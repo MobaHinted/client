@@ -1,0 +1,7 @@
+certifi==2020.6.20
+chardet==3.0.4
+idna==2.9
+requests==2.24.0
+riotwatcher==3.0.0
+urllib3==1.25.9
+python-dotenv==0.13.0
