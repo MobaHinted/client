@@ -20,3 +20,15 @@ to set up the virtual environment and install the requirements.
 `virtualenv --no-site-packages --distribute .env
     && source .env/bin/activate
     && pip install -r requirements.txt`
+    
+You'll also need an `.env` file setup with the following variables.
+
+- `riotKey` your Riot API key
+
+Then you can build the executable.
+
+```
+python build.py
+```
+
+Now you can run `main.exe`.

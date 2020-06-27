@@ -2,3 +2,6 @@
 /data/
 /.idea/
 .env
+/dist/
+/build/
+*.spec
