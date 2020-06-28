@@ -5,7 +5,7 @@ buildCommand = 'pyinstaller --onefile main.py'
 process = subprocess.Popen(buildCommand.split(), stdout=subprocess.PIPE)
 process.wait()
 
-moveCommand = 'mv ./dist/main.exe ./main.exe'
+moveCommand = 'mv ./dist/main.exe ./MobaHinted.exe'
 process = subprocess.Popen(moveCommand.split(), stdout=subprocess.PIPE)
 process.wait()
 

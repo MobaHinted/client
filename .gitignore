@@ -1,7 +1,9 @@
 /venv/
 /data/
 /.idea/
-.env
 /dist/
 /build/
+.env
 *.spec
+*.exe
+*.zip
