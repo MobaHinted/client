@@ -1,14 +1,10 @@
 import hinter.ui.main
-import tkinter
-from dotenv import load_dotenv
-
-load_dotenv('.env')
+import hinter.settings
 
 
 ###
 
-def NewFile():
-    print("New File!")
+hinter.settings.settings.load_settings()
 
 ###
 
