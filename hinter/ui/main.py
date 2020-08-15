@@ -35,6 +35,7 @@ class UI:
         # Add users to dropdown
         user_list = hinter.users.users.list_users()
 
+        # Add option to remove users if there are any
         if len(user_list) > 0:
             user_menu.add_command(
                 label="Remove user",
@@ -43,14 +44,19 @@ class UI:
             )
             user_menu.add_separator()
 
+        # List users, with on-click to select that as the active user
         for user in user_list:
+            # Set the username for the label of the dropdown entry
             username = user[0]
+            # Check if the user is the currently active selection
             if user[0] == hinter.settings.settings.active_user:
                 username = '* ' + username
 
+            # Add the user entry
             user_menu.add_command(
                 label=username,
-                command=lambda: hinter.users.users.select_user(user)
+                command=lambda user_info=user:  # lambda parameter required for user data to be static
+                hinter.users.users.select_user(user_info)  # method to set this user as active if entry is clicked
             )
 
         # Add the menus
