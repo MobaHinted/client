@@ -19,9 +19,11 @@ class Users:
     current_list_cache = []
 
     def __init__(self):
+        # Make sure settings are loaded
         hinter.settings.settings.load_settings()
 
     def list_users(self):
+        # Open user file
         if not os.path.exists('./data/'):
             os.mkdir('./data')
 
@@ -29,14 +31,17 @@ class Users:
             open(self.users_list, "w+")
             return []
 
+        # Read user file
         user_list_file = open(self.users_list, "r").readlines()
         user_list = []
 
+        # Load users from file
         for user in user_list_file:
             user_list.append(
                 [user.split(';;')[0], user.split(';;')[1]]
             )
 
+        # Save user list
         self.current_list_cache = user_list
 
         return user_list
@@ -50,15 +55,19 @@ class Users:
             parent=root
         )
 
-        # Check for duplicates
-        if username in self.current_list_cache:
+        # Check for duplicate in current user list
+        user_list = []
+        for user in self.current_list_cache:
+            user_list.append(user[0])
+
+        if username in user_list:
             messagebox.showwarning(
                 'Duplicate username',
                 'This account is already in your list!'
             )
             return
 
-        # Check user exists
+        # Check user exists on Riot's side
         try:
             summoner = watcher.summoner.by_name(
                 hinter.settings.settings.region,
@@ -92,8 +101,12 @@ class Users:
 
         removed = False
 
-        # Check for nonexistent
-        if username not in self.current_list_cache:
+        # Check if user is in list
+        user_list = []
+        for user in self.current_list_cache:
+            user_list.append(user[0])
+
+        if username not in user_list:
             messagebox.showwarning(
                 'Nonexistent username',
                 'This account was never added, and has not been removed!'
@@ -133,6 +146,7 @@ class Users:
 
         user_list_file.close()
 
+        # Confirm user was removed and reload menu
         messagebox.showinfo(
             'User removed',
             'This account was removed!'
@@ -140,6 +154,7 @@ class Users:
         hinter.ui.main.UI.add_menu()
 
     def select_user(self, user):
+        # Write both variables for the active user setting
         hinter.settings.settings.write_setting(
             'active_user',
             user[0]
