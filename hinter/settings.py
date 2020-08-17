@@ -1,11 +1,11 @@
 import os.path
 import hinter.ui.main
 
+
 class Settings:
     settings_file = './data/settings.dat'
     region = 'na1'
     active_user = ''
-    active_user_id = ''
 
     def load_settings(self):
         # Verify folder and file exist
@@ -70,5 +70,6 @@ class Settings:
         # Reload settings file and menu bar
         self.load_settings()
         hinter.ui.main.UI.add_menu()
+
 
 settings = Settings()

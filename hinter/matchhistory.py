@@ -5,15 +5,15 @@ from tkinter import *
 
 import hinter.settings
 import hinter.ui.main
+import hinter.background.dataloader
+import hinter.struct.user
 
 load_dotenv('.env')
 
 watcher = LolWatcher(os.getenv('riotKey'))
 
-# hinter.settings.settings.active_user
 
-
-class Home:
+class MatchHistory:
     games = []
     rank = ""
     average_kda = ""
@@ -23,18 +23,12 @@ class Home:
 
     def __init__(self):
         # Load summoner information
-        summoner = watcher.summoner.by_account(
-            hinter.settings.settings.region,
-            hinter.settings.settings.active_user_id
-        )
-        self.level = summoner['summonerLevel']
-        self.icon = summoner['profileIconId']
-        self.username = summoner['name']
+        user = hinter.struct.user.User(hinter.settings.settings.active_user)
 
         # Load match history information
         entries = watcher.match.matchlist_by_account(
             hinter.settings.settings.region,
-            hinter.settings.settings.active_user_id
+            user.account_id
         )
         for match in entries['matches'][0:5]:
             match = watcher.match.by_id(hinter.settings.settings.region, match['gameId'])
@@ -43,4 +37,4 @@ class Home:
             text.pack()
 
 
-home = Home()
+match_history = MatchHistory()

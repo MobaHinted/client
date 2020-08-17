@@ -1,5 +1,6 @@
 import os
 import os.path
+from typing import List
 from tkinter import messagebox
 from tkinter import simpledialog
 
@@ -8,6 +9,7 @@ from riotwatcher import LolWatcher
 
 import hinter.settings
 import hinter.ui.main
+import hinter.struct.user
 
 load_dotenv('.env')
 
@@ -16,30 +18,36 @@ watcher = LolWatcher(os.getenv('riotKey'))
 
 class Users:
     users_list = './data/users.dat'
-    current_list_cache = []
+    current_list_cache: List[hinter.struct.user.User] = []
 
     def __init__(self):
         # Make sure settings are loaded
         hinter.settings.settings.load_settings()
 
-    def list_users(self):
+    def list_users(self, root):
         # Open user file
         if not os.path.exists('./data/'):
             os.mkdir('./data')
 
         if not os.path.exists(self.users_list):
-            open(self.users_list, "w+")
+            open(self.users_list, 'w+')
             return []
 
         # Read user file
-        user_list_file = open(self.users_list, "r").readlines()
+        user_list_file = open(self.users_list, 'r').readlines()
         user_list = []
 
         # Load users from file
-        for user in user_list_file:
-            user_list.append(
-                [user.split(';;')[0], user.split(';;')[1]]
-            )
+        for username in user_list_file:
+            username = username.split('\n')[0]
+            user = hinter.struct.user.User(username)
+
+            if user.user_exists:
+                user_list.append(
+                    hinter.struct.user.User(username)
+                )
+            else:
+                self.remove_user(root, username)
 
         # Save user list
         self.current_list_cache = user_list
@@ -49,64 +57,58 @@ class Users:
     def add_user(self, root):
         # Grab username
         username = simpledialog.askstring(
-            "Add User",
-            "What is your username? (currently using region: "
-            + hinter.settings.settings.region + ")",
+            'Add User',
+            'What is the username? (currently using region: '
+            + hinter.settings.settings.region + ')',
             parent=root
         )
 
         # Check for duplicate in current user list
-        user_list = []
         for user in self.current_list_cache:
-            user_list.append(user[0])
-
-        if username in user_list:
-            messagebox.showwarning(
-                'Duplicate username',
-                'This account is already in your list!'
-            )
-            return
+            if user.username == username:
+                messagebox.showwarning(
+                    'Duplicate username',
+                    'This account is already in your list!'
+                )
+                return
 
         # Check user exists on Riot's side
-        try:
-            summoner = watcher.summoner.by_name(
-                hinter.settings.settings.region,
-                username
-            )
-        except Exception:
+        user = hinter.struct.user.User(username)
+        if not user.user_exists:
             messagebox.showwarning(
                 'Nonexistent user',
                 'This account does not exist in this region!'
             )
             return
 
-        # Add to user list
+        # Add to user list file and current list
         user_file = open(self.users_list, 'a+')
         user_file.write(
-            summoner['name'] + ';;' + summoner['accountId'] + '\n'
+            user.username + '\n'
         )
         user_file.close()
-        self.current_list_cache.append(username)
+        self.current_list_cache.append(user)
 
         # Add to dropdown menu
         hinter.ui.main.UI.add_menu()
 
-    def remove_user(self, root):
+    def remove_user(self, root, username: str = ''):
         # Grab username
-        username = simpledialog.askstring(
-            "Remove User",
-            "What username do you want removed?",
-            parent=root
-        )
+        if username == '':
+            username = simpledialog.askstring(
+                'Remove User',
+                'What username do you want removed?',
+                parent=root
+            )
 
         removed = False
 
         # Check if user is in list
-        user_list = []
+        found = False
         for user in self.current_list_cache:
-            user_list.append(user[0])
-
-        if username not in user_list:
+            if user.username == username:
+                found = True
+        if not found:
             messagebox.showwarning(
                 'Nonexistent username',
                 'This account was never added, and has not been removed!'
@@ -120,9 +122,8 @@ class Users:
         # Go through list
         for line in user_list_file_original:
             # Check username in list
-            listed_name = line.split(';;')[0]
-            # If the username matches the one wanting removed
-            # then don't record it
+            listed_name = line.split('\n')[0]
+            # If the username matches the one wanting removed then don't record it
             if listed_name == username:
                 removed = True
             else:
@@ -153,15 +154,11 @@ class Users:
         )
         hinter.ui.main.UI.add_menu()
 
-    def select_user(self, user):
-        # Write both variables for the active user setting
+    def select_user(self, username: str):
+        # Write the variable to have an active user
         hinter.settings.settings.write_setting(
             'active_user',
-            user[0]
-        )
-        hinter.settings.settings.write_setting(
-            'active_user_id',
-            user[1]
+            username
         )
 
 
