@@ -32,7 +32,6 @@ class MatchHistory:
         )
         for match in entries['matches'][0:5]:
             match = watcher.match.by_id(hinter.settings.settings.region, match['gameId'])
-            print(match)
             text = Label(hinter.ui.main.UI.root, text=match['gameId'])
             text.pack()
 

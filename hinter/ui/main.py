@@ -2,6 +2,7 @@ import tkinter
 
 import hinter.users
 import hinter.settings
+import hinter.background.dataloader
 
 
 class UI:
@@ -19,6 +20,10 @@ class UI:
         # Create file dropdown
         file_menu = tkinter.Menu(self.root)
         file_menu.add_command(
+            label="Reload all data",
+            command=lambda: hinter.background.dataloader.data_loader.load_all(root=self.root, refresh=True)
+        )
+        file_menu.add_command(
             label="Exit",
             command=lambda: self.quit()
         )
@@ -35,13 +40,8 @@ class UI:
         # Add users to dropdown
         user_list = hinter.users.users.list_users(self.root)
 
-        # Add option to remove users if there are any
+        # Add separation
         if len(user_list) > 0:
-            user_menu.add_command(
-                label="Remove user",
-                command=lambda:
-                hinter.users.users.remove_user(self.root)
-            )
             user_menu.add_separator()
 
         # List users, with on-click to select that as the active user
@@ -57,6 +57,15 @@ class UI:
                 label=username,
                 command=lambda user_info=user.username:  # lambda parameter required for user data to be static
                 hinter.users.users.select_user(user.username)  # method to set this user as active if entry is clicked
+            )
+
+        # Add option to remove users
+        if len(user_list) > 0:
+            user_menu.add_separator()
+            user_menu.add_command(
+                label="Remove user",
+                command=lambda:
+                hinter.users.users.remove_user(self.root)
             )
 
         # Add the menus

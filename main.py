@@ -1,6 +1,6 @@
 import hinter.ui.main
 import hinter.settings
-import hinter.home
+import hinter.matchhistory
 
 ###
 
