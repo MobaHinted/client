@@ -25,6 +25,10 @@ class MatchHistory:
         # Load summoner information
         user = hinter.struct.user.User(hinter.settings.settings.active_user)
 
+        # Don't fail on matchlist loading just because there is not active user selected
+        if not user.user_exists:
+            return
+
         # Load match history information
         entries = watcher.match.matchlist_by_account(
             hinter.settings.settings.region,
