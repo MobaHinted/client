@@ -54,20 +54,28 @@ class DataLoader:
                 open(self.data_path + data + '.json', 'w+')
                 self.data_loaded[data] = False  # Mark as not having been loaded
 
-        # TODO: Check files exist in directory, and that files are non-empty
+        # TODO: Check files are non-empty
 
         return self.data_loaded
 
     def load_all(self, root: tkinter.Tk, refresh=False):
         progress_popup = hinter.ui.progress.Progress(0, 'Downloading and processing: Champions')
-        the_thread = threading.Thread(
+        champion_thread = threading.Thread(
             target=self.load_champions,
             args=(refresh,)
         )
-        the_thread.start()
-        the_thread.join()
-        progress_popup.update(20, 'next')
-        #self.load_items(refresh)
+        champion_thread.start()
+        champion_thread.join()
+
+        progress_popup.update(16, 'Downloading and processing: Items')
+        items_thread = threading.Thread(
+            target=self.load_items,
+            args=(refresh,)
+        )
+        items_thread.start()
+        items_thread.join()
+
+        progress_popup.update(32, 'Downloading and processing: Maps')
         #self.load_maps(refresh)
         #self.load_masteries(refresh)
         #self.load_icons(refresh)
@@ -110,14 +118,21 @@ class DataLoader:
                 spell['image'] = spell['image']['full']
             champion['passive']['image'] = champion['passive']['image']['full']
 
-        with open(self.data_path + 'champions.json', 'w') as champion_file:
-            json.dump(champions, champion_file)
+        with open(self.data_path + 'champions.json', 'w') as champions_file:
+            json.dump(champions, champions_file)
 
         return self.check_loaded()
 
     def load_items(self, refresh=False):
         if self.data_loaded['items'] and not refresh:
             return False
+
+        # Load item data
+        items = watcher.data_dragon.items(self.current_patch)
+        del items['basic']
+
+        with open(self.data_path + 'items.json', 'w') as items_file:
+            json.dump(items, items_file)
 
         return self.check_loaded()
 
