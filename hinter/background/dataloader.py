@@ -2,15 +2,17 @@ import os
 import time
 import json
 import requests
+import tarfile
+from retry import retry
 from typing import Dict
 
-import hinter
 import hinter.ui.progress
 
 
 class DataLoader:
     current_patch: str = ''
-    data_path: str = './data/game_constants/'
+    data_path = './data/game_constants/'
+    temp_data_path = data_path + 'temp/'
     url_ranked_emblems = 'http://static.developer.riotgames.com/docs/lol/ranked-emblems.zip'
     url_ranked_positions = 'http://static.developer.riotgames.com/docs/lol/ranked-positions.zip'
     url_dragon_tail = ''
@@ -60,7 +62,7 @@ class DataLoader:
         self.check_loaded()
         self.url_dragon_tail = 'https://ddragon.leagueoflegends.com/cdn/dragontail-' + self.current_patch + '.tgz'
 
-    def check_loaded(self):
+    def check_loaded(self) -> Dict[str, bool]:
         # Verify data directory exists
         if not os.path.exists(self.data_path):
             os.mkdir(self.data_path)
@@ -85,7 +87,7 @@ class DataLoader:
                     self.data_loaded[data] = False  # Mark as not loaded
         return self.data_loaded
 
-    def load_all(self, refresh: bool = False):
+    def load_all(self, refresh: bool = False) -> Dict[str, bool]:
         # Save refresh variable so we don't have to pass it into every method
         self.refresh = refresh
 
@@ -106,14 +108,12 @@ class DataLoader:
         self.load_spells()
 
         progress_popup.update(50, 'Downloading: Images')
-        # TODO: Implement image downloading
-        #  (https://ddragon.leagueoflegends.com/cdn/dragontail-<current-patch>.tgz) self.download_images()
+        self.download_images()
 
-        progress_popup.update(90, 'Processing: Images')
-        # TODO: Implement image processing (unzipping, moving images to folders, removing larger asset)
-        #  self.process_images()
+        progress_popup.update(58, 'Processing: Images')
+        self.process_images()
 
-        progress_popup.update(95, 'Downloading and processing: Rank icons')
+        progress_popup.update(90, 'Downloading and processing: Rank icons')
         # TODO: Implement rank icon downloading
         #  (http://static.developer.riotgames.com/docs/lol/ranked-emblems.zip for ranked emblems,
         #  http://static.developer.riotgames.com/docs/lol/ranked-positions.zip for ranked positions)
@@ -126,12 +126,13 @@ class DataLoader:
 
         # Do not update again until this is called, refresh data loaded checks
         self.refresh = False
+        # TODO: implement download cleanup | self.cleanup_downloads()
         return self.check_loaded()
 
-    def load_champions(self):
+    def load_champions(self) -> Dict[str, bool]:
         # Skip loading if data is already loaded and a refresh was not requested
         if self.data_loaded['champions'] and not self.refresh:
-            return False
+            return self.data_loaded
 
         # Load champion data
         champions = hinter.watcher.data_dragon.champions(self.current_patch, full=True)
@@ -168,10 +169,10 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_items(self):
+    def load_items(self) -> Dict[str, bool]:
         # Skip loading if data is already loaded and a refresh was not requested
         if self.data_loaded['items'] and not self.refresh:
-            return False
+            return self.data_loaded
 
         # Load item data
         items = hinter.watcher.data_dragon.items(self.current_patch)
@@ -185,10 +186,10 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_maps(self):
+    def load_maps(self) -> Dict[str, bool]:
         # Skip loading if data is already loaded and a refresh was not requested
         if self.data_loaded['maps'] and not self.refresh:
-            return False
+            return self.data_loaded
 
         # Load maps data
         maps = hinter.watcher.data_dragon.maps(self.current_patch)
@@ -203,10 +204,10 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_runes(self):
+    def load_runes(self) -> Dict[str, bool]:
         # Skip loading if data is already loaded and a refresh was not requested
         if self.data_loaded['runes'] and not self.refresh:
-            return False
+            return self.data_loaded
 
         # Load runes data
         runes = hinter.watcher.data_dragon.runes_reforged(self.current_patch)
@@ -217,10 +218,10 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_spells(self):
+    def load_spells(self) -> Dict[str, bool]:
         # Skip loading if data is already loaded and a refresh was not requested
         if self.data_loaded['spells'] and not self.refresh:
-            return False
+            return self.data_loaded
 
         # Load spells data
         spells = hinter.watcher.data_dragon.summoner_spells(self.current_patch)
@@ -238,8 +239,42 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def download_images(self):
-        dragon_tail = requests.get()
+    @retry(tries=3, delay=1)
+    def download_images(self) -> bool:
+        # Create temporary data directory
+        file_path = self.temp_data_path + 'dragon_tail.tgz'
+        if not os.path.exists(self.temp_data_path):
+            os.mkdir(self.temp_data_path)
+        elif os.stat(file_path).st_size > 0:
+            return True
+
+        # Download dragon tail data
+        dragon_tail = requests.get(self.url_dragon_tail)
+        open(file_path, 'wb').write(dragon_tail.content)
+        file_size = os.stat(file_path).st_size
+
+        # Verify download
+        return True if file_size > 0 else False
+
+    def process_images(self) -> None:
+        file_path = self.temp_data_path + 'dragon_tail.tgz'
+
+        # Extract images
+        dragon_tail_tar = tarfile.open(file_path, 'r:gz')
+        dragon_tail_tar.extractall(self.temp_data_path)
+        dragon_tail_tar.close()
+
+        """
+        /<current-patch>/img/champion/<champion name>.png for load_champions
+            /<current-patch>/img/spell/<spell name>.png for ability spell icons
+            /<current-patch>/img/passive/<champion name>_P.png for passive spell icons
+            /img/champions/splash/<champion name>_0.png for splash backgrounds
+        /<current-patch>/img/item/<item id>.png for load_items
+        /<current-patch>/img/map/<map id>.png for load_maps
+        /<current-patch>/img/profileicon/<icon id>.png for load_icons
+        /img/perk-images/Styles/ for load_runes, "icon" has full path needed
+        /<current-patch>/img/spell/<spell name>.png for load_spells
+        """
 
 
 data_loader = DataLoader()
