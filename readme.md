@@ -42,10 +42,15 @@ Now you can run `main.exe`.
 
 Nah. I play League, the clients/tools are annoying, and I want one that has all of my favorite features without the ads or anything like that.
 
-No data is automatically transmitted to me, except if you enable (default is disabled) periodic information dumps for analytics and debugging purposes, or if you include it in the feedback form.
-If you opt to use data on my server, then the data is available to CloudFlare and DigitalOcean, I only track occurences of data access, no user data; it's faster not to, but league data is kind of fat, particularly in its initial download.
+If you want to thank me, then send me an email, report an issue, or star this repository; there is also a Sponsor option for one-off gifts, go crazy.
 
-If you want to thank me, then send me an email, report an issue, or star this repository; there is also a Sponsor option for one-off gifts.
+### Privacy
+
+No data is automatically transmitted to me, except if you enable periodic information dumps (disabled by default) for analytics and debugging purposes, or if you include it in the feedback form. The exact data included is up to you to select.
+
+If you opt to use data from my server instead of downloading it, then whatever data about you is available to CloudFlare and DigitalOcean, I only track occurences of data access, no user data. It's faster not to, but league data is pretty fat - particularly in its initial download.
+
+There are also lots of API requests of course, so Riot has access to whatever data about you, too. But if you don't want them to have your data, then you'd have to not play league ... so ...
 
 ## License
 This software is licensed under GPLv3, and as such can be shared freely. Crediting me is good.
