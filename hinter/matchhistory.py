@@ -2,7 +2,6 @@ from tkinter import *
 
 import hinter
 import hinter.ui.main
-import hinter.background.dataloader
 
 
 class MatchHistory:
@@ -30,6 +29,3 @@ class MatchHistory:
             match = hinter.watcher.match.by_id(hinter.settings.region, match['gameId'])
             text = Label(hinter.ui.main.UI.root, text=match['gameId'])
             text.pack()
-
-
-match_history = MatchHistory()

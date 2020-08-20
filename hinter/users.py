@@ -3,7 +3,6 @@ from typing import List
 from tkinter import messagebox
 from tkinter import simpledialog
 
-import hinter.ui.main
 import hinter.struct.user
 
 
@@ -76,9 +75,6 @@ class Users:
         user_file.close()
         self.current_list_cache.append(user)
 
-        # Add to dropdown menu
-        hinter.ui.main.UI.add_menu()
-
     def remove_user(self, root, username: str = ''):
         # Grab username
         if username == '':
@@ -122,7 +118,6 @@ class Users:
                 'Nonexistent username',
                 'This account could not be found, and has not been removed!'
             )
-            hinter.ui.main.UI.add_menu()
             return
 
         # Reopen file with write permissions
@@ -139,7 +134,6 @@ class Users:
             'User removed',
             'This account was removed!'
         )
-        hinter.ui.main.UI.add_menu()
 
     def select_user(self, username: str):
         # Write the variable to have an active user

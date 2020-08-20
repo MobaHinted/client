@@ -1,5 +1,4 @@
 import os.path
-import hinter.ui.main
 
 
 class Settings:
@@ -81,6 +80,5 @@ class Settings:
         )
         settings_file.close()
 
-        # Reload settings file and menu bar
+        # Reload settings file
         self.load_settings(refresh=True)
-        hinter.ui.main.UI.add_menu()

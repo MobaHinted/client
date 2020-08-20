@@ -1,7 +1,4 @@
 import hinter
-import hinter.settings
-import hinter.ui.main
-import hinter.background.dataloader
 
 
 class User:
@@ -15,7 +12,7 @@ class User:
         # Check user exists on Riot's side
         try:
             user = hinter.watcher.summoner.by_name(
-                hinter.settings.settings.region,
+                hinter.settings.region,
                 username
             )
         except Exception as e:

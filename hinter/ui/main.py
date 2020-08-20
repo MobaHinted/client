@@ -33,7 +33,7 @@ class UI:
         menu.add_cascade(label="User", menu=user_menu)
         user_menu.add_command(
             label="Add user",
-            command=lambda: hinter.users.add_user(self.root)
+            command=lambda: (hinter.users.add_user(self.root), self.add_menu())
         )
 
         # Add users to dropdown
@@ -54,8 +54,11 @@ class UI:
             # Add the user entry
             user_menu.add_command(
                 label=username,
-                command=lambda user_info=user.username:  # lambda parameter required for user data to be static
-                hinter.users.select_user(user.username)  # method to set this user as active if entry is clicked
+                command=lambda user_info=user.username:       # lambda parameter required for user data to be static
+                (
+                    hinter.users.select_user(user.username),  # method to set this user as active if entry is clicked
+                    self.add_menu()                           # Refresh menu
+                )
             )
 
         # Add option to remove users
