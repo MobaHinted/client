@@ -42,7 +42,8 @@ Now you can run `main.exe`.
 
 Nah. I play League, the clients/tools are annoying, and I want one that has all of my favorite features without the ads or anything like that.
 
-The only data that gets transmitted to me (*if* you opt into it, it defaults to off) is the state of the software, with usernames removed and no hardware information other than diskspace.
+No data is automatically transmitted to me, except if you enable (default is disabled) periodic information dumps for analytics and debugging purposes, or if you include it in the feedback form.
+If you opt to use data on my server, then the data is available to CloudFlare and DigitalOcean, I only track occurences of data access, no user data; it's faster not to, but league data is kind of fat, particularly in its initial download.
 
 If you want to thank me, then send me an email, report an issue, or star this repository; there is also a Sponsor option for one-off gifts.
 
