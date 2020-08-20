@@ -21,7 +21,7 @@ class UI:
         file_menu = tkinter.Menu(self.root)
         file_menu.add_command(
             label="Reload all data",
-            command=lambda: hinter.background.dataloader.data_loader.load_all(root=self.root, refresh=True)
+            command=lambda: hinter.background.dataloader.data_loader.load_all(refresh=True)
         )
         file_menu.add_command(
             label="Exit",
