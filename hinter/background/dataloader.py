@@ -162,7 +162,6 @@ class DataLoader:
             # Reformat data
             champion['image'] = champion['image']['full']
             for spell in champion['spells']:
-                spell['id'] = spell['id'][-1]
                 spell['image'] = spell['image']['full']
             champion['passive']['image'] = champion['passive']['image']['full']
 
