@@ -17,7 +17,7 @@ class Progress:
         self.current_percentage = percentage
         self.popup = Toplevel()
 
-        Label(self.popup, text='Downloading Game data ...').grid(row=0, column=0, padx=20)
+        Label(self.popup, text='Downloading Game data ...').grid(row=0, column=0, padx=50)
         self.status_text = Label(self.popup, text=current_status)
         self.status_text.grid(row=3, column=0, padx=20)
 
@@ -39,3 +39,6 @@ class Progress:
         self.bar.grid(row=2, column=0)
         self.status_text.grid(row=3, column=0, padx=20)
         self.bar.update()
+
+    def close(self):
+        self.popup.destroy()
