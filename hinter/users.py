@@ -1,5 +1,4 @@
 import os
-import os.path
 from typing import List
 from tkinter import messagebox
 from tkinter import simpledialog

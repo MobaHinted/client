@@ -1,7 +1,6 @@
 import os.path
 from dotenv import load_dotenv
 from riotwatcher import LolWatcher
-from tkinter import *
 
 import hinter.settings
 import hinter.ui.main
