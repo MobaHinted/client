@@ -24,6 +24,7 @@ class Progress:
         self.bar = Progressbar(self.popup, orient=HORIZONTAL, length=100, mode='determinate')
         self.bar['value'] = self.current_percentage
         self.bar.grid(row=2, column=0)
+        self.bar.update()
 
     def update(self, percentage: int, current_status: str):
         # Make sure percentage is 1-100
@@ -37,3 +38,4 @@ class Progress:
 
         self.bar.grid(row=2, column=0)
         self.status_text.grid(row=3, column=0, padx=20)
+        self.bar.update()
