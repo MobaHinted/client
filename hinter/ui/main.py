@@ -1,7 +1,6 @@
 import tkinter
 
-import hinter.users
-import hinter.settings
+import hinter
 import hinter.background.dataloader
 
 
@@ -34,11 +33,11 @@ class UI:
         menu.add_cascade(label="User", menu=user_menu)
         user_menu.add_command(
             label="Add user",
-            command=lambda: hinter.users.users.add_user(self.root)
+            command=lambda: hinter.users.add_user(self.root)
         )
 
         # Add users to dropdown
-        user_list = hinter.users.users.list_users(self.root)
+        user_list = hinter.users.list_users(self.root)
 
         # Add separation
         if len(user_list) > 0:
@@ -49,14 +48,14 @@ class UI:
             # Set the username for the label of the dropdown entry
             username = user.username
             # Check if the user is the currently active selection
-            if username == hinter.settings.settings.active_user:
+            if username == hinter.settings.active_user:
                 username = '* ' + username
 
             # Add the user entry
             user_menu.add_command(
                 label=username,
                 command=lambda user_info=user.username:  # lambda parameter required for user data to be static
-                hinter.users.users.select_user(user.username)  # method to set this user as active if entry is clicked
+                hinter.users.select_user(user.username)  # method to set this user as active if entry is clicked
             )
 
         # Add option to remove users
@@ -65,7 +64,7 @@ class UI:
             user_menu.add_command(
                 label="Remove user",
                 command=lambda:
-                hinter.users.users.remove_user(self.root)
+                hinter.users.remove_user(self.root)
             )
 
         # Add the menus

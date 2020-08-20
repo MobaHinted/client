@@ -3,25 +3,13 @@ from typing import List
 from tkinter import messagebox
 from tkinter import simpledialog
 
-from dotenv import load_dotenv
-from riotwatcher import LolWatcher
-
-import hinter.settings
 import hinter.ui.main
 import hinter.struct.user
-
-load_dotenv('.env')
-
-watcher = LolWatcher(os.getenv('riotKey'))
 
 
 class Users:
     users_list = './data/users.dat'
     current_list_cache: List[hinter.struct.user.User] = []
-
-    def __init__(self):
-        # Make sure settings are loaded
-        hinter.settings.settings.load_settings()
 
     def list_users(self, root):
         # Open user file
@@ -58,7 +46,7 @@ class Users:
         username = simpledialog.askstring(
             'Add User',
             'What is the username? (currently using region: '
-            + hinter.settings.settings.region + ')',
+            + hinter.settings.region + ')',
             parent=root
         )
 
@@ -155,10 +143,7 @@ class Users:
 
     def select_user(self, username: str):
         # Write the variable to have an active user
-        hinter.settings.settings.write_setting(
+        hinter.settings.write_setting(
             'active_user',
             username
         )
-
-
-users = Users()

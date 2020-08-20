@@ -1,22 +1,19 @@
 import os
-from typing import Dict
-from dotenv import load_dotenv
-from riotwatcher import LolWatcher
-import json
-
 import time
+import json
+import requests
+from typing import Dict
 
-import hinter.settings
+import hinter
 import hinter.ui.progress
-
-load_dotenv('.env')
-
-watcher = LolWatcher(os.getenv('riotKey'))
 
 
 class DataLoader:
     current_patch: str = ''
     data_path: str = './data/game_constants/'
+    url_ranked_emblems = 'http://static.developer.riotgames.com/docs/lol/ranked-emblems.zip'
+    url_ranked_positions = 'http://static.developer.riotgames.com/docs/lol/ranked-positions.zip'
+    url_dragon_tail = ''
     data_loaded: Dict[str, bool] = {
         'champions': True,
         'items': True,
@@ -59,9 +56,9 @@ class DataLoader:
     refresh: bool = False
 
     def __init__(self):
-        hinter.settings.settings.load_settings()
-        self.current_patch = watcher.data_dragon.versions_for_region(hinter.settings.settings.region)['v']
+        self.current_patch = hinter.watcher.data_dragon.versions_for_region(hinter.settings.region)['v']
         self.check_loaded()
+        self.url_dragon_tail = 'https://ddragon.leagueoflegends.com/cdn/dragontail-' + self.current_patch + '.tgz'
 
     def check_loaded(self):
         # Verify data directory exists
@@ -137,7 +134,7 @@ class DataLoader:
             return False
 
         # Load champion data
-        champions = watcher.data_dragon.champions(self.current_patch, full=True)
+        champions = hinter.watcher.data_dragon.champions(self.current_patch, full=True)
 
         # Trim down data
         for trash, champion in champions['data'].items():
@@ -177,7 +174,7 @@ class DataLoader:
             return False
 
         # Load item data
-        items = watcher.data_dragon.items(self.current_patch)
+        items = hinter.watcher.data_dragon.items(self.current_patch)
 
         # Trim down data
         del items['basic']
@@ -194,7 +191,7 @@ class DataLoader:
             return False
 
         # Load maps data
-        maps = watcher.data_dragon.maps(self.current_patch)
+        maps = hinter.watcher.data_dragon.maps(self.current_patch)
 
         # Trim data
         for trash, ind_map in maps['data'].items():
@@ -212,7 +209,7 @@ class DataLoader:
             return False
 
         # Load runes data
-        runes = watcher.data_dragon.runes_reforged(self.current_patch)
+        runes = hinter.watcher.data_dragon.runes_reforged(self.current_patch)
 
         # Save runes data
         with open(self.data_path + 'runes.json', 'w') as runes_file:
@@ -226,7 +223,7 @@ class DataLoader:
             return False
 
         # Load spells data
-        spells = watcher.data_dragon.summoner_spells(self.current_patch)
+        spells = hinter.watcher.data_dragon.summoner_spells(self.current_patch)
 
         # Reformat data
         spells = {
@@ -240,6 +237,9 @@ class DataLoader:
             json.dump(spells, spells_file)
 
         return self.check_loaded()
+
+    def download_images(self):
+        dragon_tail = requests.get()
 
 
 data_loader = DataLoader()

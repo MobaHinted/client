@@ -1,14 +1,7 @@
-import os.path
-from dotenv import load_dotenv
-from riotwatcher import LolWatcher
-
+import hinter
 import hinter.settings
 import hinter.ui.main
 import hinter.background.dataloader
-
-load_dotenv('.env')
-
-watcher = LolWatcher(os.getenv('riotKey'))
 
 
 class User:
@@ -21,7 +14,7 @@ class User:
     def __init__(self, username: str):
         # Check user exists on Riot's side
         try:
-            user = watcher.summoner.by_name(
+            user = hinter.watcher.summoner.by_name(
                 hinter.settings.settings.region,
                 username
             )

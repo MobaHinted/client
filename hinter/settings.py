@@ -84,6 +84,3 @@ class Settings:
         # Reload settings file and menu bar
         self.load_settings(refresh=True)
         hinter.ui.main.UI.add_menu()
-
-
-settings = Settings()
