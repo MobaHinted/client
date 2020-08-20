@@ -15,17 +15,18 @@ watcher = LolWatcher(os.getenv('riotKey'))
 
 
 class DataLoader:
-    current_patch = ''
-    data_path = './data/game_constants/'
-    data_loaded: Dict[str: bool] = {
+    current_patch: str = ''
+    data_path: str = './data/game_constants/'
+    data_loaded: Dict[str, bool] = {
         'champions': True,
         'items': True,
         'maps': True,
         'icons': True,
         'runes': True,
-        'spells': True
+        'spells': True,
+        'ranks': True
     }
-    data_needs = {
+    data_needs: Dict[str, Dict[str, bool]] = {
         'champions': {
             'images': True,
             'json': True
@@ -49,8 +50,13 @@ class DataLoader:
         'spells': {
             'images': True,
             'json': True
+        },
+        'ranks': {
+            'images': True,
+            'json': False
         }
     }
+    refresh: bool = False
 
     def __init__(self):
         hinter.settings.settings.load_settings()
@@ -82,49 +88,52 @@ class DataLoader:
                     self.data_loaded[data] = False  # Mark as not loaded
         return self.data_loaded
 
-    def load_all(self, refresh=False):
+    def load_all(self, refresh: bool = False):
+        # Save refresh variable so we don't have to pass it into every method
+        self.refresh = refresh
+
+        # Open the download popup, start downloading data and updating the progress bar as we go
         progress_popup = hinter.ui.progress.Progress(0, 'Downloading and processing: Champions')
-        start_time = time.process_time()
+        self.load_champions()
 
-        start_champ_time = time.process_time()
-        self.load_champions(refresh)
-        end_champ_time = time.process_time()
-        champ_time = end_champ_time - start_champ_time
-        print('champ time: ' + str(champ_time))
+        progress_popup.update(40, 'Downloading and processing: Items')
+        self.load_items()
 
-        start_items_time = time.process_time()
-        progress_popup.update(20, 'Downloading and processing: Items')
-        self.load_items(refresh)
-        end_items_time = time.process_time()
-        items_time = end_items_time - start_items_time
-        print('items time: ' + str(items_time))
+        progress_popup.update(45, 'Downloading and processing: Maps')
+        self.load_maps()
 
-        start_maps_time = time.process_time()
-        progress_popup.update(40, 'Downloading and processing: Maps')
-        self.load_maps(refresh)
-        end_maps_time = time.process_time()
-        maps_time = end_maps_time - start_maps_time
-        print('maps time: ' + str(maps_time))
+        progress_popup.update(46, 'Downloading and processing: Runes')
+        self.load_runes()
 
-        start_icons_time = time.process_time()
-        progress_popup.update(60, 'Downloading and processing: Icons')
-        self.load_icons(refresh)
-        end_icons_time = time.process_time()
-        icons_time = end_icons_time - start_icons_time
-        print('icons time: ' + str(icons_time))
+        progress_popup.update(49, 'Downloading and processing: Spells')
+        self.load_spells()
 
-        # self.load_icons(refresh)
-        # self.load_runes(refresh)
-        # self.load_spells(refresh)
+        progress_popup.update(50, 'Downloading: Images')
+        # TODO: Implement image downloading
+        #  (https://ddragon.leagueoflegends.com/cdn/dragontail-<current-patch>.tgz) self.download_images()
 
-        end_time = time.process_time() - start_time
-        print('total download time: ' + str(end_time))
+        progress_popup.update(90, 'Processing: Images')
+        # TODO: Implement image processing (unzipping, moving images to folders, removing larger asset)
+        #  self.process_images()
 
+        progress_popup.update(95, 'Downloading and processing: Rank icons')
+        # TODO: Implement rank icon downloading
+        #  (http://static.developer.riotgames.com/docs/lol/ranked-emblems.zip for ranked emblems,
+        #  http://static.developer.riotgames.com/docs/lol/ranked-positions.zip for ranked positions)
+        #  self.load_rank_icons()
+
+        # Inform user data refresh completed, wait, then close the popup
+        progress_popup.update(100, 'Data refresh complete! Window will close ...')
+        time.sleep(3)
+        progress_popup.close()
+
+        # Do not update again until this is called, refresh data loaded checks
+        self.refresh = False
         return self.check_loaded()
 
-    def load_champions(self, refresh=False):
+    def load_champions(self):
         # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['champions'] and not refresh:
+        if self.data_loaded['champions'] and not self.refresh:
             return False
 
         # Load champion data
@@ -163,9 +172,9 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_items(self, refresh=False):
+    def load_items(self):
         # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['items'] and not refresh:
+        if self.data_loaded['items'] and not self.refresh:
             return False
 
         # Load item data
@@ -180,9 +189,9 @@ class DataLoader:
 
         return self.check_loaded()
 
-    def load_maps(self, refresh=False):
+    def load_maps(self):
         # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['maps'] and not refresh:
+        if self.data_loaded['maps'] and not self.refresh:
             return False
 
         # Load maps data
@@ -193,40 +202,43 @@ class DataLoader:
             ind_map['image'] = ind_map['image']['full']
 
         # Save maps data
-        with open(self.data_path + 'items.json', 'w') as items_file:
-            json.dump(maps, items_file)
+        with open(self.data_path + 'maps.json', 'w') as maps_file:
+            json.dump(maps, maps_file)
 
         return self.check_loaded()
 
-    def load_icons(self, refresh=False):
+    def load_runes(self):
         # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['icons'] and not refresh:
+        if self.data_loaded['runes'] and not self.refresh:
             return False
 
-        # Load icons data
-        icons = watcher.data_dragon.profile_icons(self.current_patch)
+        # Load runes data
+        runes = watcher.data_dragon.runes_reforged(self.current_patch)
 
-        # Trim data
-        for trash, icon in icons.items():
-            icon['image'] = icon['image']['full']
-
-        # Save icons data
-        with open(self.data_path + 'icons.json', 'w') as items_file:
-            json.dump(icons, items_file)
+        # Save runes data
+        with open(self.data_path + 'runes.json', 'w') as runes_file:
+            json.dump(runes, runes_file)
 
         return self.check_loaded()
 
-    def load_runes(self, refresh=False):
+    def load_spells(self):
         # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['runes'] and not refresh:
+        if self.data_loaded['spells'] and not self.refresh:
             return False
 
-        return self.check_loaded()
+        # Load spells data
+        spells = watcher.data_dragon.summoner_spells(self.current_patch)
 
-    def load_spells(self, refresh=False):
-        # Skip loading if data is already loaded and a refresh was not requested
-        if self.data_loaded['spells'] and not refresh:
-            return False
+        # Reformat data
+        spells = {
+            'type': 'summonerSpells',
+            'version': self.current_patch,
+            'data': spells
+        }
+
+        # Save spells data
+        with open(self.data_path + 'spells.json', 'w') as spells_file:
+            json.dump(spells, spells_file)
 
         return self.check_loaded()
 
