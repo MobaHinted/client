@@ -14,9 +14,11 @@ helpful to look at in game anyway.
 
 ## Status
 
-This is rather early on in development, and I've never made desktop GUI software before, so I'm sure there will be lots of hiccups.
+This is rather early on in development, and I've never made desktop GUI software
+before, so I'm sure there will be lots of hiccups.
 
-You can stay tuned by Watching the project in the top right, or checking the [Todo List](https://github.com/zbee/mobahinted/projects/1).
+You can stay tuned by Watching the project in the top right, or checking the
+[Todo List](https://github.com/zbee/mobahinted/projects/1).
 
 ## Setup
 
@@ -40,20 +42,40 @@ Now you can run `main.exe`.
 
 ## What's the catch?
 
-Nah. I play League, the clients/tools are annoying, and I want one that has all of my favorite features without the ads or anything like that.
-
-If you want to thank me, then send me an email, report an issue, or star this repository; there is also a Sponsor option for one-off gifts, go crazy.
+Nah. I play League, the clients/tools are annoying, and I want one that has all
+of my favorite features without the ads or anything like that.
 
 ### Privacy
 
-No data is automatically transmitted to me, except if you enable periodic information dumps (disabled by default) for analytics and debugging purposes, or if you include it in the feedback form. The exact data included is up to you to select.
+No data is automatically transmitted to me, except if you enable periodic
+information dumps (disabled by default) for analytics and debugging purposes,
+or if you include it in the feedback form.
+The exact data included is up to you to select.
 
-If you opt to use data from my server instead of downloading it, then whatever data about you is available to CloudFlare and DigitalOcean, I only track occurences of data access, no user data. It's faster not to, but league data is pretty fat - particularly in its initial download.
+Your API requests are proxied through my server for caching and better rate
+limiting, I'm just log accesses, but CloudFlare and DigitalOcean will have
+access to your data.
 
-There are also lots of API requests of course, so Riot has access to whatever data about you, too. But if you don't want them to have your data, then you'd have to not play league ... so ...
+If you prefer, you can set up an environment variable as described in the Setup
+section above, and then your API requests won't be proxied, but then Riot will
+have all that data; though you're already playing League ... so ...
+
+## Contributing
+
+The biggest contribution would be trying it out, and opening an issue if you
+find one.
+
+If you want to code on this, try fixing an issue, or implementing something from
+the ToDo list, and opening a pull request. If it all works out fine, we can talk
+about adding you as a contributor.
+
+If you want to thank me, then send me an email, report an issue, or star this
+repository; there is also a Sponsor option on the Github page for one-off gifts,
+go crazy.
 
 ## License
-This software is licensed under GPLv3, and as such can be shared freely. Crediting me is good.
+This software is licensed under GPLv3, and as such can be shared freely.
+Crediting me is good.
 
 "Copyright 2020 Ethan Henderson <ethan@zbee.codes>"
 
@@ -71,3 +93,29 @@ This software is licensed under GPLv3, and as such can be shared freely. Crediti
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
+### Attribution
+
+MobaHinted isn't endorsed by Riot Games and does not reflect the views or
+opinions of Riot Games or anyone officially involved in producing or managing
+League of Legends.
+League of Legends and Riot Games are trademarks or registered trademarks of
+Riot Games, Inc. League of Legends (c) Riot Games, Inc.
+
+---
+
+[Cassiopeia](https://github.com/meraki-analytics/cassiopeia), 
+Copyright (c) 2017 Rob Rua, Jason Maldonis - 
+Licensed under the MIT License
+
+[Requests](https://github.com/psf/requests), 
+Copyright 2019 Kenneth Reitz - 
+Licensed under the Apache License (Version 2.0)
+
+[python-dotenv](https://github.com/theskumar/python-dotenv), 
+Copyright (c) 2014, Saurabh Kumar - 
+Licensed under the 3-Clause BSD License
+
+[retry](https://github.com/invl/retry), 
+Copyright 2014 invl -
+Licensed under the Apache License (Version 2.0)
