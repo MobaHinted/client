@@ -30,7 +30,7 @@ to set up the virtual environment and install the requirements.
     
 You'll also need an `.env` file setup with the following variables.
 
-- `riotKey` your [Riot API key](https://developer.riotgames.com/)
+- `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
 
 Then you can build the executable.
 
