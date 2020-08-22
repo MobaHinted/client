@@ -3,7 +3,7 @@ import os.path
 
 class Settings:
     settings_file = './data/settings.dat'
-    region = 'na1'
+    region = 'NA'
     active_user = ''
     settings_loaded = False
 

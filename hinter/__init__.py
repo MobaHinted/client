@@ -1,20 +1,48 @@
 import os
 from dotenv import load_dotenv
 
-from riotwatcher import LolWatcher
+import cassiopeia
 
 import hinter.settings
 import hinter.users
 
 import hinter.struct.user
 
-# Set up riotWatcher
-load_dotenv('.env')
-watcher = LolWatcher(os.getenv('riotKey'))
-
 # Set up settings
 settings = hinter.settings.Settings()
 settings.load_settings()
+
+# Get ready for Cassiopeia
+cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
+if not os.path.exists(cassiopeia_path):
+    os.mkdir(cassiopeia_path)
+cassiopeia_settings = {
+    'pipeline': {
+        'Cache': {},
+        'SimpleKVDiskStore': {
+            'package': 'cassiopeia_diskstore',
+            'path': cassiopeia_path,
+        },
+        'DDragon': {},
+    },
+}
+
+# Set up Cassiopeia, either with local key or proxy kernel
+try:
+    load_dotenv('.env')
+    cassiopeia.set_riot_api_key(os.getenv('riotKey'))
+    cassiopeia_settings['pipeline']['RiotAPI'] = {
+        'api_key': os.getenv('riotKey'),
+    }
+except Exception:
+    cassiopeia_settings['pipeline']['kernel'] = {
+            'server_url': 'https://mhk-api.zbee.dev',
+            'port': '80',
+        }
+
+# Load basic settings for Cassiopeia
+cassiopeia.apply_settings(cassiopeia_settings)
+cassiopeia.set_default_region(hinter.settings.region)
 
 # Set up user control
 users = hinter.users.Users()

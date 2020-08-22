@@ -1,8 +1,5 @@
-certifi==2020.6.20
-chardet==3.0.4
-idna==2.10
 requests==2.24.0
-riotwatcher==3.0.0
-urllib3==1.25.10
 python-dotenv==0.14.0
 retry==0.9.2
+cassiopeia==4.0.13
+cassiopeia-diskstore==1.1.3
