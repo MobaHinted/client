@@ -30,9 +30,9 @@ cassiopeia_settings = {
 # Set up Cassiopeia, either with local key or proxy kernel
 try:
     load_dotenv('.env')
-    cassiopeia.set_riot_api_key(os.getenv('riotKey'))
+    cassiopeia.set_riot_api_key(os.getenv('RIOT_API_KEY'))
     cassiopeia_settings['pipeline']['RiotAPI'] = {
-        'api_key': os.getenv('riotKey'),
+        'api_key': os.getenv('RIOT_API_KEY'),
     }
 except Exception:
     cassiopeia_settings['pipeline']['kernel'] = {
@@ -42,7 +42,7 @@ except Exception:
 
 # Load basic settings for Cassiopeia
 cassiopeia.apply_settings(cassiopeia_settings)
-cassiopeia.set_default_region(hinter.settings.region)
+cassiopeia.set_default_region(settings.region)
 
 # Set up user control
 users = hinter.users.Users()
