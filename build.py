@@ -1,16 +1,5 @@
-import subprocess
+import os
 
-buildCommand = 'pyinstaller --onefile main.py'
-
-process = subprocess.Popen(buildCommand.split(), stdout=subprocess.PIPE)
-process.wait()
-
-moveCommand = 'mv ./dist/main.exe ./MobaHinted.exe'
-process = subprocess.Popen(moveCommand.split(), stdout=subprocess.PIPE)
-process.wait()
-
-removeCommand = 'rm -rf ./build && rm -rf ./dist && rm -rf ./main.spec'
-
-process = subprocess.Popen(removeCommand.split(), stdout=subprocess.PIPE)
-output, error = process.communicate()
-print(output, error)
+os.system('pyinstaller --onefile main.py')
+os.system('copy .\\dist\\main.exe .\\MobaHinted.exe /a')
+os.system('del /f .\\build\\, .\\dist\\, .\\main.spec /Q')
