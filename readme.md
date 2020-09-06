@@ -115,7 +115,3 @@ Licensed under the Apache License (Version 2.0)
 [python-dotenv](https://github.com/theskumar/python-dotenv), 
 Copyright (c) 2014, Saurabh Kumar - 
 Licensed under the 3-Clause BSD License
-
-[retry](https://github.com/invl/retry), 
-Copyright 2014 invl -
-Licensed under the Apache License (Version 2.0)
