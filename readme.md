@@ -30,6 +30,12 @@ to set up the virtual environment and install the requirements.
     
 You'll also need an `.env` file setup with the following variables.
 
+> You can exclude this, but then the queries will go through my
+[kernel](https://github.com/meraki-analytics/kernel) API proxy server.
+>
+> (If you're building this project yourself though, then I assume the circumstances
+are such that you should use your own development key though)
+ 
 - `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
 
 Then you can build the executable.
@@ -106,6 +112,10 @@ Riot Games, Inc. League of Legends (c) Riot Games, Inc.
 
 [Cassiopeia](https://github.com/meraki-analytics/cassiopeia), 
 Copyright (c) 2017 Rob Rua, Jason Maldonis - 
+Licensed under the MIT License
+
+[Kernel](https://github.com/meraki-analytics/kernel)
+Copyright (c) 2017 Meraki Analytics, LLC - 
 Licensed under the MIT License
 
 [Requests](https://github.com/psf/requests), 
