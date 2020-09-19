@@ -1,7 +1,8 @@
 import hinter.ui.main
 import hinter.matchhistory
 
-hinter.matchhistory.MatchHistory()
+match_history = hinter.matchhistory.MatchHistory()
+match_history.show_match_screen()
 
 ###
 
