@@ -5,6 +5,8 @@ import hinter.background.dataloader
 
 
 class UI:
+    screen: tkinter.Frame
+
     def __init__(self):
         self.root = tkinter.Tk()
         self.root.state('zoomed')
@@ -20,7 +22,9 @@ class UI:
         file_menu = tkinter.Menu(self.root)
         file_menu.add_command(
             label="Reload all data",
-            command=lambda: hinter.background.dataloader.data_loader.load_all(refresh=True)
+            command=lambda: hinter.background.dataloader.data_loader.load_all(
+                refresh=True
+            )
         )
         file_menu.add_command(
             label="Exit",
@@ -72,6 +76,12 @@ class UI:
 
         # Add the menus
         self.root.config(menu=menu)
+
+    def new_screen(self):
+        self.screen = tkinter.Frame(self.root)
+
+    def clear_screen(self):
+        self.screen.destroy()
 
     def quit(self):
         self.root.destroy()
