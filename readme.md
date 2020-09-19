@@ -125,3 +125,7 @@ Licensed under the Apache License (Version 2.0)
 [python-dotenv](https://github.com/theskumar/python-dotenv), 
 Copyright (c) 2014, Saurabh Kumar - 
 Licensed under the 3-Clause BSD License
+
+[timeago](https://github.com/hustcc/timeago), 
+Copyright (c) 2016 hustcc - 
+Licensed under the MIT License
