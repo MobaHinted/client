@@ -1,15 +1,15 @@
 from tkinter import *
 
-import hinter
-import hinter.ui.main
-import hinter.struct.user
-
 import cassiopeia
+
+import hinter
+import hinter.struct.user
+import hinter.ui.main
 
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
-    games_shown: int = 25
+    games_shown: int = 10
     rank: cassiopeia.Rank
     average_kda: float
     level = 0
@@ -33,13 +33,11 @@ class MatchHistory:
         self.level = user.level
         self.icon = user.profile_icon
 
-        # Set up screen
-        hinter.ui.main.UI.new_screen()
-
         # Load match history information
         self.games = user.match_history
 
     def show_match_screen(self):
+        hinter.ui.main.UI.new_screen()
         hinter.ui.main.UI.screen.grid(row=0, column=0, padx=150, pady=20)
 
         # Set up the left-bar
@@ -57,9 +55,6 @@ class MatchHistory:
         # Set up the main match history, and call to show all matches
         self.history = Frame(master=hinter.ui.main.UI.screen)
 
-        text = Label(master=self.history, text='match history here')
-        text.grid()
-
         self.display_matches()
 
         # Display match history
@@ -73,7 +68,6 @@ class MatchHistory:
             match: cassiopeia.Match
             team: str
             player: cassiopeia.core.match.Participant
-            player_stats: cassiopeia.core.match.ParticipantStatsData
 
             # Determine stats of user whose match history this is
             for participant in match.participants:
@@ -82,23 +76,58 @@ class MatchHistory:
                     player = participant
                     player_stats = participant.stats
 
-            # Cast and determine slightly more complex variables
+            # Resolve ending condition of game
             if match.is_remake:
                 win = 'remake'
             else:
                 win = 'win' if player.stats.win else 'loss'
 
-            # Display the data in the game container
-            key_data = Label(
-                master=game, text='key: ' + str(key) + ', match: ' + str(match.id)
-            )
-            key_data.grid(row=0, column=0)
+            # Structure what runes the player took
+            runes_taken = {
+                'keystone': {
+                    'name': str,
+                    'image': Image,
+                    'path': str,
+                },
+                'secondary_tree': {
+                    'name': str,
+                    'image': str,
+                },
+                'runes': [],
+            }
 
+            # Resolve what runes the player took
+            for trash, rune in enumerate(player.runes):
+                rune: cassiopeia.Rune
+                if rune.is_keystone:
+                    runes_taken['keystone']['name'] = rune.name
+                    runes_taken['keystone']['image'] = rune.image
+                    runes_taken['keystone']['path'] = rune.path.name
+
+                if rune.path.name != runes_taken['keystone']['path']:
+                    runes_taken['secondary_tree']['name'] = rune.path.name
+                    runes_taken['secondary_tree']['image'] = rune.path.image_url
+
+                runes_taken['runes'].append(rune.name)
+
+            # Display the data in the game container
             outcome = Label(master=game, text=win)
             outcome.grid(row=1, column=0)
 
-            champion_played = Label(master=game, text=player.champion.name)
-            champion_played.grid(row=1, column=1)
+            spells = Label(master=game, text=player.summoner_spell_d.name + ', ' + player.summoner_spell_f.name)
+            spells.grid(row=1, column=1)
+
+            champion_played = Label(master=game, text=player.champion.name + ' (' + str(player.stats.level) + ')')
+            champion_played.grid(row=1, column=2)
+
+            runes_used = Label(master=game, text=runes_taken['keystone']['name'] + ', ' + runes_taken['secondary_tree']['name'])
+            runes_used.grid(row=1, column=3)
+
+            kda_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
+            kda_display.grid(row=1, column=4)
+
+            damage = Label(master=game, text=player.stats.total_damage_dealt_to_champions)
+            damage.grid(row=1, column=6)
 
             # Save each game to the grid
             game.grid(row=key, pady=10)
