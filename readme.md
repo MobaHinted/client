@@ -59,12 +59,12 @@ or if you include it in the feedback form.
 The exact data included is up to you to select.
 
 Your API requests are proxied through my server for caching and better rate
-limiting, I'm just log accesses, but CloudFlare and DigitalOcean will have
-access to your data.
+limiting, I just log accesses for rate-limiting purposes, but CloudFlare and
+DigitalOcean will have access to your data as well.
 
 If you prefer, you can set up an environment variable as described in the Setup
-section above, and then your API requests won't be proxied, but then Riot will
-have all that data; though you're already playing League ... so ...
+section above, and then your API requests won't be proxied, only then Riot will
+have all that data in that case.
 
 ## Contributing
 
