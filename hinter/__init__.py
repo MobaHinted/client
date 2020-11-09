@@ -29,16 +29,21 @@ cassiopeia_settings = {
 
 # Set up Cassiopeia, either with local key or proxy kernel
 try:
+    if not os.path.exists('.env'):
+        raise Exception('No .env file found')
+
     load_dotenv('.env')
     cassiopeia.set_riot_api_key(os.getenv('RIOT_API_KEY'))
     cassiopeia_settings['pipeline']['RiotAPI'] = {
         'api_key': os.getenv('RIOT_API_KEY'),
     }
+    print('USING: Development Key (RIOT\'s servers)')
 except Exception:
-    cassiopeia_settings['pipeline']['kernel'] = {
+    cassiopeia_settings['pipeline']['Kernel'] = {
             'server_url': 'https://mhk-api.zbee.dev',
-            'port': '80',
+            'port': '443',
         }
+    print('USING: Kernel with key (zbee\'s servers)')
 
 # Load basic settings for Cassiopeia
 cassiopeia.apply_settings(cassiopeia_settings)
