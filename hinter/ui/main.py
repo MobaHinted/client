@@ -1,14 +1,19 @@
 import tkinter
+from tkinter import font
 
 import hinter
 import hinter.background.dataloader
 
 
 class UI:
-    screen: tkinter.Frame
+    screen: tkinter.Frame = None
 
     def __init__(self):
+
         self.root = tkinter.Tk()
+        tk = tkinter
+        default_font = tk.font.nametofont("TkDefaultFont")
+        default_font.config(size=17)
         self.root.state('zoomed')
         self.root.title('MobaHinted')
         self.root.iconbitmap("./assets/logo.ico")
@@ -81,7 +86,8 @@ class UI:
         self.screen = tkinter.Frame(self.root)
 
     def clear_screen(self):
-        self.screen.destroy()
+        if self.screen is not None:
+            self.screen.destroy()
 
     def quit(self):
         self.root.destroy()
