@@ -38,19 +38,19 @@ class MatchHistory:
 
     def show_match_screen(self):
         hinter.ui.main.UI.new_screen()
-        hinter.ui.main.UI.screen.grid(row=0, column=0, padx=150, pady=20)
+        hinter.ui.main.UI.screen.grid(row=0, column=0, pady=20)
 
         # Set up the left-bar
         self.left_bar = Frame(master=hinter.ui.main.UI.screen)
         text = Label(master=self.left_bar, text='rank, icon, level, lp, users-played-with stats here')
         text.grid()
-        self.left_bar.grid(row=0, column=0, padx=20)
+        self.left_bar.grid(row=0, column=0, padx=20, sticky=W)
 
         # Set up the right-bar
         self.right_bar = Frame(master=hinter.ui.main.UI.screen)
         text = Label(master=self.right_bar, text='role distribution, champ wr here')
         text.grid()
-        self.right_bar.grid(row=0, column=2, padx=20)
+        self.right_bar.grid(row=0, column=2, padx=15, sticky=E)
 
         # Set up the main match history, and call to show all matches
         self.history = Frame(master=hinter.ui.main.UI.screen)
@@ -58,16 +58,24 @@ class MatchHistory:
         self.display_matches()
 
         # Display match history
-        self.history.grid(row=0, column=1, padx=20)
+        self.history.grid(row=0, column=1, padx=15, sticky=N)
 
     def display_matches(self):
+        # Have filler if the user is not in any games
+        if not self.games:
+            game = Frame(self.history)
+            champion_played = Label(master=game, text='There are no games for this user, yet!')
+            champion_played.grid(row=1, column=2)
+            game.grid(row=0, pady=10)
+            return
+
         # Loop through the first games
         for key, match in enumerate(self.games[0:self.games_shown]):
             # Set up each game's container, and cast multiple variables
             game = Frame(self.history)
             match: cassiopeia.Match
             team: str
-            player: cassiopeia.core.match.Participant
+            player: cassiopeia.core.match.Participant = cassiopeia.core.match.Participant()
 
             # Determine stats of user whose match history this is
             for participant in match.participants:
@@ -111,7 +119,7 @@ class MatchHistory:
                 runes_taken['runes'].append(rune.name)
 
             # Display the data in the game container
-            outcome = Label(master=game, text=win)
+            outcome = Label(master=game, text=win + '(' + team + ')')
             outcome.grid(row=1, column=0)
 
             spells = Label(master=game, text=player.summoner_spell_d.name + ', ' + player.summoner_spell_f.name)
