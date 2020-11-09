@@ -1,5 +1,5 @@
 requests==2.24.0
 python-dotenv==0.14.0
-cassiopeia==4.0.13
+cassiopeia==4.0.14
 cassiopeia-diskstore==1.1.3
 timeago==1.0.14
