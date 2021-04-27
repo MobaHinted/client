@@ -3,6 +3,8 @@ from tkinter import font
 
 import hinter
 import hinter.background.dataloader
+import hinter.matchhistory
+import hinter.struct.user
 
 
 class UI:
@@ -63,10 +65,10 @@ class UI:
             # Add the user entry
             user_menu.add_command(
                 label=username,
-                command=lambda user_info=user.username:       # lambda parameter required for user data to be static
+                command=lambda user_info=user:
                 (
-                    hinter.users.select_user(user.username),  # method to set this user as active if entry is clicked
-                    self.add_menu()                           # Refresh menu
+                    hinter.users.select_user(user_info.username),
+                    self.add_menu()
                 )
             )
 

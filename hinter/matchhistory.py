@@ -6,6 +6,8 @@ import hinter
 import hinter.struct.user
 import hinter.ui.main
 
+from PIL import ImageTk, Image
+
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
@@ -34,9 +36,10 @@ class MatchHistory:
         self.icon = user.profile_icon
 
         # Load match history information
-        self.games = user.match_history
+        self.games = user.match_history(end_index=200)
 
     def show_match_screen(self):
+        hinter.ui.main.UI.clear_screen()
         hinter.ui.main.UI.new_screen()
         hinter.ui.main.UI.screen.grid(row=0, column=0, pady=20)
 
@@ -76,13 +79,14 @@ class MatchHistory:
             match: cassiopeia.Match
             team: str
             player: cassiopeia.core.match.Participant = cassiopeia.core.match.Participant()
+            rune_size = (20,20)
 
             # Determine stats of user whose match history this is
             for participant in match.participants:
                 if participant.summoner.name == self.username:
                     team = participant.side.name
                     player = participant
-                    player_stats = participant.stats
+                    player_stats: cassiopeia.core.match.ParticipantStats = participant.stats
 
             # Resolve ending condition of game
             if match.is_remake:
@@ -92,12 +96,12 @@ class MatchHistory:
 
             # Structure what runes the player took
             runes_taken = {
-                'keystone': {
+                'key': {
                     'name': str,
                     'image': Image,
                     'path': str,
                 },
-                'secondary_tree': {
+                'secondary': {
                     'name': str,
                     'image': str,
                 },
@@ -107,15 +111,19 @@ class MatchHistory:
             # Resolve what runes the player took
             for trash, rune in enumerate(player.runes):
                 rune: cassiopeia.Rune
+
+                # Store keystone information
                 if rune.is_keystone:
-                    runes_taken['keystone']['name'] = rune.name
-                    runes_taken['keystone']['image'] = rune.image
-                    runes_taken['keystone']['path'] = rune.path.name
+                    runes_taken['key']['name'] = rune.name
+                    runes_taken['key']['image'] = rune.image.image.resize(rune_size)
+                    runes_taken['key']['path'] = rune.path.name
 
-                if rune.path.name != runes_taken['keystone']['path']:
-                    runes_taken['secondary_tree']['name'] = rune.path.name
-                    runes_taken['secondary_tree']['image'] = rune.path.image_url
+                # Store secondary rune tree information
+                if rune.path.name != runes_taken['key']['path']:
+                    runes_taken['secondary']['name'] = rune.path.name
+                    runes_taken['secondary']['image'] = rune.path.image_url
 
+                # Store list of actual runes used
                 runes_taken['runes'].append(rune.name)
 
             # Display the data in the game container
@@ -128,14 +136,20 @@ class MatchHistory:
             champion_played = Label(master=game, text=player.champion.name + ' (' + str(player.stats.level) + ')')
             champion_played.grid(row=1, column=2)
 
-            runes_used = Label(master=game, text=runes_taken['keystone']['name'] + ', ' + runes_taken['secondary_tree']['name'])
+            img = ImageTk.PhotoImage(image=runes_taken['key']['image'])
+
+            runes_used = Label(master=game, image=img)
+            runes_used.image = img
             runes_used.grid(row=1, column=3)
 
             kda_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
-            kda_display.grid(row=1, column=4)
+            kda_display.grid(row=1, column=5)
 
-            damage = Label(master=game, text=player.stats.total_damage_dealt_to_champions)
+            damage = Label(master=game, text=str(player.stats.total_damage_dealt_to_champions) + 'dmg')
             damage.grid(row=1, column=6)
+
+            gold = Label(master=game, text=str(player.stats.gold_earned) + 'g')
+            gold.grid(row=1, column=7)
 
             # Save each game to the grid
             game.grid(row=key, pady=10)
