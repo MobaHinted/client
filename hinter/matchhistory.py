@@ -1,6 +1,7 @@
 from tkinter import *
 
 import cassiopeia
+from cassiopeia import configuration
 
 import hinter
 import hinter.struct.user
@@ -90,9 +91,9 @@ class MatchHistory:
 
             # Resolve ending condition of game
             if match.is_remake:
-                win = 'remake'
+                win = 'Remake'
             else:
-                win = 'win' if player.stats.win else 'loss'
+                win = 'Victory' if player.stats.win else 'Defeat'
 
             # Structure what runes the player took
             runes_taken = {
@@ -121,35 +122,54 @@ class MatchHistory:
                 # Store secondary rune tree information
                 if rune.path.name != runes_taken['key']['path']:
                     runes_taken['secondary']['name'] = rune.path.name
-                    runes_taken['secondary']['image'] = rune.path.image_url
+                    runes_taken['secondary']['image'] = rune.path.image.resize(rune_size)
 
                 # Store list of actual runes used
                 runes_taken['runes'].append(rune.name)
 
-            # Display the data in the game container
-            outcome = Label(master=game, text=win + '(' + team + ')')
+            '''Display the data in the game container'''
+
+            # Upfront data, win and champ
+            outcome = Label(master=game, text=win)
             outcome.grid(row=1, column=0)
 
-            spells = Label(master=game, text=player.summoner_spell_d.name + ', ' + player.summoner_spell_f.name)
-            spells.grid(row=1, column=1)
-
             champion_played = Label(master=game, text=player.champion.name + ' (' + str(player.stats.level) + ')')
-            champion_played.grid(row=1, column=2)
+            champion_played.grid(row=1, column=1)
 
+            # Summoner Spells
+            spell_d: cassiopeia.SummonerSpell = player.summoner_spell_d
+            spell_f: cassiopeia.SummonerSpell = player.summoner_spell_f
+
+            img = ImageTk.PhotoImage(image=spell_d.image.image.resize(rune_size))
+            spell_d_used = Label(master=game, image=img)
+            spell_d_used.image = img
+            spell_d_used.grid(row=1, column=2)
+
+            img = ImageTk.PhotoImage(image=spell_f.image.image.resize(rune_size))
+            spell_f_used = Label(master=game, image=img)
+            spell_f_used.image = img
+            spell_f_used.grid(row=1, column=3)
+
+            # Runes
             img = ImageTk.PhotoImage(image=runes_taken['key']['image'])
+            key_rune_used = Label(master=game, image=img)
+            key_rune_used.image = img
+            key_rune_used.grid(row=1, column=4)
 
-            runes_used = Label(master=game, image=img)
-            runes_used.image = img
-            runes_used.grid(row=1, column=3)
+            img = ImageTk.PhotoImage(image=runes_taken['secondary']['image'])
+            secondary_rune_used = Label(master=game, image=img)
+            secondary_rune_used.image = img
+            secondary_rune_used.grid(row=1, column=5)
 
+            # Number data, kda, dmg, gold
             kda_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
-            kda_display.grid(row=1, column=5)
+            kda_display.grid(row=1, column=6)
 
             damage = Label(master=game, text=str(player.stats.total_damage_dealt_to_champions) + 'dmg')
-            damage.grid(row=1, column=6)
+            damage.grid(row=1, column=7)
 
             gold = Label(master=game, text=str(player.stats.gold_earned) + 'g')
-            gold.grid(row=1, column=7)
+            gold.grid(row=1, column=8)
 
             # Save each game to the grid
             game.grid(row=key, pady=10)
