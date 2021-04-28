@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 
 import cassiopeia
@@ -61,10 +62,19 @@ class MatchHistory:
 
         self.display_matches()
 
+        # Scroll match history
+        # v = Scrollbar(hinter.ui.main.UI.screen, orient='vertical', command=tkinter.YView)
+        # v.grid(row=0, column=3)
+
         # Display match history
         self.history.grid(row=0, column=1, padx=15, sticky=N)
 
     def display_matches(self):
+        champ_size = (64, 64)
+        rune_size = (30, 30)
+        sec_rune_size = (26, 26)
+        spell_size = (30, 30)
+
         # Have filler if the user is not in any games
         if not self.games:
             game = Frame(self.history)
@@ -80,14 +90,18 @@ class MatchHistory:
             match: cassiopeia.Match
             team: str
             player: cassiopeia.core.match.Participant = cassiopeia.core.match.Participant()
-            rune_size = (20,20)
+            team_kills: int = 0
 
             # Determine stats of user whose match history this is
             for participant in match.participants:
                 if participant.summoner.name == self.username:
                     team = participant.side.name
                     player = participant
-                    player_stats: cassiopeia.core.match.ParticipantStats = participant.stats
+
+            # Determine player's team's kill count
+            for participant in match.participants:
+                if participant.side.name == team:
+                    team_kills += participant.stats.kills
 
             # Resolve ending condition of game
             if match.is_remake:
@@ -122,57 +136,95 @@ class MatchHistory:
                 # Store secondary rune tree information
                 if rune.path.name != runes_taken['key']['path']:
                     runes_taken['secondary']['name'] = rune.path.name
-                    runes_taken['secondary']['image'] = rune.path.image.resize(rune_size)
+                    runes_taken['secondary']['image'] = rune.path.image.resize(sec_rune_size)
 
                 # Store list of actual runes used
                 runes_taken['runes'].append(rune.name)
 
-            '''Display the data in the game container'''
+            '''Assign the data to widgets to be displayed'''
 
             # Upfront data, win and champ
-            outcome = Label(master=game, text=win)
-            outcome.grid(row=1, column=0)
+            img = ImageTk.PhotoImage(image=player.champion.image.image.resize(champ_size))
+            champion_played = Label(master=game, image=img)
+            champion_played.image = img
 
-            champion_played = Label(master=game, text=player.champion.name + ' (' + str(player.stats.level) + ')')
-            champion_played.grid(row=1, column=1)
+            outcome = Label(master=game, text=win)
+
+            match_length_parts = str(match.duration).split(':')
+            match_minutes = int(match_length_parts[0] * 60)
+            match_minutes += int(match_length_parts[1])
+            match_minutes += (int(match_length_parts[2]) / 60)
+            match_minutes = round(match_minutes, 2)
+
+            duration = Label(master=game, text=str(match.duration) + ' long')
 
             # Summoner Spells
             spell_d: cassiopeia.SummonerSpell = player.summoner_spell_d
             spell_f: cassiopeia.SummonerSpell = player.summoner_spell_f
 
-            img = ImageTk.PhotoImage(image=spell_d.image.image.resize(rune_size))
+            img = ImageTk.PhotoImage(image=spell_d.image.image.resize(spell_size))
             spell_d_used = Label(master=game, image=img)
             spell_d_used.image = img
-            spell_d_used.grid(row=1, column=2)
 
-            img = ImageTk.PhotoImage(image=spell_f.image.image.resize(rune_size))
+            img = ImageTk.PhotoImage(image=spell_f.image.image.resize(spell_size))
             spell_f_used = Label(master=game, image=img)
             spell_f_used.image = img
-            spell_f_used.grid(row=1, column=3)
 
             # Runes
             img = ImageTk.PhotoImage(image=runes_taken['key']['image'])
             key_rune_used = Label(master=game, image=img)
             key_rune_used.image = img
-            key_rune_used.grid(row=1, column=4)
 
             img = ImageTk.PhotoImage(image=runes_taken['secondary']['image'])
             secondary_rune_used = Label(master=game, image=img)
             secondary_rune_used.image = img
-            secondary_rune_used.grid(row=1, column=5)
 
             # Number data, kda, dmg, gold
+            kills_assists = player.stats.kills + player.stats.assists
+            k_d_a = kills_assists
+            if player.stats.deaths is not 0:  # Avoid dividing my zero
+                k_d_a /= player.stats.deaths
+
+            k_d_a = round(k_d_a, 2)  # Trim off excess decimal places
+
+            k_d_a_display = Label(master=game, text=str(k_d_a) + ' KDA')
             kda_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
-            kda_display.grid(row=1, column=6)
+
+            kill_participation = int(round(kills_assists / team_kills * 100, 0))
 
             damage = Label(master=game, text=str(player.stats.total_damage_dealt_to_champions) + 'dmg')
-            damage.grid(row=1, column=7)
 
             gold = Label(master=game, text=str(player.stats.gold_earned) + 'g')
+
+            vision_min = round(player.stats.vision_score / match_minutes, 2)
+            vision_min = Label(master=game, text=str(vision_min) + ' Vis/Min')
+
+            vision = Label(master=game, text=str(player.stats.vision_score) + ' Vis - ' + str(kill_participation) + '% KP')
+
+            '''Display and organize game widgets'''
+            # First row - game type, win/loss, time-ago, duration
+            outcome.grid(row=1, column=0, pady=10)
+            duration.grid(row=1, column=3, padx=60)
+
+            # Second row - champion, spells, runes, kda, cs/min, dmg/min, items
+            champion_played.grid(row=2, column=0, rowspan=2)
+            spell_d_used.grid(row=2, column=1)
+            key_rune_used.grid(row=2, column=2)
+            k_d_a_display.grid(row=2, column=3, padx=60)
+            vision_min.grid(row=2, column=4, padx=60)
+
+            # Third row - spells, runes, k/d/a, cs, dmg and %team, items
+            spell_f_used.grid(row=3, column=1)
+            secondary_rune_used.grid(row=3, column=2)
+            kda_display.grid(row=3, column=3, padx=60)
+            vision.grid(row=3, column=4, padx=60)
+
+            #
+            damage.grid(row=1, column=7)
             gold.grid(row=1, column=8)
 
             # Save each game to the grid
-            game.grid(row=key, pady=10)
+            game.grid(row=key, pady=15)
 
     def __del__(self):
         hinter.ui.main.UI.clear_screen()
