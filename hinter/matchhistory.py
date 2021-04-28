@@ -1,14 +1,15 @@
-import tkinter
 from tkinter import *
+import tkinter
+from PIL import ImageTk, Image
+import datetime
+import timeago
+import pytz
 
 import cassiopeia
-from cassiopeia import configuration
 
 import hinter
 import hinter.struct.user
 import hinter.ui.main
-
-from PIL import ImageTk, Image
 
 
 class MatchHistory:
@@ -61,10 +62,6 @@ class MatchHistory:
         self.history = Frame(master=hinter.ui.main.UI.screen)
 
         self.display_matches()
-
-        # Scroll match history
-        # v = Scrollbar(hinter.ui.main.UI.screen, orient='vertical', command=tkinter.YView)
-        # v.grid(row=0, column=3)
 
         # Display match history
         self.history.grid(row=0, column=1, padx=15, sticky=N)
@@ -142,7 +139,6 @@ class MatchHistory:
                 runes_taken['runes'].append(rune.name)
 
             '''Assign the data to widgets to be displayed'''
-
             # Upfront data, win and champ
             img = ImageTk.PhotoImage(image=player.champion.image.image.resize(champ_size))
             champion_played = Label(master=game, image=img)
@@ -156,7 +152,14 @@ class MatchHistory:
             match_minutes += (int(match_length_parts[2]) / 60)
             match_minutes = round(match_minutes, 2)
 
-            duration = Label(master=game, text=str(match.duration) + ' long')
+            now = datetime.datetime.utcnow()
+            now = pytz.utc.localize(now)
+            match_time = datetime.datetime.fromisoformat(
+                str(match.creation)
+            )
+            duration = str(match.duration) + ' long - ' + timeago.format(match_time, now)
+
+            timing = Label(master=game, text=duration)
 
             # Summoner Spells
             spell_d: cassiopeia.SummonerSpell = player.summoner_spell_d
@@ -181,14 +184,14 @@ class MatchHistory:
 
             # Number data, kda, dmg, gold
             kills_assists = player.stats.kills + player.stats.assists
-            k_d_a = kills_assists
-            if player.stats.deaths is not 0:  # Avoid dividing my zero
-                k_d_a /= player.stats.deaths
+            kda = kills_assists
+            if player.stats.deaths != 0:  # Avoid dividing my zero
+                kda /= player.stats.deaths
 
-            k_d_a = round(k_d_a, 2)  # Trim off excess decimal places
+            kda = round(kda, 2)  # Trim off excess decimal places
 
-            k_d_a_display = Label(master=game, text=str(k_d_a) + ' KDA')
-            kda_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
+            kda_display = Label(master=game, text=str(kda) + ' KDA')
+            k_d_a_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
 
             kill_participation = int(round(kills_assists / team_kills * 100, 0))
 
@@ -203,15 +206,15 @@ class MatchHistory:
 
             '''Display and organize game widgets'''
             # First row - game type, win/loss, time-ago, duration
-            outcome.grid(row=1, column=0, pady=10)
-            duration.grid(row=1, column=3, padx=60)
+            outcome.grid(row=1, column=0, pady=5)
+            timing.grid(row=1, column=5, columnspan=2)
 
             # Second row - champion, spells, runes, kda, cs/min, dmg/min, items
             champion_played.grid(row=2, column=0, rowspan=2)
             spell_d_used.grid(row=2, column=1)
             key_rune_used.grid(row=2, column=2)
-            k_d_a_display.grid(row=2, column=3, padx=60)
-            vision_min.grid(row=2, column=4, padx=60)
+            kda_display.grid(row=2, column=3)
+            vision_min.grid(row=2, column=4, padx=15)
 
             # Third row - spells, runes, k/d/a, cs, dmg and %team, items
             spell_f_used.grid(row=3, column=1)
@@ -220,11 +223,11 @@ class MatchHistory:
             vision.grid(row=3, column=4, padx=60)
 
             #
-            damage.grid(row=1, column=7)
-            gold.grid(row=1, column=8)
+            damage.grid(row=2, column=7)
+            gold.grid(row=2, column=8)
 
             # Save each game to the grid
-            game.grid(row=key, pady=15)
+            game.grid(row=key, pady=10)
 
     def __del__(self):
         hinter.ui.main.UI.clear_screen()
