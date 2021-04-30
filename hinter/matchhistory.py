@@ -69,25 +69,36 @@ class MatchHistory:
     def display_matches(self):
         champ_size = (64, 64)
         rune_size = (30, 30)
-        sec_rune_size = (26, 26)
+        sec_rune_size = (22, 22)
         spell_size = (30, 30)
 
-        # Have filler if the user is not in any games
+        # Simplify Label creation
+        def game_label(text: str = '', image: PhotoImage = None):
+            if image is not None:
+                returning = Label(master=game, image=image)
+                returning.image = image
+                return returning
+            return Label(master=game, text=text)
+
+        # Have filler if the user has not been in any games
         if not self.games:
             game = Frame(self.history)
-            champion_played = Label(master=game, text='There are no games for this user, yet!')
+            champion_played = game_label('There are no games for this user, yet!')
             champion_played.grid(row=1, column=2)
             game.grid(row=0, pady=10)
             return
 
         # Loop through the first games
         for key, match in enumerate(self.games[0:self.games_shown]):
-            # Set up each game's container, and cast multiple variables
+            # Set up each game's container, and cast or setup multiple variables
             game = Frame(self.history)
             match: cassiopeia.Match
-            team: str
-            player: cassiopeia.core.match.Participant = cassiopeia.core.match.Participant()
+            team: str = '?'
+            player: cassiopeia.core.match.Participant
+            player = cassiopeia.core.match.Participant()
+            player.stats: cassiopeia.core.match.ParticipantStats
             team_kills: int = 0
+            team_damage: int = 0
 
             # Determine stats of user whose match history this is
             for participant in match.participants:
@@ -99,6 +110,8 @@ class MatchHistory:
             for participant in match.participants:
                 if participant.side.name == team:
                     team_kills += participant.stats.kills
+                    team_damage += \
+                        participant.stats.total_damage_dealt_to_champions
 
             # Resolve ending condition of game
             if match.is_remake:
@@ -127,24 +140,30 @@ class MatchHistory:
                 # Store keystone information
                 if rune.is_keystone:
                     runes_taken['key']['name'] = rune.name
-                    runes_taken['key']['image'] = rune.image.image.resize(rune_size)
+                    runes_taken['key']['image'] = rune.image.image.resize(
+                        rune_size
+                    )
                     runes_taken['key']['path'] = rune.path.name
 
                 # Store secondary rune tree information
                 if rune.path.name != runes_taken['key']['path']:
                     runes_taken['secondary']['name'] = rune.path.name
-                    runes_taken['secondary']['image'] = rune.path.image.resize(sec_rune_size)
+                    runes_taken['secondary']['image'] = rune.path.image.resize(
+                        sec_rune_size
+                    )
 
                 # Store list of actual runes used
                 runes_taken['runes'].append(rune.name)
 
             '''Assign the data to widgets to be displayed'''
-            # Upfront data, win and champ
-            img = ImageTk.PhotoImage(image=player.champion.image.image.resize(champ_size))
-            champion_played = Label(master=game, image=img)
-            champion_played.image = img
 
-            outcome = Label(master=game, text=win)
+            # Upfront data, win and champ
+            img = ImageTk.PhotoImage(
+                image=player.champion.image.image.resize(champ_size)
+            )
+            champion_played = game_label(image=img)
+
+            outcome = game_label(text=win)
 
             match_length_parts = str(match.duration).split(':')
             match_minutes = int(match_length_parts[0] * 60)
@@ -157,77 +176,169 @@ class MatchHistory:
             match_time = datetime.datetime.fromisoformat(
                 str(match.creation)
             )
-            duration = str(match.duration) + ' long - ' + timeago.format(match_time, now)
+            duration = str(match.duration) + ' long - '
+            duration += timeago.format(match_time, now)
 
-            timing = Label(master=game, text=duration)
+            timing = game_label(text=duration)
 
             # Summoner Spells
             spell_d: cassiopeia.SummonerSpell = player.summoner_spell_d
             spell_f: cassiopeia.SummonerSpell = player.summoner_spell_f
 
-            img = ImageTk.PhotoImage(image=spell_d.image.image.resize(spell_size))
-            spell_d_used = Label(master=game, image=img)
-            spell_d_used.image = img
+            img = ImageTk.PhotoImage(
+                image=spell_d.image.image.resize(spell_size)
+            )
+            spell_d_used = game_label(image=img)
 
-            img = ImageTk.PhotoImage(image=spell_f.image.image.resize(spell_size))
-            spell_f_used = Label(master=game, image=img)
-            spell_f_used.image = img
+            img = ImageTk.PhotoImage(
+                image=spell_f.image.image.resize(spell_size)
+            )
+            spell_f_used = game_label(image=img)
+
+            # Determine role of player
+            role = str(player.role)
+            lane = str(player.lane)
+            position: cassiopeia.data.Position = cassiopeia.data.Position.none
+
+            cassiopeia.core.Items()
+
+            # Search for support item
+            has_support: bool = False
+            support_items = [
+                3853,  # shard of true ice
+                3851,  # frostfang
+                3850,  # spellthief
+                3860,  # bulwark of the mountain
+                3859,  # targons buckler
+                3858,  # relic shield
+                3864,  # black mist scythe
+                3863,  # harrowing crescent
+                3862,  # spectral sickle
+                3857,  # pauldrons of whiterock
+                3855,  # runesteel spaulders
+                3854,  # steel shoulderguards
+            ]
+            for item in player.stats.items:
+                if item is None:
+                    continue
+
+                if item.id in support_items:
+                    has_support = True
+
+            # Check spells
+            has_smite: bool = False
+            if spell_d.name == 'Smite' or spell_f.name == 'Smite':
+                has_smite = True
+            has_teleport: bool = False
+            if spell_d.name == 'Teleport' or spell_f.name == 'Teleport':
+                has_teleport = True
+            has_heal: bool = False
+            if spell_d.name == 'Heal' or spell_f.name == 'Heal':
+                has_heal = True
+
+            # Assign role
+            # First assign off of lane/position as provided
+            if 'solo' in role:
+                if 'mid' in lane:
+                    position = cassiopeia.data.Position.middle
+                else:
+                    position = cassiopeia.data.Position.top
+            elif 'jungle' in lane:
+                position = cassiopeia.data.Position.jungle
+            else:
+                if 'support' in role:
+                    position = cassiopeia.data.Position.utility
+                else:
+                    position = cassiopeia.data.Position.bottom
+
+            # Next assign if no assignment was made
+            if position is cassiopeia.data.Position.none:
+                if has_support:
+                    position = cassiopeia.data.Position.utility
+                elif has_smite:
+                    position = cassiopeia.data.Position.jungle
+                elif has_heal:
+                    position = cassiopeia.data.Position.bottom
+                elif 'mid' in lane:
+                    position = cassiopeia.data.Position.mid
+                elif 'top' in lane:
+                    position = cassiopeia.data.Position.top
+
+            played_position = game_label(position.name)
 
             # Runes
             img = ImageTk.PhotoImage(image=runes_taken['key']['image'])
-            key_rune_used = Label(master=game, image=img)
-            key_rune_used.image = img
+            key_rune_used = game_label(image=img)
 
             img = ImageTk.PhotoImage(image=runes_taken['secondary']['image'])
-            secondary_rune_used = Label(master=game, image=img)
-            secondary_rune_used.image = img
+            secondary_rune_used = game_label(image=img)
 
             # Number data, kda, dmg, gold
             kills_assists = player.stats.kills + player.stats.assists
             kda = kills_assists
             if player.stats.deaths != 0:  # Avoid dividing my zero
                 kda /= player.stats.deaths
-
             kda = round(kda, 2)  # Trim off excess decimal places
 
-            kda_display = Label(master=game, text=str(kda) + ' KDA')
-            k_d_a_display = Label(master=game, text=str(player.stats.kills) + ' / ' + str(player.stats.deaths) + ' / ' + str(player.stats.assists))
+            kda_display = game_label(text=str(kda) + ' KDA')
+            k_d_a_display = game_label(
+                str(player.stats.kills) + ' / ' + str(player.stats.deaths)
+                + ' / ' + str(player.stats.assists)
+            )
 
             kill_participation = int(round(kills_assists / team_kills * 100, 0))
 
-            damage = Label(master=game, text=str(player.stats.total_damage_dealt_to_champions) + 'dmg')
-
-            gold = Label(master=game, text=str(player.stats.gold_earned) + 'g')
+            damage = player.stats.total_damage_dealt_to_champions
+            damage_of_team = int(round(damage / (team_damage + 0.1) * 100, 0))
+            damage_min = int(round(damage / match_minutes, 0))
+            damage_min = game_label(text=str(damage_min) + ' DMG/Min')
+            damage = game_label(
+                str(damage) + ' DMG - ' + str(damage_of_team) + '%/Team'
+            )
 
             vision_min = round(player.stats.vision_score / match_minutes, 2)
-            vision_min = Label(master=game, text=str(vision_min) + ' Vis/Min')
+            vision_min = game_label(text=str(vision_min) + ' Vis/Min')
 
-            vision = Label(master=game, text=str(player.stats.vision_score) + ' Vis - ' + str(kill_participation) + '% KP')
+            vision = game_label(
+                str(player.stats.vision_score) + ' Vis - '
+                + str(kill_participation) + '% KP'
+            )
+
+            cs_gotten = player.stats.total_minions_killed
+            cs_gotten += player.stats.neutral_minions_killed
+            cs_min = round(cs_gotten / match_minutes, 1)
+            cs_min = game_label(text=str(cs_min) + ' CS/Min')
+            total_cs = game_label(text=str(cs_gotten) + ' CS')
 
             '''Display and organize game widgets'''
+
             # First row - game type, win/loss, time-ago, duration
             outcome.grid(row=1, column=0, pady=5)
-            timing.grid(row=1, column=5, columnspan=2)
+            outcome.config(font=('*Font', 20))
+            played_position.grid(row=1, column=3)
+            played_position.config(font=('*Font', 14))
+            timing.grid(row=1, column=5, columnspan=2, sticky=SE)
+            timing.config(font=('*Font', 14))
 
             # Second row - champion, spells, runes, kda, cs/min, dmg/min, items
             champion_played.grid(row=2, column=0, rowspan=2)
             spell_d_used.grid(row=2, column=1)
             key_rune_used.grid(row=2, column=2)
-            kda_display.grid(row=2, column=3)
-            vision_min.grid(row=2, column=4, padx=15)
+            kda_display.grid(row=2, column=3, padx=40)
+            vision_min.grid(row=2, column=4)
+            cs_min.grid(row=2, column=5, padx=40)
+            damage_min.grid(row=2, column=6)
 
             # Third row - spells, runes, k/d/a, cs, dmg and %team, items
             spell_f_used.grid(row=3, column=1)
             secondary_rune_used.grid(row=3, column=2)
-            kda_display.grid(row=3, column=3, padx=60)
-            vision.grid(row=3, column=4, padx=60)
-
-            #
-            damage.grid(row=2, column=7)
-            gold.grid(row=2, column=8)
+            k_d_a_display.grid(row=3, column=3)
+            vision.grid(row=3, column=4)
+            total_cs.grid(row=3, column=5)
+            damage.grid(row=3, column=6)
 
             # Save each game to the grid
-            game.grid(row=key, pady=10)
+            game.grid(row=key, pady=10, sticky=W+E)
 
     def __del__(self):
         hinter.ui.main.UI.clear_screen()
