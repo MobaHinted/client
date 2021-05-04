@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 
 import cassiopeia
+import cassiopeia_diskstore
 
 import hinter.settings
 import hinter.users

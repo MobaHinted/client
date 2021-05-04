@@ -1,5 +1,6 @@
 import os
 
-os.system('pyinstaller --onefile main.py')
+os.system('pyinstaller --onefile -p=.\\venv\\Lib\\site-packages -i .\\assets\\logo.ico main.py')
 os.system('copy .\\dist\\main.exe .\\MobaHinted.exe /a')
-os.system('del /f .\\build\\, .\\dist\\, .\\main.spec /Q')
+os.system('rmdir /s /q .\\build\\, .\\dist\\')
+os.system('del /f /q .\\main.spec')

@@ -1,8 +1,8 @@
 from tkinter import *
-import tkinter
 from PIL import ImageTk, Image
 import datetime
 import timeago
+import timeago.locales.en
 import pytz
 
 import cassiopeia
@@ -286,7 +286,8 @@ class MatchHistory:
                 + ' / ' + str(player.stats.assists)
             )
 
-            kill_participation = int(round(kills_assists / team_kills * 100, 0))
+            kill_participation = kills_assists / (team_kills + 0.00001) * 100
+            kill_participation = int(round(kill_participation, 0))
 
             damage = player.stats.total_damage_dealt_to_champions
             damage_of_team = int(round(damage / (team_damage + 0.1) * 100, 0))

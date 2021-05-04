@@ -3,7 +3,9 @@
 /.idea/
 /dist/
 /build/
+/__pycache__/
 .env
 *.spec
 *.exe
 *.zip
+*.pyc
