@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 import cassiopeia
-import cassiopeia_diskstore
+import cassiopeia_diskstore  # Required for building to executable
 
 import hinter.settings
 import hinter.users

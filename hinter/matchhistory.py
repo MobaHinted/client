@@ -2,7 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 import datetime
 import timeago
-import timeago.locales.en
+import timeago.locales.en   # Required for building to executable
 import pytz
 
 import cassiopeia
