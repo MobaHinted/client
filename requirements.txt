@@ -1,4 +1,4 @@
-requests==2.24.0
+requests==2.31.0
 python-dotenv==0.14.0
 cassiopeia>=4.0.18
 cassiopeia-diskstore>=1.1.3
