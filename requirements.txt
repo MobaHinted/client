@@ -1,6 +1,6 @@
-requests==2.24.0
-python-dotenv==0.14.0
-cassiopeia>=4.0.18
+requests==2.31.0
+python-dotenv==1.0.0
+cassiopeia>=5.0.3
 cassiopeia-diskstore>=1.1.3
 timeago>=1.0.14
-pytz>=2021.1
+pytz==2023.3.post1

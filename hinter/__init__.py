@@ -17,13 +17,10 @@ settings.load_settings()
 cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
 if not os.path.exists(cassiopeia_path):
     os.mkdir(cassiopeia_path)
+
 cassiopeia_settings = {
     'pipeline': {
         'Cache': {},
-        'SimpleKVDiskStore': {
-            'package': 'cassiopeia_diskstore',
-            'path': cassiopeia_path,
-        },
         'DDragon': {},
     },
 }
@@ -48,7 +45,6 @@ except Exception:
 
 # Load basic settings for Cassiopeia
 cassiopeia.apply_settings(cassiopeia_settings)
-cassiopeia.set_default_region(settings.region)
 
 # Set up user control
 users = hinter.users.Users()

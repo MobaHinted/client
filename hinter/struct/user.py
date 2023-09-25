@@ -1,4 +1,5 @@
 import cassiopeia
+import hinter
 
 
 class User:
@@ -11,7 +12,7 @@ class User:
     def __init__(self, username: str):
         # Check user exists on Riot's side
         try:
-            user: cassiopeia.Summoner = cassiopeia.Summoner(name=username)
+            user: cassiopeia.Summoner = cassiopeia.Summoner(name=username, region=hinter.settings.region)
 
             # Load in data
             self.user_exists = user.exists

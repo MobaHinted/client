@@ -3,13 +3,12 @@ This is a tool for League of Legends that will have functionality similar to
 Blitz / Mobalytics primarily, with the exclusion of ads, paid features, and the
 inclusion of it just actually working while having everything you need.
 
-Made out of grief from Blitz refusing to remove ads in favor of a paid model and
-both Mobalytics and Blitz commonly just not even having correct builds or
+Made out of grief from both Mobalytics and Blitz commonly just not even having correct builds or
 stats on matchups or even failing to import at critical moments, and completely
-missing features like suggesting counter picks from your champion pool.
+missing features like suggesting counter picks from your champion pool - not to mention all the ads.
 
 It won't have crazy in-depth statistics on people like Mobalytics does,
-but just go use that if you want to look at someone specific - that isn't
+but just go use that if you want to look at someone specific - that isn't largely
 helpful to look at in game anyway.
 
 ## Status
@@ -60,7 +59,7 @@ The exact data included is up to you to select.
 
 Your API requests are proxied through my server for caching and better rate
 limiting, I just log accesses for rate-limiting purposes, but CloudFlare and
-DigitalOcean will have access to your data as well.
+Vultr will have access to your data as well.
 
 If you prefer, you can set up an environment variable as described in the Setup
 section above, and then your API requests won't be proxied, only then Riot will
@@ -72,8 +71,7 @@ The biggest contribution would be trying it out, and opening an issue if you
 find one.
 
 If you want to code on this, try fixing an issue, or implementing something from
-the ToDo list, and opening a pull request. If it all works out fine, we can talk
-about adding you as a contributor.
+the ToDo list, and opening a pull request.
 
 If you want to thank me, then send me an email, report an issue, or star this
 repository; there is also a Sponsor option on the Github page for one-off gifts,
@@ -102,11 +100,9 @@ Crediting me is good.
 
 ### Attribution
 
-MobaHinted isn't endorsed by Riot Games and does not reflect the views or
-opinions of Riot Games or anyone officially involved in producing or managing
-League of Legends.
-League of Legends and Riot Games are trademarks or registered trademarks of
-Riot Games, Inc. League of Legends (c) Riot Games, Inc.
+MobaHinted  is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially
+involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or
+registered trademarks of Riot Games, Inc.
 
 ---
 
