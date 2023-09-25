@@ -41,20 +41,40 @@ class MatchHistory:
         self.icon = user.profile_icon
 
         # Load match history information
-        # self.games = user.match_history(count=200)
+        # self.games = user.match_history(count=50)
 
     def show_match_screen(self):
         hinter.ui.main.UI.clear_screen()
         hinter.ui.main.UI.new_screen()
         hinter.ui.main.UI.screen.grid(row=0, column=0, pady=20)
 
-        # Set up the left-bar
+        ''' Set up the left-bar '''
         self.left_bar = Frame(master=hinter.ui.main.UI.screen)
+
+        # User name
+        name = Label(master=self.left_bar, text=self.username)
+        name.config(font=('*Font', 38))
+        name.grid(padx=20)
+
+        # Rank
+        rank = Frame(master=self.left_bar)
+        rank_icon_icon = Image.open('./data/ranked-emblem/emblem-' + self.rank.tier.name + '.png')
+        rank_icon_icon = rank_icon_icon.crop((477, 214, 810, 472))
+        rank_icon_icon = ImageTk.PhotoImage(rank_icon_icon.resize((100, 70)))
+        rank_icon = Label(master=rank, image=rank_icon_icon)
+        rank_icon.image = rank_icon_icon
+        rank_icon.grid(row=0, column=1)
+        rank_name = self.rank.tier.name + ' ' + self.rank.division.name
+        rank_name = Label(master=rank, text=rank_name.title())
+        rank_name.config(font=('*Font', 38))
+        rank_name.grid(row=0, column=2)
+        rank.grid(row=1, padx=20, sticky=W+E)
+
         text = Label(master=self.left_bar, text='rank, icon, level, lp, users-played-with stats here')
         text.grid()
         self.left_bar.grid(row=0, column=0, padx=20, sticky=NW)
 
-        # Set up the right-bar
+        ''' Set up the right-bar '''
         self.right_bar = Frame(master=hinter.ui.main.UI.screen)
         text = Label(master=self.right_bar, text='role distribution, champ wr here')
         text.grid()
