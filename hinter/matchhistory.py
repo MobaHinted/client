@@ -378,7 +378,7 @@ class MatchHistory:
             queue_type = game_label(text=queue)
             queue_type.grid(row=1, column=4)
             queue_type.config(font=('*Font', 14), bg=background_color)
-            timing.grid(row=1, column=5, columnspan=2, sticky=SE)
+            timing.grid(row=1, column=5, columnspan=2, sticky=E)
             timing.config(font=('*Font', 14), bg=background_color)
 
             # Second row - champion, spells, runes, kda, cs/min, dmg/min, items
@@ -388,11 +388,11 @@ class MatchHistory:
             spell_d_used.config(bg=background_color)
             key_rune_used.grid(row=2, column=2)
             key_rune_used.config(bg=background_color)
-            kda_display.grid(row=2, column=3, padx=40)
+            kda_display.grid(row=2, column=3, padx=65)
             kda_display.config(bg=background_color)
             vision_min.grid(row=2, column=4)
             vision_min.config(bg=background_color)
-            cs_min.grid(row=2, column=5, padx=40)
+            cs_min.grid(row=2, column=5, padx=65)
             cs_min.config(bg=background_color)
             damage_min.grid(row=2, column=6)
             damage_min.config(bg=background_color)
@@ -405,17 +405,17 @@ class MatchHistory:
             k_d_a_display.grid(row=3, column=3)
             k_d_a_display.config(bg=background_color)
             vision.grid(row=3, column=4)
-            vision.config(bg=background_color)
+            vision.config(font=('*Font', 12), bg=background_color)
             total_cs.grid(row=3, column=5)
             total_cs.config(bg=background_color)
             damage.grid(row=3, column=6)
-            damage.config(bg=background_color)
+            damage.config(font=('*Font', 12), bg=background_color)
 
             # Color game based on win/loss
-            game.config(bg=background_color)
+            game.config(bg=background_color, padx=40, pady=10)
 
             # Save each game to the grid
-            game.grid(row=key, pady=10, sticky=W+E)
+            game.grid(row=key, pady=10, padx=40, sticky=W+E)
 
     def __del__(self):
         hinter.ui.main.UI.clear_screen()
