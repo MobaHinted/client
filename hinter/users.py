@@ -40,14 +40,15 @@ class Users:
 
         return user_list
 
-    def add_user(self, root):
-        # Grab username
-        username = simpledialog.askstring(
-            'Add User',
-            'What is the username? (currently using region: '
-            + hinter.settings.region + ')',
-            parent=root
-        )
+    def add_user(self, root, username: str = ''):
+        if username == '':
+            # Grab username
+            username = simpledialog.askstring(
+                'Add User',
+                'What is the username? (currently using region: '
+                + hinter.settings.region + ')',
+                parent=root
+            )
 
         # Check for duplicate in current user list
         for user in self.current_list_cache:
