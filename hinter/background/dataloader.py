@@ -14,11 +14,11 @@ class DataLoader:
     refresh: bool = False
 
     def __init__(self):
-        self.current_patch = cassiopeia.get_version()
+        self.current_patch = cassiopeia.get_version(region=hinter.settings.region)
         print('CURRENT PATCH DATA: ' + self.current_patch)
 
     def load_all(self, refresh: bool = False):
-        # Save refresh variable so we don't have to pass it into every method
+        # Save refresh variable, so we don't have to pass it into every method
         self.refresh = refresh
 
         if refresh:
@@ -30,19 +30,19 @@ class DataLoader:
         progress_popup = hinter.ui.progress.Progress(
             0, 'Downloading and processing: Champions'
         )
-        cassiopeia.get_champions()
+        cassiopeia.get_champions(region=hinter.settings.region)
 
         progress_popup.update(70, 'Downloading and processing: Items')
-        cassiopeia.get_items()
+        cassiopeia.get_items(region=hinter.settings.region)
 
         progress_popup.update(80, 'Downloading and processing: Maps')
-        cassiopeia.get_maps()
+        cassiopeia.get_maps(region=hinter.settings.region)
 
         progress_popup.update(81, 'Downloading and processing: Spells')
-        cassiopeia.get_summoner_spells()
+        cassiopeia.get_summoner_spells(region=hinter.settings.region)
 
         progress_popup.update(82, 'Downloading and processing: Runes')
-        cassiopeia.get_runes()
+        cassiopeia.get_runes(region=hinter.settings.region)
 
         progress_popup.update(85, 'Downloading and processing: Rank icons')
         self.load_rank_icons(refresh)
