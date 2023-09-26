@@ -93,14 +93,19 @@ class MatchHistory:
         rune_size = (30, 30)
         sec_rune_size = (22, 22)
         spell_size = (30, 30)
+        item_size = (30, 30)
 
         # Simplify Label creation
-        def game_label(text: str = '', image: PhotoImage = None):
+        def game_label(text: str = '', image: PhotoImage = None, master: Frame = None):
+            if master is None:
+                master = game
+
             if image is not None:
-                returning = Label(master=game, image=image)
+                returning = Label(master=master, image=image)
                 returning.image = image
                 return returning
-            return Label(master=game, text=text)
+
+            return Label(master=master, text=text)
 
         # Have filler if the user has not been in any games
         if not self.games:
@@ -399,6 +404,57 @@ class MatchHistory:
             cs_min = round(cs_gotten / match_minutes, 1)
             cs_min = game_label(text=str(cs_min) + ' CS/Min')
             total_cs = game_label(text=str(cs_gotten) + ' CS')
+            # endregion Creep Score (CS) stats
+
+            # region Items
+            # TODO: make this place fillers into the items array, so there's no filling separately, and the trinket is
+            #  always in the last spot
+            items = []
+
+            # Arrange player items into a list, item id and the image
+            for item in player.stats.items:
+                if item is None:
+                    continue
+
+                items.append(
+                    {
+                        'item': item.id,
+                        'image': ImageTk.PhotoImage(image=item.image.image.resize(item_size)),
+                    }
+                )
+
+            items_row_one = Frame(game)
+            items_row_two = Frame(game)
+
+            # Organize the items into two rows
+            counter = 0
+            for item in items:
+
+                if counter < 3:
+                    item_display = game_label(image=item['image'], master=items_row_one)
+                    item_display.grid(row=1, padx=2, pady=1, column=counter)
+                else:
+                    item_display = game_label(image=item['image'], master=items_row_two)
+                    item_display.grid(row=1, padx=2, pady=1, column=counter - 3)
+
+                item_display.config(bg=background_color)
+                counter += 1
+
+            filler_image = Image.open('./assets/filler.png')
+            filler_image = ImageTk.PhotoImage(filler_image.resize(item_size))
+
+            # Fill in the 4th slot on the first row (to make up for trinket)
+            filler = game_label(image=filler_image, master=items_row_one)
+            filler.grid(row=1, padx=2, pady=1, column=3)
+            filler.config(bg=background_color)
+
+            # Fill in the 4th slot on the second row (if no trinket) (and any empty slots)
+            while counter < 7:
+                filler = game_label(image=filler_image, master=items_row_two)
+                filler.grid(row=1, padx=2, pady=1, column=counter)
+                filler.config(bg=background_color)
+                counter += 1
+            # endregion Items
 
             '''Display and organize game widgets'''
             # region Display
@@ -423,13 +479,15 @@ class MatchHistory:
             spell_d_used.config(bg=background_color)
             key_rune_used.grid(row=2, column=2)
             key_rune_used.config(bg=background_color)
-            kda_display.grid(row=2, column=3, padx=65)
+            items_row_one.grid(row=2, column=3)
+            items_row_one.config(bg=background_color)
+            kda_display.grid(row=2, column=4, padx=65)
             kda_display.config(bg=background_color)
-            vision_min.grid(row=2, column=4)
+            vision_min.grid(row=2, column=5)
             vision_min.config(bg=background_color)
-            cs_min.grid(row=2, column=5, padx=65)
+            cs_min.grid(row=2, column=6, padx=65)
             cs_min.config(bg=background_color)
-            damage_min.grid(row=2, column=6)
+            damage_min.grid(row=2, column=7)
             damage_min.config(bg=background_color)
             # endregion Second Row
 
@@ -439,13 +497,15 @@ class MatchHistory:
             spell_f_used.config(bg=background_color)
             secondary_rune_used.grid(row=3, column=2)
             secondary_rune_used.config(bg=background_color)
-            k_d_a_display.grid(row=3, column=3)
+            items_row_two.grid(row=3, column=3)
+            items_row_two.config(bg=background_color)
+            k_d_a_display.grid(row=3, column=4)
             k_d_a_display.config(bg=background_color)
-            vision.grid(row=3, column=4)
+            vision.grid(row=3, column=5)
             vision.config(font=('*Font', 12), bg=background_color)
-            total_cs.grid(row=3, column=5)
+            total_cs.grid(row=3, column=6)
             total_cs.config(bg=background_color)
-            damage.grid(row=3, column=6)
+            damage.grid(row=3, column=7)
             damage.config(font=('*Font', 12), bg=background_color)
             # endregion Third Row
 
