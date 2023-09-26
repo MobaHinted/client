@@ -126,7 +126,9 @@ class MatchHistory:
             remake_color: str = 'grey94'
             background_color: str = remake_color
 
-            # Determine type of game
+            '''Resolve some data to work from'''
+
+            # region Determine type of game
             queue = match.queue.name
             if match.queue == cassiopeia.data.Queue.ranked_solo_fives:
                 queue = 'Ranked Solo'
@@ -142,21 +144,24 @@ class MatchHistory:
                 queue = 'ARAM'
             else:
                 queue = queue.replace('_', ' ').title()
+            # endregion Determine type of game
 
-            # Determine stats of user whose match history this is
+            # region Determine stats of user whose match history this is
             for participant in match.participants:
                 if participant.summoner.name == self.username:
                     team = participant.side.name
                     player = participant
+            # endregion Determine stats of user whose match history this is
 
-            # Determine player's team's kill count
+            # region Determine player's team's kill count
             for participant in match.participants:
                 if participant.side.name == team:
                     team_kills += participant.stats.kills
                     team_damage += \
                         participant.stats.total_damage_dealt_to_champions
+            # endregion Determine player's team's kill count
 
-            # Resolve ending condition of game
+            # region Resolve ending condition of game
             if match.is_remake:
                 win = 'Remake'
             else:
@@ -166,7 +171,9 @@ class MatchHistory:
                 else:
                     win = 'Defeat'
                     background_color = loss_color
+            # endregion Resolve ending condition of game
 
+            # region Runes Taken
             # Structure what runes the player took
             runes_taken = {
                 'key': {
@@ -202,6 +209,7 @@ class MatchHistory:
 
                 # Store list of actual runes used
                 runes_taken['runes'].append(rune.name)
+            # endregion Runes Taken
 
             '''Assign the data to widgets to be displayed'''
 
@@ -213,26 +221,34 @@ class MatchHistory:
 
             outcome = game_label(text=win)
 
+            # region Match Timing
+            # Calculate match length in minutes
             match_length_parts = str(match.duration).split(':')
             match_minutes = int(match_length_parts[0] * 60)
             match_minutes += int(match_length_parts[1])
             match_minutes += (int(match_length_parts[2]) / 60)
             match_minutes = round(match_minutes, 2)
 
+            # Calculate when the match happened
             now = datetime.datetime.utcnow()
             now = pytz.utc.localize(now)
             match_time = datetime.datetime.fromisoformat(
                 str(match.creation)
             )
+
+            # Format match timing and how long ago it was
             duration = str(match.duration) + ' long - '
             duration += timeago.format(match_time, now)
 
             timing = game_label(text=duration)
+            # endregion Match Timing
 
-            # Summoner Spells
+            # region Summoner Spells
+            # Load the spells assigned to 'd' and 'f'
             spell_d: cassiopeia.SummonerSpell = player.summoner_spell_d
             spell_f: cassiopeia.SummonerSpell = player.summoner_spell_f
 
+            # Load the images for each spell
             img = ImageTk.PhotoImage(
                 image=spell_d.image.image.resize(spell_size)
             )
@@ -242,7 +258,9 @@ class MatchHistory:
                 image=spell_f.image.image.resize(spell_size)
             )
             spell_f_used = game_label(image=img)
+            # endregion Summoner Spells
 
+            # region Role
             # Only check any lane/role data if this is summoner's rift
             if match.map.id == 11:
                 # Determine role of player
@@ -322,15 +340,20 @@ class MatchHistory:
                 played_position = game_label('Support')
             else:
                 played_position = game_label(position.name.capitalize())
+            # endregion Role
 
-            # Runes
+            # region Runes
+            # Load the keystone rune
             img = ImageTk.PhotoImage(image=runes_taken['key']['image'])
             key_rune_used = game_label(image=img)
 
+            # Load the secondary rune tree
             img = ImageTk.PhotoImage(image=runes_taken['secondary']['image'])
             secondary_rune_used = game_label(image=img)
+            # endregion Runes
 
-            # Number data, kda, dmg, gold
+            # region KDA and KP
+            # Calculate KDA
             kills_assists = player.stats.kills + player.stats.assists
             kda = kills_assists
             if player.stats.deaths != 0:  # Avoid dividing my zero
@@ -343,9 +366,12 @@ class MatchHistory:
                 + ' / ' + str(player.stats.assists)
             )
 
+            # Calculate KP
             kill_participation = kills_assists / (team_kills + 0.00000001) * 100
             kill_participation = int(round(kill_participation, 0))
+            # endregion KDA and KP
 
+            # region Damage
             damage = player.stats.total_damage_dealt_to_champions
             damage_of_team = int(round(damage / (team_damage + 0.1) * 100, 0))
             damage_min = int(round(damage / match_minutes, 0))
@@ -353,15 +379,21 @@ class MatchHistory:
             damage = game_label(
                 str(damage) + ' DMG - ' + str(damage_of_team) + '%/Team'
             )
+            # endregion Damage
 
+            # region Vision
+            # Calculate Vision/Min
             vision_min = round(player.stats.vision_score / match_minutes, 2)
             vision_min = game_label(text=str(vision_min) + ' Vis/Min')
 
+            # Show vision score and kill participation
             vision = game_label(
                 str(player.stats.vision_score) + ' Vis - '
                 + str(kill_participation) + '% KP'
             )
+            # endregion Vision
 
+            # region Creep Score (CS) stats
             cs_gotten = player.stats.total_minions_killed
             cs_gotten += player.stats.neutral_minions_killed
             cs_min = round(cs_gotten / match_minutes, 1)
@@ -369,7 +401,8 @@ class MatchHistory:
             total_cs = game_label(text=str(cs_gotten) + ' CS')
 
             '''Display and organize game widgets'''
-
+            # region Display
+            # region First Row
             # First row - game type, win/loss, time-ago, duration
             outcome.grid(row=1, column=0, pady=5)
             outcome.config(font=('*Font', 20), bg=background_color)
@@ -378,9 +411,11 @@ class MatchHistory:
             queue_type = game_label(text=queue)
             queue_type.grid(row=1, column=4)
             queue_type.config(font=('*Font', 14), bg=background_color)
-            timing.grid(row=1, column=5, columnspan=2, sticky=E)
+            timing.grid(row=1, column=6, columnspan=2, sticky=E)
             timing.config(font=('*Font', 14), bg=background_color)
+            # endregion First Row
 
+            # region Second Row
             # Second row - champion, spells, runes, kda, cs/min, dmg/min, items
             champion_played.grid(row=2, column=0, rowspan=2)
             champion_played.config(bg=background_color)
@@ -396,7 +431,9 @@ class MatchHistory:
             cs_min.config(bg=background_color)
             damage_min.grid(row=2, column=6)
             damage_min.config(bg=background_color)
+            # endregion Second Row
 
+            # region Third Row
             # Third row - spells, runes, k/d/a, cs, dmg and %team, items
             spell_f_used.grid(row=3, column=1)
             spell_f_used.config(bg=background_color)
@@ -410,12 +447,14 @@ class MatchHistory:
             total_cs.config(bg=background_color)
             damage.grid(row=3, column=6)
             damage.config(font=('*Font', 12), bg=background_color)
+            # endregion Third Row
 
             # Color game based on win/loss
             game.config(bg=background_color, padx=40, pady=10)
 
             # Save each game to the grid
             game.grid(row=key, pady=10, padx=40, sticky=W+E)
+            # endregion Display
 
     def __del__(self):
         hinter.ui.main.UI.clear_screen()

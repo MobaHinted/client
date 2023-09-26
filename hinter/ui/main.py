@@ -13,8 +13,8 @@ class UI:
     def __init__(self):
 
         self.root = tkinter.Tk()
-        tk = tkinter
-        default_font = tk.font.nametofont("TkDefaultFont")
+        self.root.minsize(1780, 670)
+        default_font = tkinter.font.nametofont("TkDefaultFont")
         default_font.config(size=17)
         self.root.state('zoomed')
         self.root.title('MobaHinted')
