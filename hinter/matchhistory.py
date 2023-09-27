@@ -413,13 +413,37 @@ class MatchHistory:
             # endregion Creep Score (CS) stats
 
             # region Items
-            # TODO: make this place fillers into the items array, so there's no filling separately, and the trinket is
-            #  always in the last spot
             items = []
+
+            filler_image = Image.open('./assets/filler.png')
+            filler_image = ImageTk.PhotoImage(filler_image.resize(item_size))
+
+            trinket = {
+                'item': None,
+                'image': filler_image,
+            }
+            trinkets = [
+                3340,  # Warding Totem
+                3363,  # Farsight Alteration
+                3364,  # Oracle Lens
+            ]
 
             # Arrange player items into a list, item id and the image
             for item in player.stats.items:
                 if item is None:
+                    items.append(
+                        {
+                            'item': None,
+                            'image': filler_image,
+                        }
+                    )
+                    continue
+
+                if item.id in trinkets:
+                    trinket = {
+                        'item': item.id,
+                        'image': ImageTk.PhotoImage(image=item.image.image.resize(item_size)),
+                    }
                     continue
 
                 items.append(
@@ -428,6 +452,8 @@ class MatchHistory:
                         'image': ImageTk.PhotoImage(image=item.image.image.resize(item_size)),
                     }
                 )
+
+            items.append(trinket)
 
             items_row_one = Frame(game)
             items_row_two = Frame(game)
@@ -445,20 +471,10 @@ class MatchHistory:
                 item_display.config(bg=background_color)
                 counter += 1
 
-            filler_image = Image.open('./assets/filler.png')
-            filler_image = ImageTk.PhotoImage(filler_image.resize(item_size))
-
             # Fill in the 4th slot on the first row (to make up for trinket)
             filler = game_label(image=filler_image, master=items_row_one)
             filler.grid(row=1, padx=2, pady=1, column=3)
             filler.config(bg=background_color)
-
-            # Fill in the 4th slot on the second row (if no trinket) (and any empty slots)
-            while counter < 7:
-                filler = game_label(image=filler_image, master=items_row_two)
-                filler.grid(row=1, padx=2, pady=1, column=counter)
-                filler.config(bg=background_color)
-                counter += 1
             # endregion Items
 
             '''Display and organize game widgets'''
