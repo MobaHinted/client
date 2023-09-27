@@ -49,6 +49,7 @@ class MatchHistory:
         hinter.ui.main.UI.screen.grid(row=0, column=0, pady=20)
 
         ''' Set up the left-bar '''
+        # region Left Bar
         self.left_bar = Frame(master=hinter.ui.main.UI.screen)
 
         # User name
@@ -73,13 +74,17 @@ class MatchHistory:
         text = Label(master=self.left_bar, text='rank, icon, level, lp, users-played-with stats here')
         text.grid()
         self.left_bar.grid(row=0, column=0, padx=20, sticky=NW)
+        # endregion Left Bar
 
         ''' Set up the right-bar '''
+        # region Right Bar
         self.right_bar = Frame(master=hinter.ui.main.UI.screen)
         text = Label(master=self.right_bar, text='role distribution, champ wr here')
         text.grid()
         self.right_bar.grid(row=0, column=2, padx=15, sticky=NE)
+        # endregion Right Bar
 
+        # region Center, Match History
         # Set up the main match history, and call to show all matches
         self.history = Frame(master=hinter.ui.main.UI.screen)
 
@@ -87,6 +92,7 @@ class MatchHistory:
 
         # Display match history
         self.history.grid(row=0, column=1, padx=15, sticky=N)
+        # endregion Center, Match History
 
     def display_matches(self):
         champ_size = (64, 64)
@@ -429,7 +435,6 @@ class MatchHistory:
             # Organize the items into two rows
             counter = 0
             for item in items:
-
                 if counter < 3:
                     item_display = game_label(image=item['image'], master=items_row_one)
                     item_display.grid(row=1, padx=2, pady=1, column=counter)
