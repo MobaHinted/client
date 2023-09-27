@@ -1,5 +1,6 @@
-requests==2.31.0
-python-dotenv==1.0.0
-cassiopeia>=5.0.3
-timeago>=1.0.14
-pytz==2023.3.post1
+requests~=2.31.0
+python-dotenv~=1.0.0
+cassiopeia~=5.0.3
+timeago~=1.0.14
+pytz~=2023.3.post1
+Pillow~=10.0.1

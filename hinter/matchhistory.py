@@ -11,8 +11,6 @@ import hinter
 import hinter.struct.user
 import hinter.ui.main
 
-import json
-
 
 class MatchHistory:
     games: cassiopeia.MatchHistory

@@ -11,7 +11,6 @@ class UI:
     screen: tkinter.Frame = None
 
     def __init__(self):
-
         self.root = tkinter.Tk()
         self.root.minsize(1780, 670)
         default_font = tkinter.font.nametofont("TkDefaultFont")
