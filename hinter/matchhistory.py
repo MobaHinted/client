@@ -97,27 +97,27 @@ class MatchHistory:
                 with self.ui.imgui.table_row():
                     with self.ui.imgui.table(header_row=False):
                         self.ui.imgui.add_table_column(init_width_or_weight=0.2)
-                        self.ui.imgui.add_table_column(init_width_or_weight=0.3)  # Icon
-                        self.ui.imgui.add_table_column(init_width_or_weight=0.3)  # Rank name
+                        self.ui.imgui.add_table_column(init_width_or_weight=0.6)
                         self.ui.imgui.add_table_column(init_width_or_weight=0.2)
 
                         with self.ui.imgui.table_row():
                             self.ui.imgui.add_spacer()
 
-                            # Show the icon
-                            rank_icon_texture = self.ui.load_image(
-                                'rank-' + self.rank.tier.name,
-                                self.ui.FILE,
-                                './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
-                                (477, 214, 810, 472),
-                                (86, 60),
-                            )
-                            self.ui.imgui.add_image(texture_tag=rank_icon_texture)
+                            with self.ui.imgui.group(horizontal=True):
+                                # Show the icon
+                                rank_icon_texture = self.ui.load_image(
+                                    'rank-' + self.rank.tier.name,
+                                    self.ui.FILE,
+                                    './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
+                                    (477, 214, 810, 472),
+                                    (86, 60),
+                                )
+                                self.ui.imgui.add_image(texture_tag=rank_icon_texture)
 
-                            # Show the rank name
-                            rank_name = self.rank.division.value
-                            self.ui.imgui.add_text(rank_name)
-                            self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
+                                # Show the rank name
+                                rank_name = self.rank.division.value
+                                self.ui.imgui.add_text(rank_name)
+                                self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
 
                             self.ui.imgui.add_spacer()
 
@@ -177,6 +177,13 @@ class MatchHistory:
         spell_size = (30, 30)
         item_size = (30, 30)
 
+        self.ui.imgui.delete_item(tag='match-history-delete-1')
+        self.ui.imgui.delete_item(tag='match-history-delete-2')
+        self.ui.imgui.delete_item(tag='match-history-delete-3')
+        self.ui.imgui.delete_item(tag='match-history-delete-4')
+        self.ui.imgui.delete_item(tag='match-history-delete-5')
+        self.ui.imgui.delete_item(tag='match-history-delete-6')
+
         # Simplify Label creation
         def game_label(text: str = '', image: PhotoImage = None, master: Frame = None):
             if master is None:
@@ -191,10 +198,10 @@ class MatchHistory:
 
         # Have filler if the user has not been in any games
         if not self.games:
-            game = Frame(self.history)
-            champion_played = game_label('There are no games for this user, yet!')
-            champion_played.grid(row=1, column=2)
-            game.grid(row=0, pady=10)
+            # game = Frame(self.history)
+            # champion_played = game_label('There are no games for this user, yet!')
+            # champion_played.grid(row=1, column=2)
+            # game.grid(row=0, pady=10)
             return
 
         # Loop through the first games
