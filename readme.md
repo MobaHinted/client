@@ -19,31 +19,59 @@ before, so I'm sure there will be lots of hiccups.
 You can stay tuned by Watching the project in the top right, or checking the
 [Todo List](https://github.com/zbee/mobahinted/projects/1).
 
+### Planned Features
+
+This is roughly in the order they will be developed.
+
+- [X] Match History
+- [ ] Post-Game Breakdown
+- [ ] Teammate Performance (like op.gg has, telling you your winrate with specific friends)
+- [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
+- [ ] Overlays
+  - [ ] Milestone Notifications
+  - [ ] Objective Reminders
+  - [ ] Enemy Spell Tracker
+  - [ ] Jungle Timers
+  - [ ] Map Check Reminder
+  - [ ] Gold Diff Tracker
+  - [ ] Scoreboard Duos
+  - [ ] Counter Item Suggestions
+  - [ ] ARAM Health Timers
+  - [ ] Back Reminder
+  - [ ] Use Trinket Reminder
+  - [ ] CS Tracker and Stats Window
+- [ ] Current-play-session window
+- [ ] Champion Suggestion (based on your pool, and performance with teammates)
+- [ ] Ban Suggestion (based on your lane WRs, and performance with teammates)
+- [ ] Item / Rune / Spell suggestions and importing (2 of the most popular, then try to have a variety - like some tools
+      don't offer AP twitch anymore but if that's what you want ..., etc)
+- [ ] Riot API Caching/Proxying with Kernel
+
 ## Setup
 
-To spin it up you should just need Python 3.7+ and to run the following command
+When this is at a usable point (e.g. Rito accepts my app, and there are enough features to make it even vaguely
+competitive), I'll release a binary for Windows, and all you will have to do is download and run that.
+
+To spin it up in the mean-time you should just need Python 3 and to run the following command
 to set up the virtual environment and install the requirements.
 
-`virtualenv venv
+1. `virtualenv venv
     && pip install -r requirements.txt`
     
-You'll also need an `.env` file setup with the following variables.
+2. You'll also need an `.env` file setup with the following variables.
+   - `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
 
-> You can exclude this, but then the queries will go through my
-[kernel](https://github.com/meraki-analytics/kernel) API proxy server.
+> ~~You can skip this step, but then the queries will go through my
+[kernel](https://github.com/meraki-analytics/kernel) API proxy server.~~ (This is no longer currently implemented, it will be added again before release.)
 >
 > (If you're building this project yourself though, then I assume the circumstances
-are such that you should use your own development key though)
+are such that you should use your own development key)
  
-- `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
 
-Then you can build the executable.
+3. Then you can build the executable, or execute the program directly.
 
-```
-python build.py
-```
-
-Now you can run `main.exe`.
+    - `python build.py` to build a `main.exe`, then execute that.
+    - `python main.py` to execute the program directly.
 
 ## What's the catch?
 
@@ -62,8 +90,8 @@ limiting, I just log accesses for rate-limiting purposes, but CloudFlare and
 Vultr will have access to your data as well.
 
 If you prefer, you can set up an environment variable as described in the Setup
-section above, and then your API requests won't be proxied, only then Riot will
-have all that data in that case.
+section above, and then your API requests won't be proxied, and only Riot will
+have access to any data in that case.
 
 ## Contributing
 
@@ -131,5 +159,5 @@ Copyright (c) 2014 The Fira Code Project Authors -
 Licensed under the OFL License
 
 [NumPy](https://github.com/numpy/numpy), 
-Copyright (c) 2005-2023, NumPy Developers - 
+Copyright (c) 2005 NumPy Developers - 
 Licensed under the BSD License
