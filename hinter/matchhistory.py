@@ -1,15 +1,15 @@
-from tkinter import *
-from PIL import ImageTk, Image
 import datetime
-import timeago
-import timeago.locales.en   # Required for building to executable
-import pytz
+from tkinter import *
 
 import cassiopeia
+import pytz
+import timeago
+import timeago.locales.en  # Required for building to executable
+from PIL import ImageTk, Image
 
 import hinter
 import hinter.struct.user
-import hinter.ui.main
+import hinter.ui.main as ui
 
 
 class MatchHistory:
@@ -20,9 +20,11 @@ class MatchHistory:
     level = 0
     icon = 0
     username = ""
-    left_bar: Frame
-    history: Frame
-    right_bar: Frame
+    table: str = 'match_history_table'
+    table_row: str = 'match_history_table-row'
+    left_bar: str = 'match_history_table-left'
+    history: str = 'match_history_table-history-container'
+    right_bar: str = 'match_history_table-right'
 
     def __init__(self, user: hinter.struct.user.User = None):
         # Load summoner information
@@ -41,56 +43,132 @@ class MatchHistory:
         # Load match history information
         # self.games = user.match_history(count=50)
 
+        self.ui = ui.UI
+
     def show_match_screen(self):
-        hinter.ui.main.UI.clear_screen()
-        hinter.ui.main.UI.new_screen()
-        hinter.ui.main.UI.screen.grid(row=0, column=0, pady=20)
+        self.ui.new_screen(tag='match_history')
 
-        ''' Set up the left-bar '''
+        # Set up the table
+        self.ui.imgui.add_table(
+            tag=self.table,
+            header_row=False,
+            parent='match_history',
+        )
+        self.ui.imgui.add_table_row(
+            parent=self.table,
+            tag=self.table_row,
+        )
+
+        # Set up the left-bar
         # region Left Bar
-        self.left_bar = Frame(master=hinter.ui.main.UI.screen)
+        self.ui.imgui.add_table_column(
+            parent=self.table,
+            tag=self.left_bar,
+            init_width_or_weight=0.2,
+        )
+        with self.ui.imgui.table_cell(parent=self.table_row):
+            with self.ui.imgui.table(header_row=False):
+                self.ui.imgui.add_table_column()
 
-        # User name
-        name = Label(master=self.left_bar, text=self.username)
-        name.config(font=('*Font', 38))
-        name.grid(padx=20)
+                # User name, centered
+                with self.ui.imgui.table_row():
+                    with self.ui.imgui.table(header_row=False):
+                        # Adjust widths to center username
+                        #  at 40pt it can fit 17 characters, and max character length for names is 16
+                        portion = 1.0 / 16
+                        name_portion = portion * len(self.username)
+                        spacer_portion = (1.0 - name_portion) / 2
 
-        # Rank
-        rank = Frame(master=self.left_bar)
-        rank_icon_icon = Image.open('./data/ranked-emblem/emblem-' + self.rank.tier.name + '.png')
-        rank_icon_icon = rank_icon_icon.crop((477, 214, 810, 472))
-        rank_icon_icon = ImageTk.PhotoImage(rank_icon_icon.resize((100, 70)))
-        rank_icon = Label(master=rank, image=rank_icon_icon)
-        rank_icon.image = rank_icon_icon
-        rank_icon.grid(row=0, column=1)
-        rank_name = self.rank.tier.name + ' ' + self.rank.division.name
-        rank_name = Label(master=rank, text=rank_name.title())
-        rank_name.config(font=('*Font', 38))
-        rank_name.grid(row=0, column=2)
-        rank.grid(row=1, padx=20, sticky=W+E)
+                        self.ui.imgui.add_table_column(init_width_or_weight=spacer_portion)
+                        self.ui.imgui.add_table_column(init_width_or_weight=name_portion)
+                        self.ui.imgui.add_table_column(init_width_or_weight=spacer_portion)
 
-        text = Label(master=self.left_bar, text='rank, icon, level, lp, users-played-with stats here')
-        text.grid()
-        self.left_bar.grid(row=0, column=0, padx=20, sticky=NW)
+                        # Center the username
+                        with self.ui.imgui.table_row():
+                            self.ui.imgui.add_spacer()
+
+                            self.ui.imgui.add_text(self.username)
+                            self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['40 bold'])
+
+                            self.ui.imgui.add_spacer()
+
+                # Rank
+                # TODO: Master+ has no division, display LP/position?
+                with self.ui.imgui.table_row():
+                    with self.ui.imgui.table(header_row=False):
+                        self.ui.imgui.add_table_column(init_width_or_weight=0.2)
+                        self.ui.imgui.add_table_column(init_width_or_weight=0.3)  # Icon
+                        self.ui.imgui.add_table_column(init_width_or_weight=0.3)  # Rank name
+                        self.ui.imgui.add_table_column(init_width_or_weight=0.2)
+
+                        with self.ui.imgui.table_row():
+                            self.ui.imgui.add_spacer()
+
+                            # Show the icon
+                            rank_icon_texture = self.ui.load_image(
+                                'rank-' + self.rank.tier.name,
+                                self.ui.FILE,
+                                './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
+                                (477, 214, 810, 472),
+                                (86, 60),
+                            )
+                            self.ui.imgui.add_image(texture_tag=rank_icon_texture)
+
+                            # Show the rank name
+                            rank_name = self.rank.division.value
+                            self.ui.imgui.add_text(rank_name)
+                            self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
+
+                            self.ui.imgui.add_spacer()
+
+                with self.ui.imgui.table_row():
+                    self.ui.imgui.add_text('rank, icon, level, lp, users-played-with stats here')
         # endregion Left Bar
 
-        ''' Set up the right-bar '''
+        # Set up the center column, just a container for match history
+        # region  Center (Match History container)
+        self.ui.imgui.add_table_column(
+            parent=self.table,
+            init_width_or_weight=0.60,
+        )
+        # Add a table that matches can be added to as rows, everything else is just a placeholder until the matches load
+        with self.ui.imgui.table_cell(parent=self.table_row):
+            with self.ui.imgui.table(header_row=False):
+                self.ui.imgui.add_table_column(tag='match-history-delete-1')
+                self.ui.imgui.add_table_column(tag=self.history)  # This is the actual destination for matches
+                self.ui.imgui.add_table_column(tag='match-history-delete-2')
+
+                with self.ui.imgui.table_row(tag='match-history-delete-3'):
+                    self.ui.imgui.add_spacer(tag='match-history-delete-4')
+                    self.ui.imgui.add_loading_indicator(tag='match-history-delete-5')
+                    self.ui.imgui.add_spacer(tag='match-history-delete-6')
+        # endregion Center (Match History container)
+
+        # Set up the right-bar
         # region Right Bar
-        self.right_bar = Frame(master=hinter.ui.main.UI.screen)
-        text = Label(master=self.right_bar, text='role distribution, champ wr here')
-        text.grid()
-        self.right_bar.grid(row=0, column=2, padx=15, sticky=NE)
+        self.ui.imgui.add_table_column(
+            parent=self.table,
+            tag=self.right_bar,
+            init_width_or_weight=0.2,
+        )
+        with self.ui.imgui.table_cell(parent=self.table_row):
+            with self.ui.imgui.table(header_row=False):
+                self.ui.imgui.add_table_column()
+
+                with self.ui.imgui.table_row():
+                    self.ui.imgui.add_text('role distribution, champ wr here')
         # endregion Right Bar
 
-        # region Center, Match History
-        # Set up the main match history, and call to show all matches
-        self.history = Frame(master=hinter.ui.main.UI.screen)
+        # Display screen
+        self.ui.imgui.set_viewport_min_width(1780)
+        self.ui.imgui.set_viewport_width(1780)
+        self.ui.imgui.set_viewport_min_height(670)
+        self.ui.imgui.set_viewport_height(670)
+        self.ui.new_screen(tag='match_history', set_primary=True)
+        self.ui.imgui.render_dearpygui_frame()
 
-        self.display_matches()
-
-        # Display match history
-        self.history.grid(row=0, column=1, padx=15, sticky=N)
-        # endregion Center, Match History
+        # Load the user's match history
+        #self.display_matches()
 
     def display_matches(self):
         champ_size = (64, 64)
