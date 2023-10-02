@@ -125,3 +125,11 @@ Licensed under the 3-Clause BSD License
 [timeago](https://github.com/hustcc/timeago), 
 Copyright (c) 2016 hustcc - 
 Licensed under the MIT License
+
+[Fira Code](https://github.com/tonsky/FiraCode), 
+Copyright (c) 2014 The Fira Code Project Authors - 
+Licensed under the OFL License
+
+[NumPy](https://github.com/numpy/numpy), 
+Copyright (c) 2005-2023, NumPy Developers - 
+Licensed under the BSD License
