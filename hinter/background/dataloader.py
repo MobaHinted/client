@@ -1,10 +1,11 @@
-import time
-import requests
-import zipfile
 import os
+import time
+import zipfile
+
+import cassiopeia
+import requests
 
 import hinter.ui.progress
-import cassiopeia
 
 
 class DataLoader:
@@ -21,14 +22,16 @@ class DataLoader:
         # Save refresh variable, so we don't have to pass it into every method
         self.refresh = refresh
 
+        title = 'Loading all Data'
         if refresh:
+            title = 'Refreshing all Data'
             cassiopeia.configuration.settings.clear_sinks()
             cassiopeia.configuration.settings.expire_sinks()
 
         # Open the download popup, start downloading data and updating the
         #  progress bar as we go
         progress_popup = hinter.ui.progress.Progress(
-            0, 'Downloading and processing: Champions'
+            0, title, 'Downloading and processing: Champions'
         )
         cassiopeia.get_champions(region=hinter.settings.region)
 
@@ -48,8 +51,8 @@ class DataLoader:
         self.load_rank_icons(refresh)
 
         # Inform user data refresh completed, wait, then close the popup
-        progress_popup.update(100, 'Data refresh complete! Window will close')
-        time.sleep(3)
+        progress_popup.update(100, 'Data loading complete!\nWindow will close')
+        time.sleep(4)
         progress_popup.close()
 
         # Do not update again until this is called, refresh data loaded checks

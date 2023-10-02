@@ -1,11 +1,59 @@
 import os.path
 
+import cassiopeia
+import dearpygui.dearpygui
 
+
+# noinspection PySimplifyBooleanCheck
 class Settings:
     settings_file = './data/settings.dat'
     region = 'NA'
     active_user = ''
     settings_loaded = False
+    imgui: dearpygui.dearpygui = dearpygui.dearpygui
+    version = '0.0.0'
+
+    def ready_settings_window(self):
+        # Make sure the popup can be hidden
+        def close_popup():
+            self.imgui.hide_item(item='settings-popup')
+
+        # Show the popup
+        with self.imgui.window(
+                label='Settings',
+                modal=True,
+                tag='settings-popup',
+                width=600,
+                height=500,
+                no_resize=True,
+                no_move=True,
+                no_collapse=True,
+                on_close=close_popup,
+                show=False,
+        ):
+            # users = hinter.users.list_users()
+
+            with self.imgui.table(header_row=False, no_clip=True):
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+                with self.imgui.table_row():
+                    self.imgui.add_text("Current User:")
+                    self.imgui.add_text(self.active_user)
+                    # self.imgui.add_combo(items=[e.username for e in users], default_value=self.active_user)
+                    self.imgui.add_text("Current Region:")
+                    self.imgui.add_text(self.region)
+                    # self.imgui.add_combo(items=[e.value for e in cassiopeia.data.Region], default_value=self.region)
+                with self.imgui.table_row():
+                    self.imgui.add_spacer()
+                with self.imgui.table_row():
+                    self.imgui.add_text("About")
+                with self.imgui.table_row():
+                    self.imgui.add_text("League Patch:")
+                    self.imgui.add_text(cassiopeia.get_version(region=self.region))
+                    self.imgui.add_text("Mobahinted Ver.:")
+                    self.imgui.add_text(self.version)
 
     def load_settings(self, refresh: bool = False):
         # Skip loading of settings if they are already loaded
