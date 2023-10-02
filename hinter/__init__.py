@@ -1,13 +1,13 @@
 import os
-from dotenv import load_dotenv
 
 import cassiopeia
+# noinspection PyUnresolvedReferences
 import cassiopeia_diskstore  # Required for building to executable
+from dotenv import load_dotenv
 
 import hinter.settings
-import hinter.users
-
 import hinter.struct.user
+import hinter.users
 
 # Set up settings
 settings = hinter.settings.Settings()
@@ -21,6 +21,10 @@ if not os.path.exists(cassiopeia_path):
 cassiopeia_settings = {
     'pipeline': {
         'Cache': {},
+        "SimpleKVDiskStore": {
+            "package": "cassiopeia_diskstore",
+            "path": cassiopeia_path
+        },
         'DDragon': {},
     },
 }
