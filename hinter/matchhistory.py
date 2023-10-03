@@ -41,7 +41,12 @@ class MatchHistory:
 
         # Save variables
         self.games = user.match_history
-        self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]
+        if cassiopeia.Queue.ranked_solo_fives in user.ranks:
+            self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]
+        elif cassiopeia.Queue.ranked_flex_fives in user.ranks:
+            self.rank = user.ranks[cassiopeia.Queue.ranked_flex_fives]
+        else:
+            self.rank = None
         self.level = user.level
         self.icon = user.profile_icon
 
@@ -99,32 +104,33 @@ class MatchHistory:
 
                 # Rank
                 # TODO: Master+ has no division, display LP/position?
-                with self.ui.imgui.table_row():
-                    with self.ui.imgui.table(header_row=False):
-                        self.ui.imgui.add_table_column(init_width_or_weight=0.275)
-                        self.ui.imgui.add_table_column(init_width_or_weight=0.45)
-                        self.ui.imgui.add_table_column(init_width_or_weight=0.275)
+                if self.rank is not None:
+                    with self.ui.imgui.table_row():
+                        with self.ui.imgui.table(header_row=False):
+                            self.ui.imgui.add_table_column(init_width_or_weight=0.275)
+                            self.ui.imgui.add_table_column(init_width_or_weight=0.45)
+                            self.ui.imgui.add_table_column(init_width_or_weight=0.275)
 
-                        with self.ui.imgui.table_row():
-                            self.ui.imgui.add_spacer()
+                            with self.ui.imgui.table_row():
+                                self.ui.imgui.add_spacer()
 
-                            with self.ui.imgui.group(horizontal=True):
-                                # Show the icon
-                                rank_icon_texture = self.ui.load_image(
-                                    'rank-' + self.rank.tier.name,
-                                    self.ui.FILE,
-                                    './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
-                                    (477, 214, 810, 472),
-                                    (86, 60),
-                                )
-                                self.ui.imgui.add_image(texture_tag=rank_icon_texture)
+                                with self.ui.imgui.group(horizontal=True):
+                                    # Show the icon
+                                    rank_icon_texture = self.ui.load_image(
+                                        'rank-' + self.rank.tier.name,
+                                        self.ui.FILE,
+                                        './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
+                                        (477, 214, 810, 472),
+                                        (86, 60),
+                                    )
+                                    self.ui.imgui.add_image(texture_tag=rank_icon_texture)
 
-                                # Show the rank name
-                                rank_name = self.rank.division.value
-                                self.ui.imgui.add_text(rank_name)
-                                self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
+                                    # Show the rank name
+                                    rank_name = self.rank.division.value
+                                    self.ui.imgui.add_text(rank_name)
+                                    self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
 
-                            self.ui.imgui.add_spacer()
+                                self.ui.imgui.add_spacer()
 
                 with self.ui.imgui.table_row():
                     self.ui.imgui.add_text('level, lp, users-played-with stats here')
@@ -244,6 +250,8 @@ class MatchHistory:
                 queue = 'Normal Draft'
             elif match.queue == cassiopeia.data.Queue.aram:
                 queue = 'ARAM'
+            elif match.queue == cassiopeia.data.Queue.rings_of_wrath:
+                queue = 'Arena'
             else:
                 queue = queue.replace('_', ' ').title()
             # endregion Determine type of game
