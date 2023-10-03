@@ -5,10 +5,10 @@ import PIL.Image as Image
 import dearpygui.dearpygui
 import numpy as np
 import requests
+import cassiopeia
 
 import hinter
 import hinter.background.dataloader
-import hinter.matchhistory
 import hinter.struct.user
 
 FONT_SCALE = 2
@@ -25,8 +25,11 @@ class UI:
     PIL = 'pil'
     FILE = 'file'
     REMOTE = 'remote'
+    user_available: bool = False
+    data_loader: hinter.background.dataloader.DataLoader
+    filler_image: str
 
-    def __init__(self):
+    def __init__(self, move_on_callback):
         self.imgui.create_context()
 
         # Set up Fira Code for use
@@ -59,32 +62,117 @@ class UI:
         self.imgui.create_viewport(
             # decorated=False, # Would have to add manual resizing, maximizing, etc
             title='MobaHinted',
-            min_width=300,
-            width=300,
+            min_width=350,
+            width=350,
             min_height=600,
             height=600,
             small_icon='./assets/logo.ico',
             large_icon='./assets/logo.ico',
         )
 
+        self.filler_image = self.load_image('filler', self.FILE, './assets/filler.png', size=(1, 1))
+
+        def login_submit():
+            username = self.imgui.get_value('add-username')
+            region = self.imgui.get_value('add-region')
+
+            hinter.settings.write_setting('region', region)
+            added = hinter.users.add_user(ui=self, username=username)
+
+            if added:
+                self.user_available = True
+                hinter.settings.write_setting('active_user', username)
+                data_loader = hinter.background.dataloader.DataLoader()
+                move_on_callback(ui=self, render=False)
+                self.imgui.render_dearpygui_frame()
+
         if hinter.settings.active_user == '':
-            self.imgui.add_window(tag=self.screen)
+            with self.imgui.window(tag=self.screen):
+                with self.imgui.table(header_row=False):
+                    self.imgui.add_table_column(init_width_or_weight=0.15)
+                    self.imgui.add_table_column(init_width_or_weight=0.7)
+                    self.imgui.add_table_column(init_width_or_weight=0.15)
 
-            self.imgui.add_text('Login', parent=self.screen)
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_spacer(height=150)
+                        self.imgui.add_spacer()
 
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_text('Add your League Account')
+                        self.imgui.add_spacer()
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer(height=10)
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_input_text(
+                            tag='add-username',
+                            hint='League Name',
+                            width=-1,
+                            on_enter=True,
+                            callback=login_submit,
+                        )
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        with self.imgui.group(horizontal=True):
+                            self.imgui.add_text('Region: ')
+                            self.imgui.add_combo(
+                                tag='add-region',
+                                items=[e.value for e in cassiopeia.data.Region],
+                                default_value=hinter.settings.region,
+                                width=-1,
+                                callback=login_submit,
+                            )
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer(height=10)
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_button(
+                            tag='add-button',
+                            label='Add >',
+                            width=-1,
+                            callback=login_submit,
+                        )
+
+            self.imgui.set_primary_window(window=self.screen, value=True)
+            self.imgui.show_viewport()
             self.imgui.set_viewport_resizable(False)
         else:
+            self.user_available = True
             self.screen = 'loading'
-            self.imgui.add_window(tag=self.screen)
-            self.add_menu()
-            self.imgui.add_text(
-                'Match history loading ...',
-                parent=self.screen,
-            )
 
-        self.imgui.set_primary_window(window=self.screen, value=True)
-        self.imgui.show_viewport()
-        self.imgui.render_dearpygui_frame()
+            with self.imgui.window(tag=self.screen):
+                with self.imgui.table(header_row=False):
+                    self.imgui.add_table_column()
+                    self.imgui.add_table_column()
+                    self.imgui.add_table_column()
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_spacer(height=250)
+                        self.imgui.add_spacer()
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_text('Loading ...',)
+                        self.imgui.add_spacer()
+
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer()
+                        self.imgui.add_loading_indicator()
+                        self.imgui.add_spacer()
+
+            self.imgui.set_primary_window(window=self.screen, value=True)
+            self.imgui.show_viewport()
+            self.render_frames(120)
+            self.add_menu()
+            move_on_callback(ui=self, render=True)
 
     def show_info_popup(self, title: str, text: str, width: int = 225, height: int = 125):
         # Wait one frame to ensure that other modals are closed
@@ -329,6 +417,7 @@ Open Source at github.com/zbee/mobahinted''',
         :param crop: (Optional) A tuple of 4 integers specifying the crop area (x, y, width, height).
         :param size: (Optional) A tuple of 2 integers specifying the size the final image should be (width, height).
         :param force_fresh: (Optional) A boolean specifying whether or not to force a fresh load of the image.
+        :return: A string specifying the texture tag to use in :func:`dearpygui.add_image`.
 
         .. seealso::
             :func:`hinter.UI.PIL`, :func:`hinter.UI.FILE`, :func:`hinter.UI.REMOTE`
@@ -377,8 +466,7 @@ Open Source at github.com/zbee/mobahinted''',
             img = Image.open(requests.get(image, stream=True).raw)
         else:
             print('hinter.UI: Cannot load image with un-handled type')
-            # TODO: return a filler image
-            return
+            return self.filler_image
 
         # Crop if necessary
         if crop is not None and not cached:
