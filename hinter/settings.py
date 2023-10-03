@@ -9,11 +9,11 @@ import hinter.users
 # noinspection PySimplifyBooleanCheck
 class Settings:
     settings_file = './data/settings.dat'
-    region = 'NA'
+    region = ''
     active_user = ''
     settings_loaded = False
-    imgui: dearpygui.dearpygui = dearpygui.dearpygui
     version = '0.0.0'
+    imgui = dearpygui.dearpygui
 
     def ready_settings_window(self):
         # Make sure the popup can be hidden
@@ -27,7 +27,6 @@ class Settings:
                 tag='settings-popup',
                 width=600,
                 height=550,
-                no_resize=True,
                 no_move=True,
                 no_collapse=True,
                 on_close=close_popup,
@@ -341,15 +340,24 @@ class Settings:
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_text('Enable Telemetry:')
-                    self.imgui.add_checkbox(default_value=False)
+                    self.imgui.add_checkbox(label='Enable Telemetry', default_value=False)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=5)
+
                 with self.imgui.table_row():
                     self.imgui.add_text(
                         '''If enabled, Mobahinted will send anonymous usage data to the developer.
-Only the owning developer has access to the data, and can only use it
-to improve the application.''',
+Only the owning developer has access to the data, and the data is only
+relevant to improving the application.''',
                         wrap=-1,
                     )
+
+                with self.imgui.table_row():
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_text('To see what data would be provided, look here:')
+                        self.imgui.add_button(label='Telemetry Overview')
+
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
                 with self.imgui.table_row():
@@ -481,6 +489,13 @@ Open Source at github.com/zbee/mobahinted'''
         self.settings_loaded = True
 
     def write_setting(self, setting, value):
+        # Verify folder and file exist
+        if not os.path.exists('./data/'):
+            os.mkdir('./data')
+        if not os.path.exists(self.settings_file):
+            open(self.settings_file, 'w+')
+            return
+
         # Remove the setting if currently set
         # This has to be verbose otherwise falsey values will trip it
         if getattr(self, setting, False) != False:
@@ -513,9 +528,7 @@ Open Source at github.com/zbee/mobahinted'''
 
         # Add the setting
         settings_file = open(self.settings_file, 'a+')
-        settings_file.write(
-            setting + '=' + value + '\n'
-        )
+        settings_file.write(f'{setting}={value}\n')
         settings_file.close()
 
         # Reload settings file
