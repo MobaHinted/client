@@ -18,7 +18,11 @@ class DataLoader:
         self.current_patch = cassiopeia.get_version(region=hinter.settings.region)
         print('CURRENT PATCH DATA: ' + self.current_patch)
 
-    def load_all(self, refresh: bool = False):
+        if not os.path.exists('./data/Emblem_Platinum.png'):
+            self.load_all()
+
+    def load_all(self, refresh: bool = False, popup: bool = True):
+
         # Save refresh variable, so we don't have to pass it into every method
         self.refresh = refresh
 
@@ -28,32 +32,39 @@ class DataLoader:
             cassiopeia.configuration.settings.clear_sinks()
             cassiopeia.configuration.settings.expire_sinks()
 
-        # Open the download popup, start downloading data and updating the
-        #  progress bar as we go
-        progress_popup = hinter.ui.progress.Progress(
-            0, title, 'Downloading and processing: Champions'
-        )
+        if popup:
+            # Open the download popup, start downloading data and updating the
+            #  progress bar as we go
+            progress_popup = hinter.ui.progress.Progress(
+                0, title, 'Downloading and processing: Champions'
+            )
         cassiopeia.get_champions(region=hinter.settings.region)
 
-        progress_popup.update(70, 'Downloading and processing: Items')
+        if popup:
+            progress_popup.update(70, 'Downloading and processing: Items')
         cassiopeia.get_items(region=hinter.settings.region)
 
-        progress_popup.update(80, 'Downloading and processing: Maps')
+        if popup:
+            progress_popup.update(80, 'Downloading and processing: Maps')
         cassiopeia.get_maps(region=hinter.settings.region)
 
-        progress_popup.update(81, 'Downloading and processing: Spells')
+        if popup:
+            progress_popup.update(81, 'Downloading and processing: Spells')
         cassiopeia.get_summoner_spells(region=hinter.settings.region)
 
-        progress_popup.update(82, 'Downloading and processing: Runes')
+        if popup:
+            progress_popup.update(82, 'Downloading and processing: Runes')
         cassiopeia.get_runes(region=hinter.settings.region)
 
-        progress_popup.update(85, 'Downloading and processing: Rank icons')
+        if popup:
+            progress_popup.update(85, 'Downloading and processing: Rank icons')
         self.load_rank_icons(refresh)
 
         # Inform user data refresh completed, wait, then close the popup
-        progress_popup.update(100, 'Data loading complete!\nWindow will close')
-        time.sleep(4)
-        progress_popup.close()
+        if popup:
+            progress_popup.update(100, 'Data loading complete!\nWindow will close')
+            time.sleep(4)
+            progress_popup.close()
 
         # Do not update again until this is called, refresh data loaded checks
         self.refresh = False
@@ -80,6 +91,3 @@ class DataLoader:
                 positions_zip.extractall('./data/')
             # Remove zip of position icons
             os.remove('./data/positions.zip')
-
-
-data_loader = DataLoader()
