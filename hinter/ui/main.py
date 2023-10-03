@@ -394,6 +394,13 @@ Open Source at github.com/zbee/mobahinted''',
 
         self.imgui.split_frame()
 
+    def render_frames(self, frames: int = 1, split: bool = False):
+        if split:
+            self.imgui.split_frame(delay=frames*10)
+
+        for _ in range(frames):
+            self.imgui.render_dearpygui_frame()
+
     def load_image(self,
                    image_name: str,
                    image_type: str = None,
@@ -503,5 +510,11 @@ Open Source at github.com/zbee/mobahinted''',
 
         return tag
 
+    # noinspection PyMethodMayBeStatic
+    def check_image_cache(self, image_name: str) -> bool:
+        """A method to check if an image is cached.
 
-UI = UI()
+        :param image_name: The name of the image to check.
+        :return: A boolean specifying whether the image is cached.
+        """
+        return os.path.exists(f'./data/image_cache/{image_name}.png')
