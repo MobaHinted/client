@@ -15,7 +15,7 @@ import hinter.struct.user
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
-    games_shown: int = 20
+    games_shown: int = 50
     rank: cassiopeia.Rank
     average_kda: float
     level = 0
@@ -144,8 +144,12 @@ class MatchHistory:
                 self.ui.imgui.add_table_column(tag='match-history-delete-6')
 
                 with self.ui.imgui.table_row(tag='match-history-delete-1'):
-                    self.ui.imgui.add_spacer(tag='match-history-delete-3')
-                    self.ui.imgui.add_loading_indicator(tag='match-history-delete-2')
+                    self.ui.imgui.add_spacer(tag='match-history-delete-2')
+                    self.ui.imgui.add_text(
+                        'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
+                        '\nIt can take a couple minutes',
+                        tag='match-history-delete-3',
+                    )
                     self.ui.imgui.add_spacer(tag='match-history-delete-4')
         # endregion Center (Match History container)
 
@@ -316,7 +320,10 @@ class MatchHistory:
             '''Calculate and format match data'''
 
             # Upfront data, win and champ
-            champion_played = player.champion.image.image
+            if not self.ui.check_image_cache('champion-' + player.champion.name):
+                champion_played = player.champion.image.image
+            else:
+                champion_played = 'champion-' + player.champion.name
 
             outcome = win
 
@@ -347,8 +354,14 @@ class MatchHistory:
             spell_f: cassiopeia.SummonerSpell = player.summoner_spell_f
 
             # Save the images for each spell
-            spell_d_used = spell_d.image.image
-            spell_f_used = spell_f.image.image
+            if not self.ui.check_image_cache('spell-' + spell_d.name):
+                spell_d_used = spell_d.image.image
+            else:
+                spell_d_used = 'spell-' + spell_d.name
+            if not self.ui.check_image_cache('spell-' + spell_f.name):
+                spell_f_used = spell_f.image.image
+            else:
+                spell_f_used = 'spell-' + spell_f.name
             # endregion Summoner Spells
 
             # region Role
@@ -570,9 +583,12 @@ class MatchHistory:
                     # region Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
                     with self.ui.imgui.table_row(height=rune_size[1]):
                         with self.ui.imgui.group(horizontal=True):
-                            champion_played = self.ui.load_image(
-                                'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
-                            )
+                            if not self.ui.check_image_cache('champion-' + player.champion.name):
+                                champion_played = self.ui.load_image(
+                                    'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
+                                )
+                            else:
+                                champion_played = self.ui.load_image(champion_played, size=champ_size)
 
                             # Place a filler image for the champion icon (hack to span 2 rows)
                             self.ui.imgui.add_image(
@@ -593,12 +609,15 @@ class MatchHistory:
                                 pos=self.ui.imgui.get_item_pos(f'champ-icon-holder-{match.id}')
                             )
 
-                            spell_d_used = self.ui.load_image(
-                                'spell-' + spell_d.name, self.ui.PIL, spell_d_used, size=spell_size
-                            )
+                            if not self.ui.check_image_cache('spell-' + spell_d.name):
+                                spell_d_used = self.ui.load_image(
+                                    'spell-' + spell_d.name, self.ui.PIL, spell_d_used, size=spell_size
+                                )
+                            else:
+                                spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
                             self.ui.imgui.add_image(texture_tag=spell_d_used)
 
-                            if type(runes_taken['key']['image']) == str:
+                            if not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
                                 key_rune_used = self.ui.load_image(
                                     'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
                                 )
@@ -652,17 +671,26 @@ class MatchHistory:
                         with self.ui.imgui.group(horizontal=True):
                             self.ui.imgui.add_spacer(width=champ_size[0])
 
-                            spell_f_used = self.ui.load_image(
-                                'spell-' + spell_f.name, self.ui.PIL, spell_f_used, size=spell_size
-                            )
+                            if not self.ui.check_image_cache('spell-' + spell_f.name):
+                                spell_f_used = self.ui.load_image(
+                                    'spell-' + spell_f.name, self.ui.PIL, spell_f_used, size=spell_size
+                                )
+                            else:
+                                spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
                             self.ui.imgui.add_image(texture_tag=spell_f_used)
 
-                            secondary_rune_used = self.ui.load_image(
-                                'rune-' + runes_taken['secondary']['name'],
-                                self.ui.PIL,
-                                secondary_rune_used,
-                                size=rune_size,
-                            )
+                            if not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
+                                secondary_rune_used = self.ui.load_image(
+                                    'rune-' + runes_taken['secondary']['name'],
+                                    self.ui.PIL,
+                                    secondary_rune_used,
+                                    size=rune_size,
+                                )
+                            else:
+                                secondary_rune_used = self.ui.load_image(
+                                    f'rune-{runes_taken["secondary"]["name"]}',
+                                    size=rune_size,
+                                )
                             self.ui.imgui.add_image(texture_tag=secondary_rune_used)
 
                         # Show the last 3 items, and the trinket
