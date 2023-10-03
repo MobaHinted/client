@@ -14,11 +14,15 @@ settings = hinter.settings.Settings()
 settings.load_settings()
 
 # Get ready for Cassiopeia
+if not os.path.exists('./data/cassiopeia'):
+    os.mkdir('./data/cassiopeia')
 cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
-if not os.path.exists(cassiopeia_path):
-    os.mkdir(cassiopeia_path)
 
 cassiopeia_settings = {
+    "global": {
+        "version_from_match": "version",
+        "default_region": 'NA'
+    },
     'pipeline': {
         'Cache': {},
         "SimpleKVDiskStore": {
