@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Union
 
 import hinter.struct.user
 
@@ -38,7 +38,7 @@ class Users:
 
         return user_list
 
-    def add_user(self, ui, username: str = ''):
+    def add_user(self, ui, username: str = '') -> Union[bool, None]:
         # Make sure the username popup can close itself
         def close_popup():
             ui.imgui.delete_item(item='add-user')
@@ -97,7 +97,7 @@ class Users:
                     'Duplicate username',
                     'This account is already in your list!'
                 )
-                return
+                return False
 
         # Check user exists on Riot's side
         user = hinter.struct.user.User(username)
@@ -106,7 +106,7 @@ class Users:
                 'Nonexistent user',
                 'This account does not exist in this region!'
             )
-            return
+            return False
 
         # Add to user list file and current list
         user_file = open(self.users_list, 'a+')
@@ -118,6 +118,7 @@ class Users:
 
         # Redraw the menu
         ui.add_menu()
+        return True
 
     def remove_user(self, ui, username: str = ''):
         # Make sure the username popup can close itself
