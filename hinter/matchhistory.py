@@ -2,13 +2,12 @@ import datetime
 import webbrowser
 from typing import Union
 
-import dearpygui.dearpygui
-
 import cassiopeia
 import pytz
 import timeago
 import timeago.locales.en  # Required for building to executable
 from PIL import Image
+import dearpygui.dearpygui
 
 import hinter
 import hinter.struct.user
@@ -28,6 +27,7 @@ class MatchHistory:
     history: str = 'match_history_table-history-container'
     right_bar: str = 'match_history_table-right'
     ui: hinter.ui.main.UI
+    imgui: dearpygui.dearpygui = dearpygui.dearpygui
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.struct.user.User = None):
         # Load summoner information
@@ -56,58 +56,60 @@ class MatchHistory:
         except Exception as e:
             self.delete_previous_screens(delete_current=True)
 
-            self.ui.imgui.set_viewport_min_width(350)
-            self.ui.imgui.set_viewport_width(350)
-            self.ui.imgui.set_viewport_min_height(600)
-            self.ui.imgui.set_viewport_height(600)
+            self.imgui.set_viewport_min_width(350)
+            self.imgui.set_viewport_width(350)
+            self.imgui.set_viewport_min_height(600)
+            self.imgui.set_viewport_height(600)
 
             if '503' in str(e):
                 region = cassiopeia.Region(hinter.settings.region)
                 platform = cassiopeia.Platform[region.name].value.lower()
 
-                with self.ui.imgui.window(tag='error'):
-                    self.ui.imgui.add_spacer(height=150)
+                with self.imgui.window(tag='error'):
+                    self.imgui.add_spacer(height=150)
 
                     text = 'Riot services are unavailable.'
-                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_text(f'{text:^40}')
                     text = 'Please try later.'
-                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_text(f'{text:^40}')
 
-                    self.ui.imgui.add_spacer(height=40)
+                    self.imgui.add_spacer(height=40)
 
                     text = 'You can check the LoL status page:'
-                    self.ui.imgui.add_text(f'{text:^40}')
-                    self.ui.imgui.add_button(
+                    self.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_button(
                         label='Open status.rito Page',
                         callback=lambda: webbrowser.open(f'https://status.riotgames.com/lol?region={platform}'),
                         width=-1,
                     )
                     text = '(rarely posted if issues are unexpected)'
-                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_text(f'{text:^40}')
 
-                self.ui.imgui.set_primary_window('error', True)
-                self.ui.imgui.start_dearpygui()
+                self.imgui.set_primary_window('error', True)
+                self.imgui.start_dearpygui()
+                self.ui.exit_callback()
                 exit(503)
             elif '403' in str(e):
-                with self.ui.imgui.window(tag='error'):
-                    self.ui.imgui.add_spacer(height=175)
+                with self.imgui.window(tag='error'):
+                    self.imgui.add_spacer(height=175)
                     text = 'This API key is invalid or expired.'
-                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_text(f'{text:^40}')
                     text = 'Please enter a new one.'
-                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_text(f'{text:^40}')
 
-                    self.ui.imgui.add_spacer(height=20)
+                    self.imgui.add_spacer(height=20)
 
                     text = 'You can get a new one here:'
-                    self.ui.imgui.add_text(f'{text:^40}')
-                    self.ui.imgui.add_button(
+                    self.imgui.add_text(f'{text:^40}')
+                    self.imgui.add_button(
                         label='Open developer.rito Page',
                         callback=lambda: webbrowser.open('https://developer.riotgames.com'),
                         width=-1,
                     )
 
-                self.ui.imgui.set_primary_window('error', True)
-                self.ui.imgui.start_dearpygui()
+                self.imgui.set_primary_window('error', True)
+                self.imgui.start_dearpygui()
+                self.ui.exit_callback()
                 exit(403)
             else:
                 print(e)
@@ -119,65 +121,66 @@ class MatchHistory:
         # Load match history information
         # self.games = user.match_history(count=50)
     def show_match_screen(self, render: bool = True):
+        self.delete_previous_screens()
         self.ui.new_screen(tag='match_history')
 
         # Set up the table
-        self.ui.imgui.add_table(
+        self.imgui.add_table(
             tag=self.table,
             header_row=False,
             parent='match_history',
         )
-        self.ui.imgui.add_table_row(
+        self.imgui.add_table_row(
             parent=self.table,
             tag=self.table_row,
         )
 
         # region Left Bar
         # Set up the left-bar
-        self.ui.imgui.add_table_column(
+        self.imgui.add_table_column(
             parent=self.table,
             tag=self.left_bar,
             init_width_or_weight=0.2,
         )
-        with self.ui.imgui.table_cell(parent=self.table_row):
-            with self.ui.imgui.table(header_row=False):
-                self.ui.imgui.add_table_column()
+        with self.imgui.table_cell(parent=self.table_row):
+            with self.imgui.table(header_row=False):
+                self.imgui.add_table_column()
 
                 # User name, centered
-                with self.ui.imgui.table_row():
-                    with self.ui.imgui.table(header_row=False):
+                with self.imgui.table_row():
+                    with self.imgui.table(header_row=False):
                         # Adjust widths to center username
                         #  at 40pt it can fit 17 characters, and max character length for names is 16
                         portion = 1.0 / 16
                         name_portion = portion * len(self.username)
                         spacer_portion = (1.0 - name_portion) / 2
 
-                        self.ui.imgui.add_table_column(init_width_or_weight=spacer_portion)
-                        self.ui.imgui.add_table_column(init_width_or_weight=name_portion)
-                        self.ui.imgui.add_table_column(init_width_or_weight=spacer_portion)
+                        self.imgui.add_table_column(init_width_or_weight=spacer_portion)
+                        self.imgui.add_table_column(init_width_or_weight=name_portion)
+                        self.imgui.add_table_column(init_width_or_weight=spacer_portion)
 
                         # Center the username
-                        with self.ui.imgui.table_row():
-                            self.ui.imgui.add_spacer()
+                        with self.imgui.table_row():
+                            self.imgui.add_spacer()
 
-                            self.ui.imgui.add_text(self.username)
-                            self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['40 bold'])
+                            self.imgui.add_text(self.username)
+                            self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['40 bold'])
 
-                            self.ui.imgui.add_spacer()
+                            self.imgui.add_spacer()
 
                 # Rank
                 # TODO: Master+ has no division, display LP/position?
                 if self.rank is not None:
-                    with self.ui.imgui.table_row():
-                        with self.ui.imgui.table(header_row=False):
-                            self.ui.imgui.add_table_column(init_width_or_weight=0.275)
-                            self.ui.imgui.add_table_column(init_width_or_weight=0.45)
-                            self.ui.imgui.add_table_column(init_width_or_weight=0.275)
+                    with self.imgui.table_row():
+                        with self.imgui.table(header_row=False):
+                            self.imgui.add_table_column(init_width_or_weight=0.275)
+                            self.imgui.add_table_column(init_width_or_weight=0.45)
+                            self.imgui.add_table_column(init_width_or_weight=0.275)
 
-                            with self.ui.imgui.table_row():
-                                self.ui.imgui.add_spacer()
+                            with self.imgui.table_row():
+                                self.imgui.add_spacer()
 
-                                with self.ui.imgui.group(horizontal=True):
+                                with self.imgui.group(horizontal=True):
                                     # Show the icon
                                     rank_icon_texture = self.ui.load_image(
                                         'rank-' + self.rank.tier.name,
@@ -186,74 +189,71 @@ class MatchHistory:
                                         (477, 214, 810, 472),
                                         (86, 60),
                                     )
-                                    self.ui.imgui.add_image(texture_tag=rank_icon_texture)
+                                    self.imgui.add_image(texture_tag=rank_icon_texture)
 
                                     # Show the rank name
                                     rank_name = self.rank.division.value
-                                    self.ui.imgui.add_text(rank_name)
-                                    self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['56 bold'])
+                                    self.imgui.add_text(rank_name)
+                                    self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['56 bold'])
 
-                                self.ui.imgui.add_spacer()
+                                self.imgui.add_spacer()
 
-                with self.ui.imgui.table_row():
-                    self.ui.imgui.add_text('level, lp, users-played-with stats here')
+                with self.imgui.table_row():
+                    self.imgui.add_text('level, lp, users-played-with stats here')
         # endregion Left Bar
 
         # region  Center (Match History container)
         # Set up the center column, just a container for match history
-        self.ui.imgui.add_table_column(
+        self.imgui.add_table_column(
             parent=self.table,
             init_width_or_weight=0.60,
         )
         # Add a table that matches can be added to as rows, everything else is just a placeholder until the matches load
-        with self.ui.imgui.table_cell(parent=self.table_row):
-            with self.ui.imgui.table(header_row=False, tag=self.history, pad_outerX=True):
-                self.ui.imgui.add_table_column(tag='match-history-delete-5')
-                self.ui.imgui.add_table_column()  # Actual destination for matches
-                self.ui.imgui.add_table_column(tag='match-history-delete-6')
+        with self.imgui.table_cell(parent=self.table_row):
+            with self.imgui.table(header_row=False, tag=self.history, pad_outerX=True):
+                self.imgui.add_table_column(tag='match-history-delete-5')
+                self.imgui.add_table_column()  # Actual destination for matches
+                self.imgui.add_table_column(tag='match-history-delete-6')
 
-                with self.ui.imgui.table_row(tag='match-history-delete-1'):
-                    self.ui.imgui.add_spacer(tag='match-history-delete-2')
-                    self.ui.imgui.add_text(
+                with self.imgui.table_row(tag='match-history-delete-1'):
+                    self.imgui.add_spacer(tag='match-history-delete-2')
+                    self.imgui.add_text(
                         'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
                         '\nIt can take a couple minutes',
                         tag='match-history-delete-3',
                     )
-                    self.ui.imgui.add_spacer(tag='match-history-delete-4')
+                    self.imgui.add_spacer(tag='match-history-delete-4')
         # endregion Center (Match History container)
 
         # region Right Bar
         # Set up the right-bar
-        self.ui.imgui.add_table_column(
+        self.imgui.add_table_column(
             parent=self.table,
             tag=self.right_bar,
             init_width_or_weight=0.2,
         )
-        with self.ui.imgui.table_cell(parent=self.table_row):
-            with self.ui.imgui.table(header_row=False):
-                self.ui.imgui.add_table_column()
+        with self.imgui.table_cell(parent=self.table_row):
+            with self.imgui.table(header_row=False):
+                self.imgui.add_table_column()
 
-                with self.ui.imgui.table_row():
-                    self.ui.imgui.add_text('role distribution, champ wr here')
+                with self.imgui.table_row():
+                    self.imgui.add_text('role distribution, champ wr here')
         # endregion Right Bar
 
         # Display screen
-        self.ui.imgui.set_viewport_min_width(1780)
-        self.ui.imgui.set_viewport_width(1780)
-        self.ui.imgui.set_viewport_min_height(670)
-        self.ui.imgui.set_viewport_height(670)
+        self.imgui.set_viewport_min_width(1780)
+        self.imgui.set_viewport_width(1780)
+        self.imgui.set_viewport_min_height(670)
+        self.imgui.set_viewport_height(670)
         self.ui.new_screen(tag='match_history', set_primary=True)
 
-        if render:
-            self.ui.render_frames(60)
-        else:
-            self.ui.render_frames(60, split=True)
+        self.ui.render_frames(60, split=not render)
 
         # Load the user's match history
-        self.display_matches()
+        self.display_matches(render)
 
     # noinspection DuplicatedCode
-    def display_matches(self):
+    def display_matches(self, render: bool = True):
         champ_size = (64, 64)
         rune_size = (30, 30)
         sec_rune_size = (22, 22)
@@ -264,25 +264,27 @@ class MatchHistory:
 
         # Have filler if the user has not been in any games
         if not self.games:
-            with self.ui.imgui.table_row(parent=self.history):
-                self.ui.imgui.add_spacer()
-                self.ui.imgui.add_text('There are no games for this user, yet!')
-                self.ui.imgui.add_spacer()
+            with self.imgui.table_row(parent=self.history):
+                self.imgui.add_spacer()
+                self.imgui.add_text('There are no games for this user, yet!')
+                self.imgui.add_spacer()
             return
 
-        self.ui.imgui.delete_item(item='match-history-delete-1')
-        self.ui.imgui.delete_item(item='match-history-delete-2')
-        self.ui.imgui.delete_item(item='match-history-delete-3')
-        self.ui.imgui.delete_item(item='match-history-delete-4')
-        self.ui.imgui.delete_item(item='match-history-delete-5')
-        self.ui.imgui.delete_item(item='match-history-delete-6')
+        # region Remove loading info
+        self.imgui.delete_item(item='match-history-delete-1')
+        self.imgui.delete_item(item='match-history-delete-2')
+        self.imgui.delete_item(item='match-history-delete-3')
+        self.imgui.delete_item(item='match-history-delete-4')
+        self.imgui.delete_item(item='match-history-delete-5')
+        self.imgui.delete_item(item='match-history-delete-6')
+        # endregion Remove loading info
 
         row_count = 0
         # Loop through the first games
         for key, match in enumerate(self.games[0:self.games_shown]):
-            self.ui.render_frames()
+            self.ui.render_frames(render)
 
-            # Set up each game's container, and cast or setup multiple variables
+            # region Cast or setup multiple variables
             match: cassiopeia.Match
             team: str = '?'
             player: cassiopeia.core.match.Participant
@@ -296,6 +298,7 @@ class MatchHistory:
             remake_color = [255, 255, 255, 10]
             background_color: str = remake_color
             filler = ''
+            # endregion Cast or setup multiple variables
 
             '''Resolve some data to work from'''
 
@@ -473,6 +476,7 @@ class MatchHistory:
 
                 # Search for support item
                 has_support: bool = False
+                # noinspection SpellCheckingInspection
                 support_items = [
                     3853,  # shard of true ice
                     3851,  # frostfang
@@ -655,244 +659,240 @@ class MatchHistory:
             '''Display and organize game widgets'''
 
             counter = 0
-            with self.ui.imgui.table_row(parent=self.history, tag=f'match-{match.id}'):
-                with self.ui.imgui.table(header_row=False, no_clip=True):
-                    self.ui.imgui.add_table_column()  # Outcome, champ played, spells, runes
-                    self.ui.imgui.add_table_column()  # Lane, items
-                    self.ui.imgui.add_table_column()  # Game Type, kda
-                    self.ui.imgui.add_table_column()  # Vision, kp
-                    self.ui.imgui.add_table_column()  # CS
-                    self.ui.imgui.add_table_column()  # Match duration info, dmg
+            self.imgui.add_table_row(parent=self.history, tag=f'match-{match.id}')
 
-                    # region Row 1: Outcome, Lane, Game Type, Match duration info
-                    with self.ui.imgui.table_row():
-                        self.ui.imgui.add_text(outcome)
-                        self.ui.imgui.bind_item_font(self.ui.imgui.last_item(), self.ui.font['24 regular'])
+            with self.imgui.table(parent=f'match-{match.id}', header_row=False, no_clip=True):
+                # region Columns
+                self.imgui.add_table_column()  # Outcome, champ played, spells, runes
+                self.imgui.add_table_column()  # Lane, items
+                self.imgui.add_table_column()  # Game Type, kda
+                self.imgui.add_table_column()  # Vision, kp
+                self.imgui.add_table_column()  # CS
+                self.imgui.add_table_column()  # Match duration info, dmg
+                # endregion Columns
 
-                        self.ui.imgui.add_text(played_position)
+                # region Row 1: Outcome, Lane, Game Type, Match duration info
+                with self.imgui.table_row():
+                    self.imgui.add_text(outcome)
+                    self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['24 regular'])
 
-                        self.ui.imgui.add_text(f'{queue:^15}')
+                    self.imgui.add_text(played_position)
 
-                        self.ui.imgui.add_spacer()
-                        self.ui.imgui.add_spacer()
+                    self.imgui.add_text(f'{queue:^15}')
 
-                        self.ui.imgui.add_text(f'{duration:>20}')
-                    # endregion Row 1: Outcome, Lane, Game Type, Match duration info
+                    self.imgui.add_spacer()
+                    self.imgui.add_spacer()
 
-                    # region Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
-                    with self.ui.imgui.table_row(height=rune_size[1]):
-                        with self.ui.imgui.group(horizontal=True):
-                            if not self.ui.check_image_cache('champion-' + player.champion.name):
-                                champion_played = self.ui.load_image(
-                                    'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
-                                )
-                            else:
-                                champion_played = self.ui.load_image(champion_played, size=champ_size)
+                    self.imgui.add_text(f'{duration:>20}')
+                # endregion Row 1: Outcome, Lane, Game Type, Match duration info
 
-                            # Place a filler image for the champion icon (hack to span 2 rows)
-                            self.ui.imgui.add_image(
+                # region Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
+                with self.imgui.table_row(height=rune_size[1]):
+                    with self.imgui.group(horizontal=True):
+                        if not self.ui.check_image_cache('champion-' + player.champion.name):
+                            champion_played = self.ui.load_image(
+                                'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
+                            )
+                        else:
+                            champion_played = self.ui.load_image(champion_played, size=champ_size)
+
+                        # Place a filler image for the champion icon (hack to span 2 rows)
+                        self.imgui.add_image(
+                            texture_tag='CACHED_IMAGE-filler',
+                            width=champ_size[0],
+                            height=rune_size[1],
+                            tag=f'champ-icon-holder-{match.id}',
+                        )
+                        # Draw a frame
+                        self.ui.render_frames(render)
+
+                        champ_icons.append(f'champ-icon-{match.id}')
+                        # Place the champion icon over the filler image
+                        self.imgui.add_image(
+                            texture_tag=champion_played,
+                            tag=f'champ-icon-{match.id}',
+                            parent='match_history',
+                            pos=self.imgui.get_item_pos(f'champ-icon-holder-{match.id}')
+                        )
+
+                        if not self.ui.check_image_cache('spell-' + spell_d.name):
+                            spell_d_used = self.ui.load_image(
+                                'spell-' + spell_d.name, self.ui.PIL, spell_d_used, size=spell_size
+                            )
+                        else:
+                            spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
+                        self.imgui.add_image(texture_tag=spell_d_used)
+
+                        if queue == 'Arena':
+                            self.imgui.add_image(
                                 texture_tag='CACHED_IMAGE-filler',
-                                width=champ_size[0],
+                                width=rune_size[0],
                                 height=rune_size[1],
-                                tag=f'champ-icon-holder-{match.id}',
                             )
-                            # Draw a frame
-                            self.ui.render_frames()
-
-                            champ_icons.append(f'champ-icon-{match.id}')
-                            # Place the champion icon over the filler image
-                            self.ui.imgui.add_image(
-                                texture_tag=champion_played,
-                                tag=f'champ-icon-{match.id}',
-                                parent='match_history',
-                                pos=self.ui.imgui.get_item_pos(f'champ-icon-holder-{match.id}')
+                        elif not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
+                            key_rune_used = self.ui.load_image(
+                                'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
                             )
+                            self.imgui.add_image(texture_tag=key_rune_used)
+                        else:
+                            key_rune_used = self.ui.load_image(runes_taken['key']['image'], size=rune_size)
+                            self.imgui.add_image(texture_tag=key_rune_used)
 
-                            if not self.ui.check_image_cache('spell-' + spell_d.name):
-                                spell_d_used = self.ui.load_image(
-                                    'spell-' + spell_d.name, self.ui.PIL, spell_d_used, size=spell_size
-                                )
-                            else:
-                                spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
-                            self.ui.imgui.add_image(texture_tag=spell_d_used)
-
-                            if queue == 'Arena':
-                                self.ui.imgui.add_image(
-                                    texture_tag='CACHED_IMAGE-filler',
-                                    width=rune_size[0],
-                                    height=rune_size[1],
-                                )
-                            elif not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
-                                key_rune_used = self.ui.load_image(
-                                    'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
-                                )
-                                self.ui.imgui.add_image(texture_tag=key_rune_used)
-                            else:
-                                key_rune_used = self.ui.load_image(runes_taken['key']['image'], size=rune_size)
-                                self.ui.imgui.add_image(texture_tag=key_rune_used)
-
-                        # Show the first 3 items
-                        with self.ui.imgui.group(horizontal=True):
-                            for item in items:
-                                if counter < 3:
-                                    # Load the image if it is not a placeholder
-                                    if item['item'] != 'filler':
-                                        if not self.ui.check_image_cache(f'item-{item["item"]}'):
-                                            image = self.ui.load_image(
-                                                'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
-                                            )
-                                        else:
-                                            image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
-                                        self.ui.imgui.add_image(texture_tag=image)
-                                    # Handle cases where there are <3 items
-                                    else:
-                                        self.ui.imgui.add_image(
-                                            texture_tag='CACHED_IMAGE-filler',
-                                            width=item_size[0],
-                                            height=item_size[1],
+                    # Show the first 3 items
+                    with self.imgui.group(horizontal=True):
+                        for item in items:
+                            if counter < 3:
+                                # Load the image if it is not a placeholder
+                                if item['item'] != 'filler':
+                                    if not self.ui.check_image_cache(f'item-{item["item"]}'):
+                                        image = self.ui.load_image(
+                                            'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
                                         )
+                                    else:
+                                        image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
+                                    self.imgui.add_image(texture_tag=image)
+                                # Handle cases where there are <3 items
                                 else:
-                                    continue
-                                counter += 1
-                            # Filler '4th item' in this row to show above trinket
-                            self.ui.imgui.add_image(
+                                    self.imgui.add_image(
+                                        texture_tag='CACHED_IMAGE-filler',
+                                        width=item_size[0],
+                                        height=item_size[1],
+                                    )
+                            else:
+                                continue
+                            counter += 1
+                        # Filler '4th item' in this row to show above trinket
+                        self.imgui.add_image(
+                            texture_tag='CACHED_IMAGE-filler',
+                            width=item_size[0],
+                            height=item_size[1],
+                        )
+
+                    self.imgui.add_text(f'{kda_display:^15}')
+
+                    if match.map.id != 11:
+                        vision_min = filler
+                    self.imgui.add_text(f'{vision_min:^20}')
+
+                    self.imgui.add_text(f'{cs_min:^15}')
+
+                    self.imgui.add_text(f'{damage_min:^20}')
+                # endregion Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
+
+                # region Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
+                with self.imgui.table_row():
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_spacer(width=champ_size[0])
+
+                        if not self.ui.check_image_cache('spell-' + spell_f.name):
+                            spell_f_used = self.ui.load_image(
+                                'spell-' + spell_f.name, self.ui.PIL, spell_f_used, size=spell_size
+                            )
+                        else:
+                            spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
+                        self.imgui.add_image(texture_tag=spell_f_used)
+
+                        if queue == 'Arena':
+                            self.imgui.add_image(
                                 texture_tag='CACHED_IMAGE-filler',
-                                width=item_size[0],
-                                height=item_size[1],
+                                width=rune_size[0],
+                                height=rune_size[1],
                             )
+                        elif not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
+                            secondary_rune_used = self.ui.load_image(
+                                'rune-' + runes_taken['secondary']['name'],
+                                self.ui.PIL,
+                                secondary_rune_used,
+                                size=rune_size,
+                            )
+                            self.imgui.add_image(texture_tag=secondary_rune_used)
+                        else:
+                            secondary_rune_used = self.ui.load_image(
+                                f'rune-{runes_taken["secondary"]["name"]}',
+                                size=rune_size,
+                            )
+                            self.imgui.add_image(texture_tag=secondary_rune_used)
 
-                        self.ui.imgui.add_text(f'{kda_display:^15}')
-
-                        if match.map.id != 11:
-                            vision_min = filler
-                        self.ui.imgui.add_text(f'{vision_min:^20}')
-
-                        self.ui.imgui.add_text(f'{cs_min:^15}')
-
-                        self.ui.imgui.add_text(f'{damage_min:^20}')
-                    # endregion Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
-
-                    # region Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
-                    with self.ui.imgui.table_row():
-                        with self.ui.imgui.group(horizontal=True):
-                            self.ui.imgui.add_spacer(width=champ_size[0])
-
-                            if not self.ui.check_image_cache('spell-' + spell_f.name):
-                                spell_f_used = self.ui.load_image(
-                                    'spell-' + spell_f.name, self.ui.PIL, spell_f_used, size=spell_size
-                                )
-                            else:
-                                spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
-                            self.ui.imgui.add_image(texture_tag=spell_f_used)
-
-                            if queue == 'Arena':
-                                self.ui.imgui.add_image(
-                                    texture_tag='CACHED_IMAGE-filler',
-                                    width=rune_size[0],
-                                    height=rune_size[1],
-                                )
-                            elif not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
-                                secondary_rune_used = self.ui.load_image(
-                                    'rune-' + runes_taken['secondary']['name'],
-                                    self.ui.PIL,
-                                    secondary_rune_used,
-                                    size=rune_size,
-                                )
-                                self.ui.imgui.add_image(texture_tag=secondary_rune_used)
-                            else:
-                                secondary_rune_used = self.ui.load_image(
-                                    f'rune-{runes_taken["secondary"]["name"]}',
-                                    size=rune_size,
-                                )
-                                self.ui.imgui.add_image(texture_tag=secondary_rune_used)
-
-                        # Show the last 3 items, and the trinket
-                        counter = 0
-                        with self.ui.imgui.group(horizontal=True):
-                            for item in items:
-                                # Skip the first 3 items
-                                if counter >= 3:
-                                    # Load the image if it is not a placeholder
-                                    if item['item'] != 'filler':
-                                        if not self.ui.check_image_cache(f'item-{item["item"]}'):
-                                            image = self.ui.load_image(
-                                                'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
-                                            )
-                                        else:
-                                            image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
-                                        self.ui.imgui.add_image(texture_tag=image)
-                                    # Handle cases where there are <3 items
-                                    else:
-                                        self.ui.imgui.add_image(
-                                            texture_tag='CACHED_IMAGE-filler',
-                                            width=item_size[0],
-                                            height=item_size[1],
+                    # Show the last 3 items, and the trinket
+                    counter = 0
+                    with self.imgui.group(horizontal=True):
+                        for item in items:
+                            # Skip the first 3 items
+                            if counter >= 3:
+                                # Load the image if it is not a placeholder
+                                if item['item'] != 'filler':
+                                    if not self.ui.check_image_cache(f'item-{item["item"]}'):
+                                        image = self.ui.load_image(
+                                            'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
                                         )
-                                # Just iterate to the 4th item
+                                    else:
+                                        image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
+                                    self.imgui.add_image(texture_tag=image)
+                                # Handle cases where there are <3 items
                                 else:
-                                    counter += 1
+                                    self.imgui.add_image(
+                                        texture_tag='CACHED_IMAGE-filler',
+                                        width=item_size[0],
+                                        height=item_size[1],
+                                    )
+                            # Just iterate to the 4th item
+                            else:
+                                counter += 1
 
-                        self.ui.imgui.add_text(f'{k_d_a_display:^15}')
+                    self.imgui.add_text(f'{k_d_a_display:^15}')
 
-                        if match.map.id != 11:
-                            vision = filler
-                        self.ui.imgui.add_text(f'{vision:^20}')
+                    if match.map.id != 11:
+                        vision = filler
+                    self.imgui.add_text(f'{vision:^20}')
 
-                        self.ui.imgui.add_text(f'{total_cs:^15}')
+                    self.imgui.add_text(f'{total_cs:^15}')
 
-                        self.ui.imgui.add_text(f'{damage:^20}')
-                    # endregion Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
+                    self.imgui.add_text(f'{damage:^20}')
+                # endregion Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
 
-                    with self.ui.imgui.table_row():
-                        self.ui.imgui.add_spacer(height=5)
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=5)
 
-            self.ui.imgui.set_table_row_color(
+            self.imgui.set_table_row_color(
                 table=self.history,
                 row=row_count,
                 color=background_color,
             )
             row_count += 1
 
-        # region Workaround for multi-row-spanning champion image
+        # region Handler and Callback for moving champ icons when the window is resized
         # Once match data is visible, add the champion image
         def resize_call(sender):
             # Get the match id
             match_id = sender.split('-')[-1]
 
-            # Add the image
-            self.ui.imgui.add_image(
-                texture_tag=champ_icons[match_id],
-                tag='champ-icon-' + match_id,
-                parent='match_history',
-                pos=self.ui.imgui.get_item_pos('champ-icon-holder-' + match_id)
+            # Move the image
+            self.imgui.set_item_pos(
+                item=f'champ-icon-{match_id}',
+                pos=self.imgui.get_item_pos(f'champ-icon-holder-{match_id}'),
             )
 
-            # Delete the visibility handler
-            self.ui.imgui.delete_item(item=sender)
-
         # Add a handler for when match data is visible, so we can get the position at that time
-        #for icon in champ_icons:
-        #    with self.ui.imgui.item_handler_registry():
-        #        self.ui.imgui.add_item_visible_handler(callback=resize_call, tag=icon)
-        #    self.ui.imgui.bind_item_handler_registry('champ-icon-ref-' + icon, self.ui.imgui.last_container())
-
-        # TODO: Add a self.history resize handler that doesn't get removed, and adjusts the image position
-        # endregion Workaround for multi-row-spanning champion image
+        with self.imgui.item_handler_registry():
+            for icon in champ_icons:
+                self.imgui.add_item_resize_handler(callback=resize_call, tag=f'resize_handler-{icon}')
+        self.imgui.bind_item_handler_registry(self.ui.screen, self.imgui.last_container())
+        # endregion Handler and Callback for moving champ icons when the window is resized
 
     def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
-        if self.ui.imgui.does_item_exist('login'):
-            self.ui.imgui.delete_item('login')
+        if self.imgui.does_item_exist('login'):
+            self.imgui.delete_item('login')
 
-        if self.ui.imgui.does_item_exist('loading'):
-            self.ui.imgui.delete_item('loading')
+        if self.imgui.does_item_exist('loading'):
+            self.imgui.delete_item('loading')
 
         if delete_history:
-            if self.ui.imgui.does_item_exist('match_history'):
-                self.ui.imgui.delete_item('match_history')
+            if self.imgui.does_item_exist('match_history'):
+                self.imgui.delete_item('match_history')
 
         if delete_current:
-            if self.ui.imgui.does_item_exist(self.ui.screen):
-                self.ui.imgui.delete_item(self.ui.screen)
+            if self.imgui.does_item_exist(self.ui.screen):
+                self.imgui.delete_item(self.ui.screen)
 
     def __del__(self):
         self.ui.clear_screen()
