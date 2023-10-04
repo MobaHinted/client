@@ -15,7 +15,7 @@ import hinter.struct.user
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
-    games_shown: int = 120
+    games_shown: int = 50
     rank: cassiopeia.Rank
     average_kda: float
     level = 0
@@ -51,23 +51,66 @@ class MatchHistory:
             else:
                 self.rank = None
 
-        # Error out if that code doesn't work, which indicates an invalid API key
+        # Error out if that code doesn't work, which indicates an API issue
         except Exception as e:
-            if self.ui.imgui.does_item_exist('login'):
-                self.ui.imgui.delete_item('login')
+            self.delete_previous_screens(delete_current=True)
 
-            if self.ui.imgui.does_item_exist('loading'):
-                self.ui.imgui.delete_item('loading')
+            self.ui.imgui.set_viewport_min_width(350)
+            self.ui.imgui.set_viewport_width(350)
+            self.ui.imgui.set_viewport_min_height(600)
+            self.ui.imgui.set_viewport_height(600)
 
-            with self.ui.imgui.window(tag='error'):
-                self.ui.imgui.add_spacer(height=225)
-                text = 'This API key is invalid or expired.'
-                self.ui.imgui.add_text(f'{text:^40}')
-                text = 'Please enter a new one.'
-                self.ui.imgui.add_text(f'{text:^40}')
-            self.ui.imgui.set_primary_window('error', True)
-            self.ui.imgui.start_dearpygui()
-            exit(403)
+            if '503' in str(e):
+                region = cassiopeia.Region(hinter.settings.region)
+                platform = cassiopeia.Platform[region.name].value.lower()
+
+                with self.ui.imgui.window(tag='error'):
+                    self.ui.imgui.add_spacer(height=150)
+
+                    text = 'Riot services are unavailable.'
+                    self.ui.imgui.add_text(f'{text:^40}')
+                    text = 'Please try later.'
+                    self.ui.imgui.add_text(f'{text:^40}')
+
+                    self.ui.imgui.add_spacer(height=40)
+
+                    text = 'You can check the LoL status page:'
+                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.ui.imgui.add_button(
+                        label='Open status.rito Page',
+                        callback=lambda: webbrowser.open(f'https://status.riotgames.com/lol?region={platform}'),
+                        width=-1,
+                    )
+                    text = '(rarely posted if issues are unexpected)'
+                    self.ui.imgui.add_text(f'{text:^40}')
+
+                self.ui.imgui.set_primary_window('error', True)
+                self.ui.imgui.start_dearpygui()
+                exit(503)
+            elif '403' in str(e):
+                with self.ui.imgui.window(tag='error'):
+                    self.ui.imgui.add_spacer(height=175)
+                    text = 'This API key is invalid or expired.'
+                    self.ui.imgui.add_text(f'{text:^40}')
+                    text = 'Please enter a new one.'
+                    self.ui.imgui.add_text(f'{text:^40}')
+
+                    self.ui.imgui.add_spacer(height=20)
+
+                    text = 'You can get a new one here:'
+                    self.ui.imgui.add_text(f'{text:^40}')
+                    self.ui.imgui.add_button(
+                        label='Open developer.rito Page',
+                        callback=lambda: webbrowser.open('https://developer.riotgames.com'),
+                        width=-1,
+                    )
+
+                self.ui.imgui.set_primary_window('error', True)
+                self.ui.imgui.start_dearpygui()
+                exit(403)
+            else:
+                print(e)
+                exit('unknown error')
 
         self.level = user.level
         self.icon = user.profile_icon
@@ -829,6 +872,21 @@ class MatchHistory:
 
         # TODO: Add a self.history resize handler that doesn't get removed, and adjusts the image position
         # endregion Workaround for multi-row-spanning champion image
+
+    def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
+        if self.ui.imgui.does_item_exist('login'):
+            self.ui.imgui.delete_item('login')
+
+        if self.ui.imgui.does_item_exist('loading'):
+            self.ui.imgui.delete_item('loading')
+
+        if delete_history:
+            if self.ui.imgui.does_item_exist('match_history'):
+                self.ui.imgui.delete_item('match_history')
+
+        if delete_current:
+            if self.ui.imgui.does_item_exist(self.ui.screen):
+                self.ui.imgui.delete_item(self.ui.screen)
 
     def __del__(self):
         self.ui.clear_screen()
