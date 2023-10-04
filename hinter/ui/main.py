@@ -238,6 +238,7 @@ class UI:
                     self.center_window('settings-popup'),
                 ),
             )
+            self.ready_settings_window()
             # endregion Settings Menu
 
             # region Data Menu
@@ -256,7 +257,7 @@ class UI:
                     label='Add User',
                     callback=lambda: (hinter.users.add_user(self)),
                 )
-                self.imgui.add_menu_item(label='', enabled=False)
+                self.add_menu_separator()
 
                 # List each user, with the option to remove that user
                 users = hinter.users.list_users(self.screen)
@@ -282,7 +283,7 @@ class UI:
 
                 # Option to remove a user
                 if len(users) > 0:
-                    self.add_menu_separator(parent='menu-user', check=False)
+                    self.add_menu_separator()
                     self.imgui.add_menu_item(
                         label='Remove User',
                         callback=lambda: (hinter.users.remove_user(self)),
@@ -296,7 +297,7 @@ class UI:
                     callback=lambda: (),
                 )
 
-                self.imgui.add_menu_item(label='', enabled=False)
+                self.add_menu_separator()
 
                 self.imgui.add_menu_item(
                     label='Offer Feedback',
@@ -313,7 +314,7 @@ class UI:
                     callback=lambda: (),
                 )
 
-                self.imgui.add_menu_item(label='', enabled=False)
+                self.add_menu_separator()
 
                 self.imgui.add_menu_item(
                     label='Contribute Code',
@@ -333,7 +334,446 @@ Open Source at github.com/zbee/mobahinted''',
                 )
             # endregion About Menu
 
-    def add_menu_separator(self, parent: str, check: bool = None):
+    def ready_settings_window(self):
+        if self.imgui.does_item_exist(item='settings-popup'):
+            return
+
+        # Make sure the popup can be hidden
+        def close_popup():
+            self.imgui.hide_item(item='settings-popup')
+
+        # Show the popup
+        with self.imgui.window(
+                label='Settings',
+                modal=True,
+                tag='settings-popup',
+                width=600,
+                height=550,
+                no_move=True,
+                no_collapse=True,
+                on_close=close_popup,
+                show=False,
+        ):
+            users = hinter.users.list_users()
+
+            with self.imgui.table(header_row=False, no_clip=True):
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+                self.imgui.add_table_column()
+
+                # region Overlay Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('Overlays')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Milestone Notifications',
+                        default_value=False,
+                    )
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label='CS Tracker and Stats Window',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Objective Reminders',
+                        default_value=False,
+                    )
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label='Enemy Spell Tracker',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Jungle Timers',
+                        default_value=False,
+                    )
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label='ARAM Health Timers',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Scoreboard Duos",
+                        default_value=False,
+                    )
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label="Gold Diff Tracker",
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Map Check Reminder',
+                            default_value=True,
+                        )
+                        self.imgui.add_button(label='G')
+                        # TODO: Make this the assets/settings.png, and add it to all overlays
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label='Back Reminder',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Use Trinket Reminder',
+                        default_value=False,
+                    )
+                    self.imgui.add_spacer()
+                    self.imgui.add_checkbox(
+                        label='Counter Item Suggestions',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='View all Overlay positions')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+                with self.imgui.table_row():
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=20)
+                # endregion Overlay Section
+
+                # region Behavior Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('Application Behavior')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Launch MobaHinted on system startup',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Keep MobaHinted up to date automatically',
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Close MobaHinted to the tray',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Bring MobaHinted to the front on window change',
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Always show MobaHinted in the same place',
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label='Detect new accounts automatically',
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show my rank to me",
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show teammate ranks",
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show enemy ranks",
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show game average ranks",
+                        default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show the current-play-session window",
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show pre-game/lobby info as a separate window",
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show pre-game build suggestions as a separate window",
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Automatically close the pre-game build suggestions window",
+                        default_value=True,
+                        indent=25,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(
+                        label="Show post-game as a separate window",
+                        default_value=False,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Customize Theme')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+                with self.imgui.table_row():
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=20)
+                # endregion Behavior Section
+
+                # region Accounts Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('Accounts')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text('Current Account:')
+                    self.imgui.add_combo(items=[e.username for e in users], default_value=hinter.settings.active_user, width=-1)
+                    self.imgui.add_text('Current Region:')
+                    self.imgui.add_combo(
+                        items=[e.value for e in cassiopeia.data.Region],
+                        default_value=hinter.settings.region,
+                        width=60
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text('Add an Account:')
+                    self.imgui.add_input_text(hint='League Name', width=-1)
+                    self.imgui.add_text('On Region:')
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_combo(
+                            items=[e.value for e in cassiopeia.data.Region],
+                            default_value=hinter.settings.region,
+                            width=60
+                        )
+                        self.imgui.add_button(label='Add >', width=-1)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+                with self.imgui.table_row():
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=20)
+                # endregion Accounts Section
+
+                # region Privacy Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('Privacy')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text('Current Data Pipeline:')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=10)
+
+                with self.imgui.table_row():
+                    pipeline = 'MHK,Cdragon'
+
+                    if pipeline == 'MHK,Cdragon':
+                        with self.imgui.group(horizontal=True):
+                            self.imgui.add_combo(
+                                items=[
+                                    'Most Private',       # Riot dev key
+                                    'Private, Accurate',  # Riot dev key and cdragon
+                                    'Fast, Accurate',     # CDragon and MHK
+                                ],
+                                default_value='Fast, Accurate',
+                                width=165,
+                            )
+                            self.imgui.add_text(': CommunityDragon > Mobahinted Proxy > Riot')
+                    if pipeline == 'Dev Key':
+                        with self.imgui.group(horizontal=True):
+                            self.imgui.add_button(label='Mobahinted', enabled=False)
+                            self.imgui.add_text('>')
+                            self.imgui.add_button(label='Riot', enabled=False)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_checkbox(label='Enable Telemetry', default_value=False)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=5)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text(
+                        '''If enabled, Mobahinted will send anonymous usage data to the developer.
+Only the owning developer has access to the data, and the data is only
+relevant to improving the application.''',
+                        wrap=-1,
+                    )
+
+                with self.imgui.table_row():
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_text('To see what data would be provided, look here:')
+                        self.imgui.add_button(label='Telemetry Overview')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+                with self.imgui.table_row():
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=20)
+                # endregion Privacy Section
+
+                # region Help Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('Help')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Package Logs')
+                    self.imgui.add_spacer()
+                    self.imgui.add_spacer()
+                    self.imgui.add_button(label='Report an issue')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Clear and Reload game Data')
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Clear MobaHinted item/rune pages')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Clear all auto-generated item/rune pages')
+
+                with self.imgui.table_row():
+                    self.imgui.add_text(
+                        'This will remove all item/rune pages labelled as MobaHinted/Blitz/etc.'
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Reset MobaHinted')
+
+                with self.imgui.table_row():
+                    self.imgui.add_text(
+                        '''This will remove all item/rune pages labelled as MobaHinted, default
+all MobaHinted settings, clear all added accounts, and clear all cached
+game data.'''
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+                with self.imgui.table_row():
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=20)
+                # endregion Help Section
+
+                # region About Section
+                with self.imgui.table_row():
+                    self.imgui.add_text('About')
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text(
+                        '''Made by zbee, mostly in season 13.
+Copyright 2020 Ethan Henderson. Available under the GPLv3 license.
+Open Source at github.com/zbee/mobahinted'''
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_text('League Patch:')
+                    self.imgui.add_text(cassiopeia.get_version(region=hinter.settings.region))
+                    self.imgui.add_text('Mobahinted Ver.:')
+                    self.imgui.add_text(hinter.settings.version)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer()
+                    self.imgui.add_spacer()
+                    self.imgui.add_button(label='View Changelog', width=-1)
+                    self.imgui.add_button(label='Check for Update', width=-1)
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_button(label='Support the Project', width=570)
+                # endregion About Section
+
+    def add_menu_separator(self, parent: str = 0):
         # Simply adding a separator to the menu via a disabled, empty menu item
         self.imgui.add_menu_item(label='', parent=parent, enabled=False)
 
