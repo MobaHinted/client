@@ -28,9 +28,14 @@ class UI:
     user_available: bool = False
     data_loader: hinter.background.dataloader.DataLoader
     filler_image: str
+    move_on_callback: callable
+    render: bool
+    data_loader: hinter.background.dataloader.DataLoader
 
     def __init__(self, move_on_callback):
+        self.move_on_callback = move_on_callback
         self.imgui.create_context()
+        self.imgui_init()
 
         # Set up Fira Code for use
         with self.imgui.font_registry():
@@ -68,10 +73,14 @@ class UI:
             height=600,
             small_icon='./assets/logo.ico',
             large_icon='./assets/logo.ico',
+            x_pos=int(hinter.settings.x),
+            y_pos=int(hinter.settings.y),
         )
+        self.imgui.set_exit_callback(self.exit_callback)
 
         self.filler_image = self.load_image('filler', self.FILE, './assets/filler.png', size=(1, 1))
 
+        # region Login flow
         def login_submit():
             username = self.imgui.get_value('add-username')
             region = self.imgui.get_value('add-region')
@@ -82,8 +91,9 @@ class UI:
             if added:
                 self.user_available = True
                 hinter.settings.write_setting('active_user', username)
-                data_loader = hinter.background.dataloader.DataLoader()
-                move_on_callback(ui=self, render=False)
+                self.data_loader = hinter.background.dataloader.DataLoader()
+                self.render = False
+                move_on_callback(ui=self, render=self.render)
                 self.imgui.render_dearpygui_frame()
 
         if hinter.settings.active_user == '':
@@ -143,6 +153,7 @@ class UI:
             self.imgui.set_primary_window(window=self.screen, value=True)
             self.imgui.show_viewport()
             self.imgui.set_viewport_resizable(False)
+        # endregion Login flow
         else:
             self.user_available = True
             self.screen = 'loading'
@@ -168,11 +179,12 @@ class UI:
                         self.imgui.add_loading_indicator()
                         self.imgui.add_spacer()
 
+            self.data_loader = hinter.background.dataloader.DataLoader()
             self.imgui.set_primary_window(window=self.screen, value=True)
             self.imgui.show_viewport()
             self.render_frames(120)
-            self.add_menu()
-            move_on_callback(ui=self, render=True)
+            self.render = True
+            move_on_callback(ui=self, render=self.render)
 
     def show_info_popup(self, title: str, text: str, width: int = 225, height: int = 125):
         # Wait one frame to ensure that other modals are closed
@@ -214,118 +226,112 @@ class UI:
 
     def add_menu(self):
         # Delete the old menu bar, if it exists, and add a new one
-        self.imgui.delete_item(item='menu')
-        self.imgui.add_menu_bar(tag='menu', parent=self.screen)
+        if self.imgui.does_item_exist('menu'):
+            self.imgui.delete_item(item='menu')
 
-        # region Settings Menu
-        self.imgui.add_menu_item(
-            label='Settings',
-            parent='menu',
-            callback=lambda: (
-                self.imgui.show_item(item='settings-popup'),
-                self.center_window('settings-popup'),
-            ),
-        )
-        # endregion Settings Menu
-
-        # region Data Menu
-        self.imgui.add_menu(label='Data', parent='menu', tag='menu-data')
-        self.imgui.add_menu_item(
-            label='Reload all data',
-            parent='menu-data',
-            callback=lambda: hinter.background.dataloader.data_loader.load_all(refresh=True)
-        )
-        # endregion Data Menu
-
-        # region User Menu
-        self.imgui.add_menu(label='User', parent='menu', tag='menu-user')
-
-        # Option to add a user
-        self.imgui.add_menu_item(
-            label='Add User',
-            parent='menu-user',
-            callback=lambda: (hinter.users.add_user(self)),
-        )
-        self.add_menu_separator(parent='menu-user')
-
-        # List each user, with the option to remove that user
-        users = hinter.users.list_users(self.screen)
-        for user in users:
-            username = user.username
-
-            # Check if the user is the one currently selected
-            selected = ''
-            if hinter.settings.active_user == username:
-                selected = '<-'
-
-            # Add the user to the menu
+        with self.imgui.menu_bar(tag='menu', parent=self.screen):
+            # region Settings Menu
             self.imgui.add_menu_item(
-                label=username,
-                parent='menu-user',
-                callback=lambda: (hinter.users.select_user(self)),
-                shortcut=selected,
+                label='Settings',
+                callback=lambda: (
+                    self.imgui.show_item(item='settings-popup'),
+                    self.center_window('settings-popup'),
+                ),
             )
+            # endregion Settings Menu
 
-        # Option to remove a user
-        if len(users) > 0:
-            self.add_menu_separator(parent='menu-user', check=False)
-            self.imgui.add_menu_item(
-                label='Remove User',
-                parent='menu-user',
-                callback=lambda: (hinter.users.remove_user(self)),
-            )
-        # endregion User Menu
+            # region Data Menu
+            with self.imgui.menu(label='Data', tag='menu-data'):
+                self.imgui.add_menu_item(
+                    label='Reload all data',
+                    parent='menu-data',
+                    callback=lambda: self.data_loader.load_all(refresh=True)
+                )
+            # endregion Data Menu
 
-        # region Help Menu
-        self.imgui.add_menu(label='Help', parent='menu', tag='menu-help')
+            # region User Menu
+            with self.imgui.menu(label='User', tag='menu-user'):
+                # Option to add a user
+                self.imgui.add_menu_item(
+                    label='Add User',
+                    callback=lambda: (hinter.users.add_user(self)),
+                )
+                self.imgui.add_menu_item(label='', enabled=False)
 
-        self.imgui.add_menu_item(
-            label='Quick Guide',
-            parent='menu-help',
-            callback=lambda: (),
-        )
+                # List each user, with the option to remove that user
+                users = hinter.users.list_users(self.screen)
+                for user in users:
+                    username = user.username
 
-        self.add_menu_separator(parent='menu-help', check=False)
+                    # Check if the user is the one currently selected
+                    selected = ''
+                    if hinter.settings.active_user == username:
+                        selected = '<-'
 
-        self.imgui.add_menu_item(
-            label='Offer Feedback',
-            parent='menu-help',
-            callback=lambda: (),
-        )
+                    # Add the user to the menu
+                    self.imgui.add_menu_item(
+                        tag=f'menu-user-{username}',
+                        label=username,
+                        callback=lambda sender: (
+                            hinter.users.select_user(sender.split('-')[-1]),
+                            self.move_on_callback(ui=self, render=not self.render),
+                            print('selecting new user:' + sender.split('-')[-1])
+                        ),
+                        shortcut=selected,
+                    )
 
-        self.imgui.add_menu_item(
-            label='Report an Issue',
-            parent='menu-help',
-            callback=lambda: (),
-        )
+                # Option to remove a user
+                if len(users) > 0:
+                    self.add_menu_separator(parent='menu-user', check=False)
+                    self.imgui.add_menu_item(
+                        label='Remove User',
+                        callback=lambda: (hinter.users.remove_user(self)),
+                    )
+            # endregion User Menu
 
-        self.imgui.add_menu_item(
-            label='Suggest a feature',
-            parent='menu-help',
-            callback=lambda: (),
-        )
+            # region Help Menu
+            with self.imgui.menu(label='Help', tag='menu-help'):
+                self.imgui.add_menu_item(
+                    label='Quick Guide',
+                    callback=lambda: (),
+                )
 
-        self.add_menu_separator(parent='menu-help', check=False)
+                self.imgui.add_menu_item(label='', enabled=False)
 
-        self.imgui.add_menu_item(
-            label='Contribute Code',
-            parent='menu-help',
-            callback=lambda: (),
-        )
-        # endregion About Menu
+                self.imgui.add_menu_item(
+                    label='Offer Feedback',
+                    callback=lambda: (),
+                )
 
-        # region About Menu
-        self.imgui.add_menu(label='About', parent='menu', tag='menu-about')
+                self.imgui.add_menu_item(
+                    label='Report an Issue',
+                    callback=lambda: (),
+                )
 
-        self.imgui.add_menu_item(
-            label='''Made by zbee, mostly in season 13
+                self.imgui.add_menu_item(
+                    label='Suggest a feature',
+                    callback=lambda: (),
+                )
+
+                self.imgui.add_menu_item(label='', enabled=False)
+
+                self.imgui.add_menu_item(
+                    label='Contribute Code',
+                    callback=lambda: (),
+                )
+            # endregion About Menu
+
+            # region About Menu
+            with self.imgui.menu(label='About', tag='menu-about'):
+
+                self.imgui.add_menu_item(
+                    label='''Made by zbee, mostly in season 13
 Copyright 2020 Ethan Henderson
 Available under the GPLv3 license
 Open Source at github.com/zbee/mobahinted''',
-            parent='menu-about',
-            enabled=False,
-        )
-        # endregion About Menu
+                    enabled=False,
+                )
+            # endregion About Menu
 
     def add_menu_separator(self, parent: str, check: bool = None):
         # Simply adding a separator to the menu via a disabled, empty menu item
@@ -518,3 +524,39 @@ Open Source at github.com/zbee/mobahinted''',
         :return: A boolean specifying whether the image is cached.
         """
         return os.path.exists(f'./data/image_cache/{image_name}.png')
+
+    def exit_callback(self):
+        window_position = self.imgui.get_viewport_pos()
+
+        hinter.settings.write_setting('x', window_position[0])
+        hinter.settings.write_setting('y', window_position[1])
+
+    def imgui_init(self, save: bool = False):
+        """Method to load or save ImGUI's init file
+
+        This method first ensures the init file exists, then either loads or saves it.
+
+        .. warning::
+            Loading should only be handled in the UI class
+
+        :param save: Whether we are saving or loading an init file
+        """
+        saving = save
+        init_file = './data/imgui.ini'
+
+        # Make the directory and file as needed
+        if not os.path.exists('./data/'):
+            os.mkdir('./data')
+        if not os.path.exists(init_file):
+            open(init_file, 'w+')
+            # Don't load a brand new, empty file
+            return
+
+        # Don't try to load an empty file
+        elif os.stat(init_file).st_size == 0 and not saving:
+            return
+
+        if not saving:
+            self.imgui.configure_app(init_file=init_file, load_init_file=True)
+        else:
+            self.imgui.save_init_file(init_file)

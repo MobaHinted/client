@@ -9,13 +9,18 @@ import hinter.users
 # noinspection PySimplifyBooleanCheck
 class Settings:
     settings_file = './data/settings.dat'
-    region = ''
+    region = 'NA'
     active_user = ''
     settings_loaded = False
     version = '0.0.0'
     imgui = dearpygui.dearpygui
+    x: int = 10  # Window Position
+    y: int = 10
 
     def ready_settings_window(self):
+        if self.imgui.does_item_exist(item='settings-popup'):
+            return
+
         # Make sure the popup can be hidden
         def close_popup():
             self.imgui.hide_item(item='settings-popup')
