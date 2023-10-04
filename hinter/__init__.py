@@ -33,6 +33,13 @@ cassiopeia_settings = {
     },
 }
 
+'''
+cassiopeia-diskstore 1.1.3 does not work with v5 endpoints
+it is currently monkey-patched to make match history work
+https://github.com/meraki-analytics/cassiopeia/issues/384
+https://github.com/meraki-analytics/cassiopeia-datastores/pull/27
+'''
+
 # Set up Cassiopeia, either with local key or proxy kernel
 try:
     if not os.path.exists('.env'):

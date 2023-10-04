@@ -16,7 +16,7 @@ FONT_SCALE = 2
 
 class UI:
     imgui: dearpygui.dearpygui = dearpygui.dearpygui
-    screen: str = 'Login'
+    screen: str = 'login'
     font: dict = {
         'regular': None,
         'medium': None,
@@ -160,7 +160,7 @@ class UI:
 
                     with self.imgui.table_row():
                         self.imgui.add_spacer()
-                        self.imgui.add_text('Loading ...',)
+                        self.imgui.add_text('Loading')
                         self.imgui.add_spacer()
 
                     with self.imgui.table_row():
@@ -472,7 +472,7 @@ Open Source at github.com/zbee/mobahinted''',
         elif image_type == self.REMOTE:
             img = Image.open(requests.get(image, stream=True).raw)
         else:
-            print('hinter.UI: Cannot load image with un-handled type')
+            print('hinter.UI: Cannot load image with un-handled type', image_name, image_type, image)
             return self.filler_image
 
         # Crop if necessary

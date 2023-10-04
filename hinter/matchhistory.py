@@ -15,7 +15,7 @@ import hinter.struct.user
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
-    games_shown: int = 50
+    games_shown: int = 120
     rank: cassiopeia.Rank
     average_kda: float
     level = 0
@@ -37,24 +37,43 @@ class MatchHistory:
         else:
             return
 
+        self.ui = ui
+
         self.username = user.name
 
-        # Save variables
-        self.games = user.match_history
-        if cassiopeia.Queue.ranked_solo_fives in user.ranks:
-            self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]
-        elif cassiopeia.Queue.ranked_flex_fives in user.ranks:
-            self.rank = user.ranks[cassiopeia.Queue.ranked_flex_fives]
-        else:
-            self.rank = None
+        # Try to load rank
+        try:
+            self.games = user.match_history
+            if cassiopeia.Queue.ranked_solo_fives in user.ranks:
+                self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]
+            elif cassiopeia.Queue.ranked_flex_fives in user.ranks:
+                self.rank = user.ranks[cassiopeia.Queue.ranked_flex_fives]
+            else:
+                self.rank = None
+
+        # Error out if that code doesn't work, which indicates an invalid API key
+        except Exception as e:
+            if self.ui.imgui.does_item_exist('login'):
+                self.ui.imgui.delete_item('login')
+
+            if self.ui.imgui.does_item_exist('loading'):
+                self.ui.imgui.delete_item('loading')
+
+            with self.ui.imgui.window(tag='error'):
+                self.ui.imgui.add_spacer(height=225)
+                text = 'This API key is invalid or expired.'
+                self.ui.imgui.add_text(f'{text:^40}')
+                text = 'Please enter a new one.'
+                self.ui.imgui.add_text(f'{text:^40}')
+            self.ui.imgui.set_primary_window('error', True)
+            self.ui.imgui.start_dearpygui()
+            exit(403)
+
         self.level = user.level
         self.icon = user.profile_icon
 
         # Load match history information
         # self.games = user.match_history(count=50)
-
-        self.ui = ui
-
     def show_match_screen(self, render: bool = True):
         self.ui.new_screen(tag='match_history')
 
@@ -238,19 +257,26 @@ class MatchHistory:
 
             # region Determine type of game
             queue = match.queue.name
-            if match.queue == cassiopeia.data.Queue.ranked_solo_fives:
+            if match.queue == cassiopeia.data.Queue.ranked_solo_fives or \
+                    match.queue == cassiopeia.data.Queue.ranked_solo_fives.name:
                 queue = 'Ranked Solo'
-            elif match.queue == cassiopeia.data.Queue.ranked_flex_fives:
+            elif match.queue == cassiopeia.data.Queue.ranked_flex_fives or \
+                    match.queue == cassiopeia.data.Queue.ranked_flex_fives.name:
                 queue = 'Ranked Flex'
-            elif match.queue == cassiopeia.data.Queue.clash:
+            elif match.queue == cassiopeia.data.Queue.clash or \
+                    match.queue == cassiopeia.data.Queue.clash.name:
                 queue = 'Clash'
-            elif match.queue == cassiopeia.data.Queue.blind_fives:
+            elif match.queue == cassiopeia.data.Queue.blind_fives or \
+                    match.queue == cassiopeia.data.Queue.blind_fives.name:
                 queue = 'Normal Blind'
-            elif match.queue == cassiopeia.data.Queue.normal_draft_fives:
+            elif match.queue == cassiopeia.data.Queue.normal_draft_fives or \
+                    match.queue == cassiopeia.data.Queue.normal_draft_fives.name:
                 queue = 'Normal Draft'
-            elif match.queue == cassiopeia.data.Queue.aram:
+            elif match.queue == cassiopeia.data.Queue.aram or \
+                    match.queue == cassiopeia.data.Queue.aram.name:
                 queue = 'ARAM'
-            elif match.queue == cassiopeia.data.Queue.rings_of_wrath:
+            elif match.queue == cassiopeia.data.Queue.rings_of_wrath or \
+                    match.queue == cassiopeia.data.Queue.rings_of_wrath.name:
                 queue = 'Arena'
             else:
                 queue = queue.replace('_', ' ').title()
@@ -267,8 +293,7 @@ class MatchHistory:
             for participant in match.participants:
                 if participant.side.name == team:
                     team_kills += participant.stats.kills
-                    team_damage += \
-                        participant.stats.total_damage_dealt_to_champions
+                    team_damage += participant.stats.total_damage_dealt_to_champions
             # endregion Determine player's team's kill count
 
             # region Resolve ending condition of game
@@ -285,44 +310,59 @@ class MatchHistory:
 
             # region Runes Taken
             # Structure what runes the player took
-            runes_taken = {
-                'key': {
-                    'name': str,
-                    'image': Union[Image.Image, str],
-                    'path': str,
-                },
-                'secondary': {
-                    'name': str,
-                    'image': Union[Image.Image, str],
-                },
-                'runes': [],
-            }
+            if queue != 'Arena':
+                runes_taken = {
+                    'key': {
+                        'name': str,
+                        'image': Union[Image.Image, str],
+                        'path': str,
+                    },
+                    'secondary': {
+                        'name': str,
+                        'image': Union[Image.Image, str],
+                    },
+                    'runes': [],
+                }
 
-            # Resolve what runes the player took
-            for trash, rune in enumerate(player.runes):
-                rune: cassiopeia.Rune
+                # Resolve what runes the player took
+                for trash, rune in enumerate(player.runes):
+                    rune: cassiopeia.Rune
 
-                # Store keystone information
-                if rune.is_keystone:
-                    runes_taken['key']['name'] = rune.name
-                    runes_taken['key']['path'] = rune.path.name
+                    # Store keystone information
+                    if rune.is_keystone:
+                        runes_taken['key']['name'] = rune.name
+                        runes_taken['key']['path'] = rune.path.name
 
-                    if not self.ui.check_image_cache('rune-' + rune.name):
-                        runes_taken['key']['image'] = rune.image.image
-                    else:
-                        runes_taken['key']['image'] = 'rune-' + rune.name
+                        if not self.ui.check_image_cache('rune-' + rune.name):
+                            runes_taken['key']['image'] = rune.image.image
+                        else:
+                            runes_taken['key']['image'] = 'rune-' + rune.name
 
-                # Store secondary rune tree information
-                if rune.path.name != runes_taken['key']['path']:
-                    runes_taken['secondary']['name'] = rune.path.name
+                    # Store secondary rune tree information
+                    if rune.path.name != runes_taken['key']['path']:
+                        runes_taken['secondary']['name'] = rune.path.name
 
-                    if not self.ui.check_image_cache('rune-' + rune.path.name):
-                        runes_taken['secondary']['image'] = rune.path.image
-                    else:
-                        runes_taken['secondary']['image'] = 'rune-' + rune.path.name
+                        if not self.ui.check_image_cache('rune-' + rune.path.name):
+                            runes_taken['secondary']['image'] = rune.path.image
+                        else:
+                            runes_taken['secondary']['image'] = 'rune-' + rune.path.name
 
-                # Store list of actual runes used
-                runes_taken['runes'].append(rune.name)
+                    # Store list of actual runes used
+                    runes_taken['runes'].append(rune.name)
+            else:
+                # TODO: Patch runes trying to be read in cassiopeia on arena modes
+                runes_taken = {
+                    'key': {
+                        'name': 'na',
+                        'image': 'na',
+                        'path': 'na',
+                    },
+                    'secondary': {
+                        'name': 'na',
+                        'image': 'na',
+                    },
+                    'runes': [],
+                }
             # endregion Runes Taken
 
             '''Calculate and format match data'''
@@ -484,7 +524,10 @@ class MatchHistory:
             damage_of_team = int(round(damage / (team_damage + 0.1) * 100, 0))
             damage_min = int(round(damage / match_minutes, 0))
             damage_min = f'{damage_min:,} DMG/Min'
-            damage = f'{damage:,} DMG - {damage_of_team}%'
+            if queue != 'Arena':
+                damage = f'{damage:,} DMG - {damage_of_team}%'
+            else:
+                damage = f'{damage:,} DMG'
             # endregion Damage
 
             # region Vision
@@ -564,7 +607,6 @@ class MatchHistory:
 
             counter = 0
             with self.ui.imgui.table_row(parent=self.history, tag=f'match-{match.id}'):
-
                 with self.ui.imgui.table(header_row=False, no_clip=True):
                     self.ui.imgui.add_table_column()  # Outcome, champ played, spells, runes
                     self.ui.imgui.add_table_column()  # Lane, items
@@ -625,13 +667,20 @@ class MatchHistory:
                                 spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
                             self.ui.imgui.add_image(texture_tag=spell_d_used)
 
-                            if not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
+                            if queue == 'Arena':
+                                self.ui.imgui.add_image(
+                                    texture_tag='CACHED_IMAGE-filler',
+                                    width=rune_size[0],
+                                    height=rune_size[1],
+                                )
+                            elif not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
                                 key_rune_used = self.ui.load_image(
                                     'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
                                 )
+                                self.ui.imgui.add_image(texture_tag=key_rune_used)
                             else:
                                 key_rune_used = self.ui.load_image(runes_taken['key']['image'], size=rune_size)
-                            self.ui.imgui.add_image(texture_tag=key_rune_used)
+                                self.ui.imgui.add_image(texture_tag=key_rune_used)
 
                         # Show the first 3 items
                         with self.ui.imgui.group(horizontal=True):
@@ -687,19 +736,26 @@ class MatchHistory:
                                 spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
                             self.ui.imgui.add_image(texture_tag=spell_f_used)
 
-                            if not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
+                            if queue == 'Arena':
+                                self.ui.imgui.add_image(
+                                    texture_tag='CACHED_IMAGE-filler',
+                                    width=rune_size[0],
+                                    height=rune_size[1],
+                                )
+                            elif not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
                                 secondary_rune_used = self.ui.load_image(
                                     'rune-' + runes_taken['secondary']['name'],
                                     self.ui.PIL,
                                     secondary_rune_used,
                                     size=rune_size,
                                 )
+                                self.ui.imgui.add_image(texture_tag=secondary_rune_used)
                             else:
                                 secondary_rune_used = self.ui.load_image(
                                     f'rune-{runes_taken["secondary"]["name"]}',
                                     size=rune_size,
                                 )
-                            self.ui.imgui.add_image(texture_tag=secondary_rune_used)
+                                self.ui.imgui.add_image(texture_tag=secondary_rune_used)
 
                         # Show the last 3 items, and the trinket
                         counter = 0
