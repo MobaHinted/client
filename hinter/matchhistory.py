@@ -16,7 +16,7 @@ import hinter.struct.user
 class MatchHistory:
     games: cassiopeia.MatchHistory
     games_shown: int = 50
-    rank: cassiopeia.Rank
+    rank: Union[cassiopeia.Rank, None]
     average_kda: float
     level = 0
     icon = 0
@@ -28,6 +28,11 @@ class MatchHistory:
     right_bar: str = 'match_history_table-right'
     ui: hinter.ui.main.UI
     imgui: dearpygui.dearpygui = dearpygui.dearpygui
+    SUMMONERS_RIFT = 11
+    friends_played_with = {}
+    enemies_played_against = {}
+    lanes_played = {}
+    champions_played = {}
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.struct.user.User = None):
         # Load summoner information
@@ -118,8 +123,6 @@ class MatchHistory:
         self.level = user.level
         self.icon = user.profile_icon
 
-        # Load match history information
-        # self.games = user.match_history(count=50)
     def show_match_screen(self, render: bool = True):
         self.delete_previous_screens()
         self.ui.new_screen(tag='match_history')
@@ -281,6 +284,7 @@ class MatchHistory:
 
         row_count = 0
         # Loop through the first games
+        # noinspection PyTypeChecker
         for key, match in enumerate(self.games[0:self.games_shown]):
             self.ui.render_frames(render)
 
@@ -289,14 +293,14 @@ class MatchHistory:
             team: str = '?'
             player: cassiopeia.core.match.Participant
             player = cassiopeia.core.match.Participant()
-            player.stats: cassiopeia.core.match.ParticipantStats
+            # player.stats: cassiopeia.core.match.ParticipantStats
             team_kills: int = 0
             team_damage: int = 0
 
             loss_color = [220, 158, 158, 40]
             victory_color = [151, 199, 154, 60]
             remake_color = [255, 255, 255, 10]
-            background_color: str = remake_color
+            background_color = remake_color
             filler = ''
             # endregion Cast or setup multiple variables
 
@@ -304,6 +308,7 @@ class MatchHistory:
 
             # region Determine type of game
             # Handle old matches that can't be loaded
+            # noinspection PyBroadException
             try:
                 queue = match.queue.name
             except Exception:
@@ -341,13 +346,6 @@ class MatchHistory:
                     player = participant
             # endregion Determine stats of user whose match history this is
 
-            # region Determine player's team's kill count
-            for participant in match.participants:
-                if participant.side.name == team:
-                    team_kills += participant.stats.kills
-                    team_damage += participant.stats.total_damage_dealt_to_champions
-            # endregion Determine player's team's kill count
-
             # region Resolve ending condition of game
             if match.is_remake:
                 win = 'Remake'
@@ -358,7 +356,29 @@ class MatchHistory:
                 else:
                     win = 'Defeat'
                     background_color = loss_color
+
+            outcome = win
             # endregion Resolve ending condition of game
+
+            self.track_champions(
+                player.champion.name,
+                outcome
+            )
+
+            for participant in match.participants:
+                if participant.summoner.name != self.username:
+                    self.track_players(
+                        participant,
+                        outcome,
+                        participant.side.name == team
+                    )
+
+            # region Determine player's team's kill count
+            for participant in match.participants:
+                if participant.side.name == team:
+                    team_kills += participant.stats.kills
+                    team_damage += participant.stats.total_damage_dealt_to_champions
+            # endregion Determine player's team's kill count
 
             # region Runes Taken
             # Structure what runes the player took
@@ -377,17 +397,19 @@ class MatchHistory:
                 }
 
                 # Resolve what runes the player took
-                for trash, rune in enumerate(player.runes):
+                for _, rune in enumerate(player.runes):
                     rune: cassiopeia.Rune
 
                     # Store keystone information
                     if rune.is_keystone:
+                        # noinspection PyTypedDict
                         runes_taken['key']['name'] = rune.name
                         runes_taken['key']['path'] = rune.path.name
 
                         if not self.ui.check_image_cache('rune-' + rune.name):
                             runes_taken['key']['image'] = rune.image.image
                         else:
+                            # noinspection PyTypedDict
                             runes_taken['key']['image'] = 'rune-' + rune.name
 
                     # Store secondary rune tree information
@@ -424,8 +446,6 @@ class MatchHistory:
                 champion_played = player.champion.image.image
             else:
                 champion_played = 'champion-' + player.champion.name
-
-            outcome = win
 
             # region Match Timing
             # Calculate match length in minutes
@@ -466,11 +486,11 @@ class MatchHistory:
 
             # region Role
             # Only check any lane/role data if this is summoner's rift
-            if match.map.id == 11:
+            position: cassiopeia.data.Position = cassiopeia.data.Position.none
+            if match.map.id == self.SUMMONERS_RIFT:
                 # Determine role of player
                 role = str(player.stats.role)
                 lane = str(player.lane)
-                position: cassiopeia.data.Position = cassiopeia.data.Position.none
 
                 cassiopeia.core.Items(region=hinter.settings.region)
 
@@ -534,17 +554,23 @@ class MatchHistory:
                         position = cassiopeia.data.Position.bottom
                     elif 'mid' in lane:
                         position = cassiopeia.data.Position.middle
-                    elif 'top' in lane:
+                    elif 'top' in lane or has_teleport:
                         position = cassiopeia.data.Position.top
 
             # Undo labelling if not on summoner's rift
-            if match.map.id != 11:
+            if match.map.id != self.SUMMONERS_RIFT:
                 played_position = ''
             # Change 'utility' to 'support'
             elif position == cassiopeia.data.Position.utility:
                 played_position = 'Support'
             else:
                 played_position = position.name.capitalize()
+
+            if match.map.id == self.SUMMONERS_RIFT:
+                self.track_lanes(
+                    played_position,
+                    outcome
+                )
             # endregion Role
 
             # region Runes
@@ -770,7 +796,7 @@ class MatchHistory:
 
                     self.imgui.add_text(f'{kda_display:^15}')
 
-                    if match.map.id != 11:
+                    if match.map.id != self.SUMMONERS_RIFT:
                         vision_min = filler
                     self.imgui.add_text(f'{vision_min:^20}')
 
@@ -795,21 +821,21 @@ class MatchHistory:
                         if queue == 'Arena':
                             self.imgui.add_image(
                                 texture_tag='CACHED_IMAGE-filler',
-                                width=rune_size[0],
-                                height=rune_size[1],
+                                width=sec_rune_size[0],
+                                height=sec_rune_size[1],
                             )
                         elif not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
                             secondary_rune_used = self.ui.load_image(
                                 'rune-' + runes_taken['secondary']['name'],
                                 self.ui.PIL,
                                 secondary_rune_used,
-                                size=rune_size,
+                                size=sec_rune_size,
                             )
                             self.imgui.add_image(texture_tag=secondary_rune_used)
                         else:
                             secondary_rune_used = self.ui.load_image(
                                 f'rune-{runes_taken["secondary"]["name"]}',
-                                size=rune_size,
+                                size=sec_rune_size,
                             )
                             self.imgui.add_image(texture_tag=secondary_rune_used)
 
@@ -841,7 +867,7 @@ class MatchHistory:
 
                     self.imgui.add_text(f'{k_d_a_display:^15}')
 
-                    if match.map.id != 11:
+                    if match.map.id != self.SUMMONERS_RIFT:
                         vision = filler
                     self.imgui.add_text(f'{vision:^20}')
 
@@ -893,6 +919,16 @@ class MatchHistory:
         if delete_current:
             if self.imgui.does_item_exist(self.ui.screen):
                 self.imgui.delete_item(self.ui.screen)
+
+    def track_players(self, player, user_outcome, same_team_as_user):
+        self.friends_played_with
+        self.enemies_played_against
+
+    def track_lanes(self, position, outcome):
+        self.lanes_played
+
+    def track_champions(self, champion, outcome):
+        self.champions_played
 
     def __del__(self):
         self.ui.clear_screen()
