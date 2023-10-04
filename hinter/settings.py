@@ -10,6 +10,10 @@ class Settings:
     version = '0.0.0'
     x: int = 10  # Window Position
     y: int = 10
+    default_width: int = 1780  # Default Window Size
+    default_height: int = 670
+    width: int = 1780  # Window Size
+    height: int = 670
 
     def load_settings(self, refresh: bool = False):
         # Skip loading of settings if they are already loaded

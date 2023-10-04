@@ -979,6 +979,9 @@ Open Source at github.com/zbee/mobahinted'''
         hinter.settings.write_setting('x', window_position[0])
         hinter.settings.write_setting('y', window_position[1])
 
+        hinter.settings.write_setting('width', self.imgui.get_viewport_width())
+        hinter.settings.write_setting('height', self.imgui.get_viewport_height())
+
     def imgui_init(self, save: bool = False):
         """Method to load or save ImGUI's init file
 

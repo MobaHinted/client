@@ -241,10 +241,10 @@ class MatchHistory:
         # endregion Right Bar
 
         # Display screen
-        self.imgui.set_viewport_min_width(1780)
-        self.imgui.set_viewport_width(1780)
-        self.imgui.set_viewport_min_height(670)
-        self.imgui.set_viewport_height(670)
+        self.imgui.set_viewport_min_width(int(hinter.settings.default_width))
+        self.imgui.set_viewport_width(int(hinter.settings.width))
+        self.imgui.set_viewport_min_height(int(hinter.settings.default_height))
+        self.imgui.set_viewport_height(int(hinter.settings.height))
         self.ui.new_screen(tag='match_history', set_primary=True)
 
         self.ui.render_frames(60, split=not render)
