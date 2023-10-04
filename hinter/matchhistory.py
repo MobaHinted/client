@@ -1,4 +1,5 @@
 import datetime
+import webbrowser
 from typing import Union
 
 import dearpygui.dearpygui
@@ -299,7 +300,12 @@ class MatchHistory:
             '''Resolve some data to work from'''
 
             # region Determine type of game
-            queue = match.queue.name
+            # Handle old matches that can't be loaded
+            try:
+                queue = match.queue.name
+            except Exception:
+                continue
+
             if match.queue == cassiopeia.data.Queue.ranked_solo_fives or \
                     match.queue == cassiopeia.data.Queue.ranked_solo_fives.name:
                 queue = 'Ranked Solo'
