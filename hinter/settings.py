@@ -1,10 +1,5 @@
 import os.path
 
-import cassiopeia
-import dearpygui.dearpygui
-
-import hinter.users
-
 
 # noinspection PySimplifyBooleanCheck
 class Settings:
@@ -13,7 +8,6 @@ class Settings:
     active_user = ''
     settings_loaded = False
     version = '0.0.0'
-    imgui = dearpygui.dearpygui
     x: int = 10  # Window Position
     y: int = 10
 

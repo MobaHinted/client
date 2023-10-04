@@ -226,6 +226,7 @@ class Users:
         # Redraw the menu
         ui.add_menu()
 
+    # noinspection PyMethodMayBeStatic
     def select_user(self, username: str):
         # Write the variable to have an active user
         hinter.settings.write_setting(
