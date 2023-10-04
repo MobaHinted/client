@@ -273,6 +273,7 @@ class UI:
                     self.imgui.add_menu_item(
                         tag=f'menu-user-{username}',
                         label=username,
+                        # TODO: changing users here doesn't work. can't determine why
                         callback=lambda sender: (
                             hinter.users.select_user(sender.split('-')[-1]),
                             self.move_on_callback(ui=self, render=not self.render),
@@ -325,6 +326,7 @@ class UI:
             # region About Menu
             with self.imgui.menu(label='About', tag='menu-about'):
 
+                # noinspection SpellCheckingInspection
                 self.imgui.add_menu_item(
                     label='''Made by zbee, mostly in season 13
 Copyright 2020 Ethan Henderson
@@ -432,7 +434,7 @@ Open Source at github.com/zbee/mobahinted''',
                             default_value=True,
                         )
                         self.imgui.add_button(label='G')
-                        # TODO: Make this the assets/settings.png, and add it to all overlays
+                        # TODO: Make this the assets/settings.png
                     self.imgui.add_spacer()
                     self.imgui.add_checkbox(
                         label='Back Reminder',
@@ -574,7 +576,10 @@ Open Source at github.com/zbee/mobahinted''',
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_button(label='Customize Theme')
+                    self.imgui.add_button(
+                        label='Customize Theme',
+                        callback=lambda: (self.imgui.show_style_editor()),
+                    )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
@@ -592,7 +597,11 @@ Open Source at github.com/zbee/mobahinted''',
 
                 with self.imgui.table_row():
                     self.imgui.add_text('Current Account:')
-                    self.imgui.add_combo(items=[e.username for e in users], default_value=hinter.settings.active_user, width=-1)
+                    self.imgui.add_combo(
+                        items=[e.username for e in users],
+                        default_value=hinter.settings.active_user,
+                        width=-1
+                    )
                     self.imgui.add_text('Current Region:')
                     self.imgui.add_combo(
                         items=[e.value for e in cassiopeia.data.Region],
@@ -636,23 +645,23 @@ Open Source at github.com/zbee/mobahinted''',
                     self.imgui.add_spacer(height=10)
 
                 with self.imgui.table_row():
-                    pipeline = 'MHK,Cdragon'
+                    pipeline = 'MHK,CDragon'
 
-                    if pipeline == 'MHK,Cdragon':
+                    if pipeline == 'MHK,CDragon':
                         with self.imgui.group(horizontal=True):
                             self.imgui.add_combo(
                                 items=[
                                     'Most Private',       # Riot dev key
-                                    'Private, Accurate',  # Riot dev key and cdragon
+                                    'Private, Accurate',  # Riot dev key and CDragon
                                     'Fast, Accurate',     # CDragon and MHK
                                 ],
                                 default_value='Fast, Accurate',
                                 width=165,
                             )
-                            self.imgui.add_text(': CommunityDragon > Mobahinted Proxy > Riot')
+                            self.imgui.add_text(': CommunityDragon > MobaHinted Proxy > Riot')
                     if pipeline == 'Dev Key':
                         with self.imgui.group(horizontal=True):
-                            self.imgui.add_button(label='Mobahinted', enabled=False)
+                            self.imgui.add_button(label='MobaHinted', enabled=False)
                             self.imgui.add_text('>')
                             self.imgui.add_button(label='Riot', enabled=False)
 
@@ -667,7 +676,7 @@ Open Source at github.com/zbee/mobahinted''',
 
                 with self.imgui.table_row():
                     self.imgui.add_text(
-                        '''If enabled, Mobahinted will send anonymous usage data to the developer.
+                        '''If enabled, MobaHinted will send anonymous usage data to the developer.
 Only the owning developer has access to the data, and the data is only
 relevant to improving the application.''',
                         wrap=-1,
@@ -745,6 +754,7 @@ game data.'''
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
+                    # noinspection SpellCheckingInspection
                     self.imgui.add_text(
                         '''Made by zbee, mostly in season 13.
 Copyright 2020 Ethan Henderson. Available under the GPLv3 license.
@@ -757,7 +767,7 @@ Open Source at github.com/zbee/mobahinted'''
                 with self.imgui.table_row():
                     self.imgui.add_text('League Patch:')
                     self.imgui.add_text(cassiopeia.get_version(region=hinter.settings.region))
-                    self.imgui.add_text('Mobahinted Ver.:')
+                    self.imgui.add_text('MobaHinted Ver.:')
                     self.imgui.add_text(hinter.settings.version)
 
                 with self.imgui.table_row():
@@ -783,16 +793,18 @@ Open Source at github.com/zbee/mobahinted'''
             self.imgui.set_primary_window(window=tag, value=True)
             return
 
-        # Add a new window
-        self.imgui.add_window(tag=tag)
-
-        # Delete the old window
-        self.imgui.delete_item(item=self.screen)
+        if self.imgui.does_item_exist(tag):
+            # Empty the old window
+            self.clear_screen()
+        else:
+            # Add a new window
+            self.imgui.add_window(tag=tag)
 
         # Save the new window tag
         self.screen = tag
 
         # Add the menu bar back
+        self.render_frames()
         self.add_menu()
 
     def clear_screen(self):
@@ -842,7 +854,7 @@ Open Source at github.com/zbee/mobahinted'''
 
     def render_frames(self, frames: int = 1, split: bool = False):
         if split:
-            self.imgui.split_frame(delay=frames*10)
+            self.imgui.split_frame(delay=frames)
 
         for _ in range(frames):
             self.imgui.render_dearpygui_frame()
@@ -869,7 +881,7 @@ Open Source at github.com/zbee/mobahinted'''
         :param image: (Optional, requires a type) An image matching the type specified.
         :param crop: (Optional) A tuple of 4 integers specifying the crop area (x, y, width, height).
         :param size: (Optional) A tuple of 2 integers specifying the size the final image should be (width, height).
-        :param force_fresh: (Optional) A boolean specifying whether or not to force a fresh load of the image.
+        :param force_fresh: (Optional) A boolean specifying whether to force a fresh load of the image.
         :return: A string specifying the texture tag to use in :func:`dearpygui.add_image`.
 
         .. seealso::
@@ -887,10 +899,6 @@ Open Source at github.com/zbee/mobahinted'''
         .. code-block:: python
             img = self.ui.load_image(self.ui.PIL, '/path/to/img', size=[64, 64])
             self.ui.imgui.add_image(texture_tag=img)
-
-        .. todo::
-            Implement this method
-            Unregister textures when they are no longer needed; clear_screen(), new_screen()?
         """
         img: Image
         image_path = f'./data/image_cache/{image_name}.png'
