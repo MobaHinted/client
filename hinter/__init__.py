@@ -6,7 +6,9 @@ import cassiopeia_diskstore  # Required for building to executable
 from dotenv import load_dotenv
 
 import hinter.settings
-import hinter.struct.user
+import hinter.struct.User as User
+import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
+import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
 import hinter.users
 
 # Set up settings

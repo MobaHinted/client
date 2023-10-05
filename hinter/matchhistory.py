@@ -10,7 +10,6 @@ from PIL import Image
 import dearpygui.dearpygui
 
 import hinter
-import hinter.struct.user
 
 
 class MatchHistory:
