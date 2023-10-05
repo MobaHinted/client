@@ -6,7 +6,7 @@ import cassiopeia
 import pytz
 import timeago
 import timeago.locales.en  # Required for building to executable
-from PIL import Image
+from PIL import Image, ImageOps
 import dearpygui.dearpygui
 
 import hinter
@@ -14,7 +14,7 @@ import hinter
 
 class MatchHistory:
     games: cassiopeia.MatchHistory
-    games_shown: int = 50
+    games_shown: int = 100
     rank: Union[cassiopeia.Rank, None]
     average_kda: float
     level = 0
@@ -169,38 +169,73 @@ class MatchHistory:
 
                             self.imgui.add_spacer()
 
+                # Icon and level
+                with self.imgui.table_row():
+                    with self.imgui.table(header_row=False):
+                        self.imgui.add_table_column(init_width_or_weight=0.2)
+                        self.imgui.add_table_column(init_width_or_weight=0.6)
+                        self.imgui.add_table_column(init_width_or_weight=0.2)
+
+                        with self.imgui.table_row():
+                            self.imgui.add_spacer()
+
+                            with self.imgui.group(horizontal=True):
+                                icon_name = f'summoner_icon-{self.icon.id}'
+
+                                if not self.ui.check_image_cache(icon_name):
+                                    mask = Image.open('./assets/circular_mask.png').convert('L')
+                                    icon = ImageOps.fit(self.icon.image, mask.size, centering=(0.5, 0.5))
+                                    icon.putalpha(mask)
+                                    icon.save(f'./data/image_cache/{icon_name}.png')
+
+                                summoner_icon_texture = self.ui.load_image(
+                                    icon_name,
+                                    size=(35, 35),
+                                )
+
+                                # Show the icon
+                                self.imgui.add_image(texture_tag=summoner_icon_texture, tag='summoner_icon')
+
+                                # Show the rank name
+                                self.imgui.add_text(f'Level {self.level}')
+                                self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['32 bold'])
+
+                            self.imgui.add_spacer()
+
                 # Rank
                 # TODO: Master+ has no division, display LP/position?
                 if self.rank is not None:
                     with self.imgui.table_row():
-                        with self.imgui.table(header_row=False):
-                            self.imgui.add_table_column(init_width_or_weight=0.275)
-                            self.imgui.add_table_column(init_width_or_weight=0.45)
-                            self.imgui.add_table_column(init_width_or_weight=0.275)
+                        with self.imgui.group():
+                            self.imgui.add_spacer(height=20)
+                            with self.imgui.table(header_row=False):
+                                self.imgui.add_table_column(init_width_or_weight=0.275)
+                                self.imgui.add_table_column(init_width_or_weight=0.45)
+                                self.imgui.add_table_column(init_width_or_weight=0.275)
 
-                            with self.imgui.table_row():
-                                self.imgui.add_spacer()
+                                with self.imgui.table_row():
+                                    self.imgui.add_spacer()
 
-                                with self.imgui.group(horizontal=True):
-                                    # Show the icon
-                                    rank_icon_texture = self.ui.load_image(
-                                        'rank-' + self.rank.tier.name,
-                                        self.ui.FILE,
-                                        './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
-                                        (477, 214, 810, 472),
-                                        (86, 60),
-                                    )
-                                    self.imgui.add_image(texture_tag=rank_icon_texture)
+                                    with self.imgui.group(horizontal=True):
+                                        # Show the icon
+                                        rank_icon_texture = self.ui.load_image(
+                                            'rank-' + self.rank.tier.name,
+                                            self.ui.FILE,
+                                            './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
+                                            (477, 214, 810, 472),
+                                            (86, 60),
+                                        )
+                                        self.imgui.add_image(texture_tag=rank_icon_texture)
 
-                                    # Show the rank name
-                                    rank_name = self.rank.division.value
-                                    self.imgui.add_text(rank_name)
-                                    self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['56 bold'])
+                                        # Show the rank name
+                                        rank_name = self.rank.division.value
+                                        self.imgui.add_text(rank_name)
+                                        self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['56 bold'])
 
-                                self.imgui.add_spacer()
+                                    self.imgui.add_spacer()
 
                 with self.imgui.table_row(tag='match_history-friends-ref'):
-                    self.imgui.add_text('level, lp, users-played-with stats here')
+                    self.imgui.add_spacer()
         # endregion Left Bar
 
         # region  Center (Match History container)
@@ -465,6 +500,7 @@ class MatchHistory:
             # duration = str(match.duration) + ' long - '  # HH:MM:SS display
             duration = f'{match_minutes:>2.0f}min - '
             duration += timeago.format(match_time, now)
+            duration = duration.replace('utes', '')
             # endregion Match Timing
 
             # region Summoner Spells
@@ -885,31 +921,59 @@ class MatchHistory:
             )
             row_count += 1
 
-        font = self.ui.font['20 medium']
-        for PlayerPlayedWith in self.players_played_with.friends:
+        font = self.ui.font['20 regular']
+        if len(self.players_played_with.friends) > 0:
             with self.imgui.table_row(before='match_history-friends-ref'):
                 with self.imgui.group():
-                    self.imgui.add_button(
-                        label=PlayerPlayedWith.username,
-                        enabled=False,
-                        tag=f'friend-{PlayerPlayedWith.clean_username}',
-                    )
-                    self.imgui.add_spacer(height=2)
-                    self.imgui.add_text(
-                        f'{PlayerPlayedWith.win_rate:>2.1f}% WR in {PlayerPlayedWith.games_played:>3} games'
-                    )
-                    self.imgui.add_spacer(height=15)
+                    self.imgui.add_spacer(height=35)
+                    self.imgui.add_text('Friends Played With', tag='match_history-friends-header')
+                    self.imgui.add_spacer(height=5)
+                    self.imgui.add_separator()
+                    self.imgui.add_spacer(height=10)
+            self.imgui.bind_item_font('match_history-friends-header', self.ui.font['24 bold'])
 
-            with self.imgui.theme() as item_theme:
-                with self.imgui.theme_component(self.imgui.mvButton, enabled_state=False):
-                    self.imgui.add_theme_color(self.imgui.mvThemeCol_Button, (255, 255, 255))
-                    self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonActive, (255, 255, 255))
-                    self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonHovered, (255, 255, 255))
-                    self.imgui.add_theme_color(self.imgui.mvThemeCol_Text, (0, 0, 0))
-                    self.imgui.add_theme_style(self.imgui.mvStyleVar_FrameRounding, 10)
-                    self.imgui.add_theme_style(self.imgui.mvStyleVar_FramePadding, 7, 2)
-            self.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
-            self.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+            for PlayerPlayedWith in self.players_played_with.friends:
+                with self.imgui.table_row(before='match_history-friends-ref'):
+                    with self.imgui.group():
+                        with self.imgui.group(horizontal=True):
+                            icon_name = f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}'
+
+                            if not self.ui.check_image_cache(icon_name):
+                                mask = Image.open('./assets/circular_mask.png').convert('L')
+                                icon = ImageOps.fit(
+                                    PlayerPlayedWith.summoner.profile_icon.image, mask.size, centering=(0.5, 0.5)
+                                )
+                                icon.putalpha(mask)
+                                icon.save(f'./data/image_cache/{icon_name}.png')
+
+                            summoner_icon_texture = self.ui.load_image(
+                                icon_name,
+                                size=(30, 30),
+                            )
+
+                            self.imgui.add_image(texture_tag=summoner_icon_texture)
+
+                            self.imgui.add_button(
+                                label=PlayerPlayedWith.username,
+                                enabled=False,
+                                tag=f'friend-{PlayerPlayedWith.clean_username}',
+                            )
+                        self.imgui.add_spacer(height=2)
+                        self.imgui.add_text(
+                            f'{PlayerPlayedWith.win_rate:>2.1f}% WR in {PlayerPlayedWith.games_played:>3} games'
+                        )
+                        self.imgui.add_spacer(height=15)
+
+                with self.imgui.theme() as item_theme:
+                    with self.imgui.theme_component(self.imgui.mvButton, enabled_state=False):
+                        self.imgui.add_theme_color(self.imgui.mvThemeCol_Button, (255, 255, 255))
+                        self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonActive, (255, 255, 255))
+                        self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonHovered, (255, 255, 255))
+                        self.imgui.add_theme_color(self.imgui.mvThemeCol_Text, (0, 0, 0))
+                        self.imgui.add_theme_style(self.imgui.mvStyleVar_FrameRounding, 15)
+                        self.imgui.add_theme_style(self.imgui.mvStyleVar_FramePadding, 7, 5)
+                self.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
+                self.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
 
         # region Handler and Callback for moving champ icons when the window is resized
         # Once match data is visible, add the champion image
