@@ -9,9 +9,6 @@ import cassiopeia
 
 import hinter
 import hinter.background.dataloader
-import hinter.struct.user
-
-FONT_SCALE = 2
 
 
 class UI:
@@ -31,6 +28,7 @@ class UI:
     move_on_callback: callable
     render: bool
     data_loader: hinter.background.dataloader.DataLoader
+    FONT_SCALE = 2
 
     def __init__(self, move_on_callback):
         self.move_on_callback = move_on_callback
@@ -39,25 +37,28 @@ class UI:
 
         # Set up Fira Code for use
         with self.imgui.font_registry():
-            self.font['regular'] = self.imgui.add_font('./assets/fcr.ttf', 16 * FONT_SCALE)
-            self.font['medium'] = self.imgui.add_font('./assets/fcm.ttf', 16 * FONT_SCALE)
-            self.font['bold'] = self.imgui.add_font('./assets/fcb.ttf', 16 * FONT_SCALE)
-            self.font['24 regular'] = self.imgui.add_font('./assets/fcr.ttf', 24 * FONT_SCALE)
-            self.font['24 medium'] = self.imgui.add_font('./assets/fcm.ttf', 24 * FONT_SCALE)
-            self.font['24 bold'] = self.imgui.add_font('./assets/fcb.ttf', 24 * FONT_SCALE)
-            self.font['32 regular'] = self.imgui.add_font('./assets/fcr.ttf', 32 * FONT_SCALE)
-            self.font['32 medium'] = self.imgui.add_font('./assets/fcm.ttf', 32 * FONT_SCALE)
-            self.font['32 bold'] = self.imgui.add_font('./assets/fcb.ttf', 32 * FONT_SCALE)
-            self.font['40 regular'] = self.imgui.add_font('./assets/fcr.ttf', 40 * FONT_SCALE)
-            self.font['40 medium'] = self.imgui.add_font('./assets/fcm.ttf', 40 * FONT_SCALE)
-            self.font['40 bold'] = self.imgui.add_font('./assets/fcb.ttf', 40 * FONT_SCALE)
-            self.font['48 regular'] = self.imgui.add_font('./assets/fcr.ttf', 48 * FONT_SCALE)
-            self.font['48 medium'] = self.imgui.add_font('./assets/fcm.ttf', 48 * FONT_SCALE)
-            self.font['48 bold'] = self.imgui.add_font('./assets/fcb.ttf', 48 * FONT_SCALE)
-            self.font['56 regular'] = self.imgui.add_font('./assets/fcr.ttf', 56 * FONT_SCALE)
-            self.font['56 medium'] = self.imgui.add_font('./assets/fcm.ttf', 56 * FONT_SCALE)
-            self.font['56 bold'] = self.imgui.add_font('./assets/fcb.ttf', 56 * FONT_SCALE)
-        self.imgui.set_global_font_scale(1 / FONT_SCALE)
+            self.font['regular'] = self.imgui.add_font('./assets/fcr.ttf', 16 * self.FONT_SCALE)
+            self.font['medium'] = self.imgui.add_font('./assets/fcm.ttf', 16 * self.FONT_SCALE)
+            self.font['bold'] = self.imgui.add_font('./assets/fcb.ttf', 16 * self.FONT_SCALE)
+            self.font['20 regular'] = self.imgui.add_font('./assets/fcr.ttf', 20 * self.FONT_SCALE)
+            self.font['20 medium'] = self.imgui.add_font('./assets/fcm.ttf', 20 * self.FONT_SCALE)
+            self.font['20 bold'] = self.imgui.add_font('./assets/fcb.ttf', 20 * self.FONT_SCALE)
+            self.font['24 regular'] = self.imgui.add_font('./assets/fcr.ttf', 24 * self.FONT_SCALE)
+            self.font['24 medium'] = self.imgui.add_font('./assets/fcm.ttf', 24 * self.FONT_SCALE)
+            self.font['24 bold'] = self.imgui.add_font('./assets/fcb.ttf', 24 * self.FONT_SCALE)
+            self.font['32 regular'] = self.imgui.add_font('./assets/fcr.ttf', 32 * self.FONT_SCALE)
+            self.font['32 medium'] = self.imgui.add_font('./assets/fcm.ttf', 32 * self.FONT_SCALE)
+            self.font['32 bold'] = self.imgui.add_font('./assets/fcb.ttf', 32 * self.FONT_SCALE)
+            self.font['40 regular'] = self.imgui.add_font('./assets/fcr.ttf', 40 * self.FONT_SCALE)
+            self.font['40 medium'] = self.imgui.add_font('./assets/fcm.ttf', 40 * self.FONT_SCALE)
+            self.font['40 bold'] = self.imgui.add_font('./assets/fcb.ttf', 40 * self.FONT_SCALE)
+            self.font['48 regular'] = self.imgui.add_font('./assets/fcr.ttf', 48 * self.FONT_SCALE)
+            self.font['48 medium'] = self.imgui.add_font('./assets/fcm.ttf', 48 * self.FONT_SCALE)
+            self.font['48 bold'] = self.imgui.add_font('./assets/fcb.ttf', 48 * self.FONT_SCALE)
+            self.font['56 regular'] = self.imgui.add_font('./assets/fcr.ttf', 56 * self.FONT_SCALE)
+            self.font['56 medium'] = self.imgui.add_font('./assets/fcm.ttf', 56 * self.FONT_SCALE)
+            self.font['56 bold'] = self.imgui.add_font('./assets/fcb.ttf', 56 * self.FONT_SCALE)
+        self.imgui.set_global_font_scale(1 / self.FONT_SCALE)
         self.imgui.bind_font(self.font['medium'])
 
         self.imgui.setup_dearpygui()
@@ -972,6 +973,35 @@ Open Source at github.com/zbee/mobahinted'''
         :return: A boolean specifying whether the image is cached.
         """
         return os.path.exists(f'./data/image_cache/{image_name}.png')
+
+    def text_size(self, text: Union[str, int], font: str, padding: Union[list[int], None] = None) -> list[int]:
+        """A method to get the size of a string as displayed by ImGUI
+
+        :param text: The text to get the size of, or a number of characters to get the size of.
+        :param font: The font to use to calculate the size.
+        :param padding: (Optional) The amount of padding to add to the size.
+        :return: A tuple of 2 integers specifying the size of the text (width, height).
+        """
+        # Default padding is 0,0
+        if padding is None:
+            padding = [0, 0]
+
+        # Set text to a number of characters, if requested
+        if isinstance(text, int):
+            text = 'a' * text
+
+        # Grab the text size
+        text_size = self.imgui.get_text_size(
+            text,
+            font=font,
+        )
+
+        # Account for the font scale and padding
+        scale = 1 / self.FONT_SCALE
+        return [
+            int(text_size[0] * scale) + padding[0],
+            int(text_size[1] * scale) + padding[1],
+        ]
 
     def exit_callback(self):
         window_position = self.imgui.get_viewport_pos()
