@@ -28,12 +28,11 @@ class MatchHistory:
     ui: hinter.ui.main.UI
     imgui: dearpygui.dearpygui = dearpygui.dearpygui
     SUMMONERS_RIFT = 11
-    friends_played_with = {}
-    enemies_played_against = {}
+    players_played_with: hinter.PlayersPlayedWith = hinter.PlayersPlayedWith.PlayersPlayedWith()
     lanes_played = {}
     champions_played = {}
 
-    def __init__(self, ui: hinter.ui.main.UI, user: hinter.struct.user.User = None):
+    def __init__(self, ui: hinter.ui.main.UI, user: hinter.User = None):
         # Load summoner information
         if user is not None:
             user = cassiopeia.get_summoner(name=user.username, region=hinter.settings.region)
@@ -145,7 +144,7 @@ class MatchHistory:
             init_width_or_weight=0.2,
         )
         with self.imgui.table_cell(parent=self.table_row):
-            with self.imgui.table(header_row=False):
+            with self.imgui.table(header_row=False, tag='match_history-friends-parent'):
                 self.imgui.add_table_column()
 
                 # User name, centered
@@ -200,7 +199,7 @@ class MatchHistory:
 
                                 self.imgui.add_spacer()
 
-                with self.imgui.table_row():
+                with self.imgui.table_row(tag='match_history-friends-ref'):
                     self.imgui.add_text('level, lp, users-played-with stats here')
         # endregion Left Bar
 
@@ -364,9 +363,10 @@ class MatchHistory:
                 outcome
             )
 
+            # Track players played with
             for participant in match.participants:
                 if participant.summoner.name != self.username:
-                    self.track_players(
+                    self.players_played_with.add(
                         participant,
                         outcome,
                         participant.side.name == team
@@ -528,7 +528,7 @@ class MatchHistory:
                 if spell_d.name == 'Heal' or spell_f.name == 'Heal':
                     has_heal = True
 
-            # Assign role
+                # Assign role
                 # First assign off of lane/position as provided
                 if 'solo' in role.lower():
                     if 'mid' in lane:
@@ -885,6 +885,32 @@ class MatchHistory:
             )
             row_count += 1
 
+        font = self.ui.font['20 medium']
+        for PlayerPlayedWith in self.players_played_with.friends:
+            with self.imgui.table_row(before='match_history-friends-ref'):
+                with self.imgui.group():
+                    self.imgui.add_button(
+                        label=PlayerPlayedWith.username,
+                        enabled=False,
+                        tag=f'friend-{PlayerPlayedWith.clean_username}',
+                    )
+                    self.imgui.add_spacer(height=2)
+                    self.imgui.add_text(
+                        f'{PlayerPlayedWith.win_rate:>2.1f}% WR in {PlayerPlayedWith.games_played:>3} games'
+                    )
+                    self.imgui.add_spacer(height=15)
+
+            with self.imgui.theme() as item_theme:
+                with self.imgui.theme_component(self.imgui.mvButton, enabled_state=False):
+                    self.imgui.add_theme_color(self.imgui.mvThemeCol_Button, (255, 255, 255))
+                    self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonActive, (255, 255, 255))
+                    self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonHovered, (255, 255, 255))
+                    self.imgui.add_theme_color(self.imgui.mvThemeCol_Text, (0, 0, 0))
+                    self.imgui.add_theme_style(self.imgui.mvStyleVar_FrameRounding, 10)
+                    self.imgui.add_theme_style(self.imgui.mvStyleVar_FramePadding, 7, 2)
+            self.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
+            self.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+
         # region Handler and Callback for moving champ icons when the window is resized
         # Once match data is visible, add the champion image
         def resize_call(sender):
@@ -919,14 +945,12 @@ class MatchHistory:
             if self.imgui.does_item_exist(self.ui.screen):
                 self.imgui.delete_item(self.ui.screen)
 
-    def track_players(self, player, user_outcome, same_team_as_user):
-        self.friends_played_with
-        self.enemies_played_against
-
     def track_lanes(self, position, outcome):
+        # TODO: Implement lane popularity/wr
         self.lanes_played
 
     def track_champions(self, champion, outcome):
+        # TODO: Implement champion popularity/wr
         self.champions_played
 
     def __del__(self):
