@@ -12,10 +12,11 @@ class PlayerPlayedWith:
     _win_rate_calculated: bool = False
 
     def __init__(self, player: cassiopeia.core.match.Participant, user_outcome: str, same_team_as_user: bool):
-        summoner: cassiopeia.core.match.Summoner = player.summoner
+        self.summoner: cassiopeia.core.match.Summoner = player.summoner
+        self.player = player
 
-        self.clean_username = summoner.sanitized_name
-        self.username = summoner.name
+        self.clean_username = self.summoner.sanitized_name
+        self.username = self.summoner.name
 
         # This logic works because we only care about their ally-ship with us in the most recent game, as such,
         # this requires the match history be ordered by most recent game first

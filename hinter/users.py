@@ -1,14 +1,14 @@
 import os
 from typing import List, Union
 
-import hinter.struct.user
+import hinter
 
 
 class Users:
     users_list = './data/users.dat'
-    current_list_cache: List[hinter.struct.user.User] = []
+    current_list_cache: List[hinter.User] = []
 
-    def list_users(self, ui=None) -> List[hinter.struct.user.User]:
+    def list_users(self, ui=None) -> List[hinter.User]:
         # Open user file
         if not os.path.exists('./data/'):
             os.mkdir('./data')
@@ -24,11 +24,11 @@ class Users:
         # Load users from file
         for username in user_list_file:
             username = username.split('\n')[0]
-            user = hinter.struct.user.User(username)
+            user = hinter.User.User(username)
 
             if user.user_exists:
                 user_list.append(
-                    hinter.struct.user.User(username)
+                    hinter.User.User(username)
                 )
             elif ui is not None:
                 self.remove_user(ui, username)
@@ -100,7 +100,7 @@ class Users:
                 return False
 
         # Check user exists on Riot's side
-        user = hinter.struct.user.User(username)
+        user = hinter.User.User(username)
         if not user.user_exists:
             ui.show_info_popup(
                 'Nonexistent user',
