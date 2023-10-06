@@ -11,6 +11,8 @@ class PlayerPlayedWith:
     _win_rate_value: float
     _win_rate_calculated: bool = False
 
+    # TODO: add docstrings for everything, implement __str__ so PlayersPlayedWith can cache more easily
+
     def __init__(self, player: cassiopeia.core.match.Participant, user_outcome: str, same_team_as_user: bool):
         self.summoner: cassiopeia.core.match.Summoner = player.summoner
         self.player = player

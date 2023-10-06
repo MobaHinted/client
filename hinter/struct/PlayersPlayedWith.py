@@ -10,6 +10,8 @@ from hinter.struct.PlayerPlayedWith import PlayerPlayedWith
 class PlayersPlayedWith:
     _players_played_with: dict[str, PlayerPlayedWith] = {}
 
+    # TODO: Add docstrings for everything, make a function to cache the data, and load from it
+
     def __init__(self):
         pass
 

@@ -1,4 +1,5 @@
 import os
+import webbrowser
 from typing import Union
 
 import PIL.Image as Image
@@ -24,6 +25,7 @@ class UI:
     render: bool
     data_loader: hinter.background.dataloader.DataLoader
     FONT_SCALE = 2
+    imgui = hinter.imgui  # TODO: Remove this, import hinter.user and match history to __init__ and include that in main
 
     def __init__(self, move_on_callback):
         self.move_on_callback = move_on_callback
@@ -389,6 +391,7 @@ Open Source at github.com/zbee/mobahinted''',
         ):
             users = hinter.users.list_users()
 
+            # TODO: Move to ui.settings, add generators for behavior section like the overlay section has
             with hinter.imgui.table(header_row=False, no_clip=True):
                 hinter.imgui.add_table_column()
                 hinter.imgui.add_table_column()
@@ -832,7 +835,11 @@ Open Source at github.com/zbee/mobahinted'''
                     hinter.imgui.add_spacer(height=20)
 
                 with hinter.imgui.table_row():
-                    hinter.imgui.add_button(label='Support the Project', width=570)
+                    hinter.imgui.add_button(
+                        label='Support the Project',
+                        width=570,
+                        callback=lambda: webbrowser.open('https://paypal.me/zbee0'),
+                    )
                 # endregion About Section
 
     def add_menu_separator(self, parent: str = 0):

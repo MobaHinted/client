@@ -49,7 +49,7 @@ class Settings:
     auto_close_builds: bool = True
     show_postgame_separate: bool = False
 
-    active_user: str = ''
+    active_user: str = ''  # TODO: What if this was scrapped and only detected the active user?
     region: str = 'NA'
 
     pipeline: str = 'Fast, Accurate'
