@@ -394,10 +394,10 @@ class MatchHistory:
             outcome = win
             # endregion Resolve ending condition of game
 
-            self.track_champions(
-                player.champion.name,
-                outcome
-            )
+            # self.track_champions(
+            #     player.champion.name,
+            #     outcome
+            # )
 
             # Track players played with
             for participant in match.participants:
@@ -602,11 +602,11 @@ class MatchHistory:
             else:
                 played_position = position.name.capitalize()
 
-            if match.map.id == self.SUMMONERS_RIFT:
-                self.track_lanes(
-                    played_position,
-                    outcome
-                )
+            # if match.map.id == self.SUMMONERS_RIFT:
+            #     self.track_lanes(
+            #         played_position,
+            #         outcome
+            #     )
             # endregion Role
 
             # region Runes
