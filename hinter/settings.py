@@ -43,8 +43,14 @@ class Settings:
             value = setting[1].split('\n')[0]
 
             # Save the setting to the Class
-            # This has to be verbose otherwise falsey values will trip it
-            if getattr(self, attribute, False) != False:
+            if getattr(self, attribute, None) is not None:
+                if value == 'False':
+                    value = False
+                elif value == 'True':
+                    value = True
+                elif value.lstrip('-').isnumeric():
+                    value = int(value)
+
                 setattr(self, attribute, value)
 
         # Save a setting that the settings were loaded
@@ -59,8 +65,7 @@ class Settings:
             return
 
         # Remove the setting if currently set
-        # This has to be verbose otherwise falsey values will trip it
-        if getattr(self, setting, False) != False:
+        if getattr(self, setting, None) is not None:
             settings_file_original = open(self.settings_file, 'r').readlines()
             lines = []
 

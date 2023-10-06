@@ -75,8 +75,8 @@ class UI:
             height=600,
             small_icon='./assets/logo.ico',
             large_icon='./assets/logo.ico',
-            x_pos=int(hinter.settings.x),
-            y_pos=int(hinter.settings.y),
+            x_pos=hinter.settings.x,
+            y_pos=hinter.settings.y,
         )
         self.imgui.set_exit_callback(self.exit_callback)
 
