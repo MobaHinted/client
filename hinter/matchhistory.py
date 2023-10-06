@@ -19,11 +19,11 @@ class MatchHistory:
     level = 0
     icon = 0
     username = ""
-    table: str = 'match_history_table'
-    table_row: str = 'match_history_table-row'
-    left_bar: str = 'match_history_table-left'
-    history: str = 'match_history_table-history-container'
-    right_bar: str = 'match_history_table-right'
+    table: str
+    table_row: str
+    left_bar: str
+    history: str
+    right_bar: str
     ui: hinter.ui.main.UI
     SUMMONERS_RIFT = 11
     players_played_with: hinter.PlayersPlayedWith
@@ -126,21 +126,21 @@ class MatchHistory:
         self.ui.new_screen(tag='match_history')
 
         # Set up the table
-        hinter.imgui.add_table(
-            tag=self.table,
+        self.table = hinter.imgui.add_table(
+            tag='match_history_table',
             header_row=False,
             parent='match_history',
         )
-        hinter.imgui.add_table_row(
+        self.table_row = hinter.imgui.add_table_row(
             parent=self.table,
-            tag=self.table_row,
+            tag='match_history_table-row',
         )
 
         # region Left Bar
         # Set up the left-bar
-        hinter.imgui.add_table_column(
+        self.left_bar = hinter.imgui.add_table_column(
             parent=self.table,
-            tag=self.left_bar,
+            tag='match_history_table-left',
             init_width_or_weight=0.2,
         )
         with hinter.imgui.table_cell(parent=self.table_row):
@@ -247,7 +247,8 @@ class MatchHistory:
         )
         # Add a table that matches can be added to as rows, everything else is just a placeholder until the matches load
         with hinter.imgui.table_cell(parent=self.table_row):
-            with hinter.imgui.table(header_row=False, tag=self.history, pad_outerX=True):
+            with hinter.imgui.table(tag='match_history_table-history-container',
+                                    header_row=False, pad_outerX=True) as self.history:
                 hinter.imgui.add_table_column(tag='match-history-delete-5')
                 hinter.imgui.add_table_column()  # Actual destination for matches
                 hinter.imgui.add_table_column(tag='match-history-delete-6')
@@ -264,9 +265,9 @@ class MatchHistory:
 
         # region Right Bar
         # Set up the right-bar
-        hinter.imgui.add_table_column(
+        self.right_bar = hinter.imgui.add_table_column(
             parent=self.table,
-            tag=self.right_bar,
+            tag='match_history_table-right',
             init_width_or_weight=0.2,
         )
         with hinter.imgui.table_cell(parent=self.table_row):
