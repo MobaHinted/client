@@ -24,7 +24,7 @@ class UI:
     move_on_callback: callable
     render: bool
     data_loader: hinter.background.dataloader.DataLoader
-    FONT_SCALE = 2
+    FONT_SCALE = 2  # TODO: Move this to hinter.constants
     imgui = hinter.imgui  # TODO: Remove this, import hinter.user and match history to __init__ and include that in main
 
     def __init__(self, move_on_callback):

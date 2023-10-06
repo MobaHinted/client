@@ -25,7 +25,7 @@ class MatchHistory:
     history: str
     right_bar: str
     ui: hinter.ui.main.UI
-    SUMMONERS_RIFT = 11
+    SUMMONERS_RIFT = 11  # TODO: Move this to hinter.constants
     players_played_with: hinter.PlayersPlayedWith
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.User = None):
