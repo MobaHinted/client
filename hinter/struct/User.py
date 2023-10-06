@@ -8,6 +8,7 @@ class User:
     account_id: str = ''
     level: int = 0
     icon: cassiopeia.ProfileIcon = None
+    # TODO: store the user's region
 
     def __init__(self, username: str):
         # Check user exists on Riot's side

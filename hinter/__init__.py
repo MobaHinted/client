@@ -22,6 +22,7 @@ if not os.path.exists('./data/cassiopeia'):
     os.mkdir('./data/cassiopeia')
 cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
 
+# TODO: load pipeline from settings
 cassiopeia_settings = {
     "global": {
         "version_from_match": "version",

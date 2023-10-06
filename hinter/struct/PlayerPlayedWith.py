@@ -5,7 +5,7 @@ class PlayerPlayedWith:
     username: str
     clean_username: str
     player: cassiopeia.core.match.Participant
-    summoner: cassiopeia.core.match.Summoner
+    summoner: cassiopeia.core.match.Summoner  # TODO: why is the /last/ summoner used for icon?
     ally: bool
     outcomes: list[dict]
     _win_rate_value: float
