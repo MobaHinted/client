@@ -7,6 +7,7 @@ import numpy as np
 import requests
 import cassiopeia
 
+# TODO: Change imports like this one to just import hinter
 import hinter
 import hinter.background.dataloader
 
@@ -82,6 +83,7 @@ class UI:
         self.filler_image = self.load_image('filler', self.FILE, './assets/filler.png', size=(1, 1))
 
         # region Login flow
+        # TODO: Move this to a private method
         def login_submit():
             username = self.imgui.get_value('add-username')
             region = self.imgui.get_value('add-region')
@@ -338,6 +340,12 @@ Open Source at github.com/zbee/mobahinted''',
             # endregion About Menu
 
     def ready_settings_window(self):
+        settings_gear = self.load_image(
+            'settings_gear',
+            self.FILE, './assets/settings.png',
+            size=(16, 16)
+        )
+
         if self.imgui.does_item_exist(item='settings-popup'):
             return
 
@@ -373,57 +381,89 @@ Open Source at github.com/zbee/mobahinted''',
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_checkbox(
-                        label='Milestone Notifications',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Milestone Notifications',
+                            default_value=False,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label='CS Tracker and Stats Window',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='CS Tracker and Stats Window',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_checkbox(
-                        label='Objective Reminders',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Objective Reminders',
+                            default_value=False,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label='Enemy Spell Tracker',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Enemy Spell Tracker',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_checkbox(
-                        label='Jungle Timers',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Jungle Timers',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label='ARAM Health Timers',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='ARAM Health Timers',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_checkbox(
-                        label="Scoreboard Duos",
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Scoreboard Duos',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label="Gold Diff Tracker",
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Gold Diff Tracker',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
@@ -434,27 +474,40 @@ Open Source at github.com/zbee/mobahinted''',
                             label='Map Check Reminder',
                             default_value=True,
                         )
-                        self.imgui.add_button(label='G')
-                        # TODO: Make this the assets/settings.png
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label='Back Reminder',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Back Reminder',
+                            default_value=False,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
 
                 with self.imgui.table_row():
-                    self.imgui.add_checkbox(
-                        label='Use Trinket Reminder',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Use Trinket Reminder',
+                            default_value=True,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
                     self.imgui.add_spacer()
-                    self.imgui.add_checkbox(
-                        label='Counter Item Suggestions',
-                        default_value=False,
-                    )
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_checkbox(
+                            label='Counter Item Suggestions',
+                            default_value=False,
+                        )
+                        self.imgui.add_image_button(
+                            texture_tag=settings_gear,
+                        )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
@@ -510,6 +563,25 @@ Open Source at github.com/zbee/mobahinted''',
                     self.imgui.add_checkbox(
                         label='Detect new accounts automatically',
                         default_value=True,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_spacer(height=20)
+
+                with self.imgui.table_row():
+                    self.imgui.add_slider_int(
+                        label='Number of games to show in Match History',
+                        min_value=20,
+                        max_value=250,
+                        default_value=100,
+                    )
+
+                with self.imgui.table_row():
+                    self.imgui.add_slider_int(
+                        label='Number of games for someone to be considered a Friend',
+                        min_value=2,
+                        max_value=10,
+                        default_value=5,
                     )
 
                 with self.imgui.table_row():

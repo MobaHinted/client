@@ -13,6 +13,7 @@ import hinter
 
 
 class MatchHistory:
+    # TODO: Make sure all of these are being filled in __init__
     games: cassiopeia.MatchHistory
     games_shown: int = 100
     rank: Union[cassiopeia.Rank, None]
@@ -48,6 +49,9 @@ class MatchHistory:
         # Try to load rank
         try:
             self.games = user.match_history
+            # TODO: fix this in cassiopeia to get fewer calls on initial load
+            # self.games = user.match_history(continent=user.region.continent, puuid=user.puuid, count=100)
+
             if cassiopeia.Queue.ranked_solo_fives in user.ranks:
                 self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]
             elif cassiopeia.Queue.ranked_flex_fives in user.ranks:
@@ -182,6 +186,7 @@ class MatchHistory:
                             with self.imgui.group(horizontal=True):
                                 icon_name = f'summoner_icon-{self.icon.id}'
 
+                                # TODO: Make a UI method from this
                                 if not self.ui.check_image_cache(icon_name):
                                     mask = Image.open('./assets/circular_mask.png').convert('L')
                                     icon = ImageOps.fit(self.icon.image, mask.size, centering=(0.5, 0.5))
@@ -921,6 +926,9 @@ class MatchHistory:
             )
             row_count += 1
 
+        # After all matches are shown
+
+        # region Friends Played With
         font = self.ui.font['20 regular']
         if len(self.players_played_with.friends) > 0:
             with self.imgui.table_row(before='match_history-friends-ref'):
@@ -938,6 +946,7 @@ class MatchHistory:
                         with self.imgui.group(horizontal=True):
                             icon_name = f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}'
 
+                            # TODO: Make a UI method from this
                             if not self.ui.check_image_cache(icon_name):
                                 mask = Image.open('./assets/circular_mask.png').convert('L')
                                 icon = ImageOps.fit(
@@ -974,9 +983,9 @@ class MatchHistory:
                         self.imgui.add_theme_style(self.imgui.mvStyleVar_FramePadding, 7, 5)
                 self.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
                 self.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+        # endregion Friends Played With
 
         # region Handler and Callback for moving champ icons when the window is resized
-        # Once match data is visible, add the champion image
         def resize_call(sender):
             # Get the match id
             match_id = sender.split('-')[-1]

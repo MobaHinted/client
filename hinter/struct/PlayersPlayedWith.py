@@ -2,6 +2,7 @@ from typing import Union
 
 import cassiopeia
 
+# TODO: Change imports like this one to just import hinter - in this case, maybe hinter.struct
 from hinter.struct.PlayerPlayedWith import PlayerPlayedWith
 
 

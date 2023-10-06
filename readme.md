@@ -25,7 +25,7 @@ This is roughly in the order they will be developed.
 
 - [X] Match History
 - [ ] Post-Game Breakdown
-- [ ] Teammate Performance (like op.gg has, telling you your winrate with specific friends)
+- [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
 - [ ] Overlays
   - [ ] Milestone Notifications

@@ -6,9 +6,9 @@ import hinter
 
 class Users:
     users_list = './data/users.dat'
-    current_list_cache: List[hinter.User] = []
+    current_list_cache: List[hinter.User.User] = []
 
-    def list_users(self, ui=None) -> List[hinter.User]:
+    def list_users(self, ui=None) -> List[hinter.User.User]:
         # Open user file
         if not os.path.exists('./data/'):
             os.mkdir('./data')

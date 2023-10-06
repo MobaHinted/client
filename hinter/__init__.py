@@ -11,6 +11,8 @@ import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
 import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
 import hinter.users
 
+# TODO: Move more imports here
+
 # Set up settings
 settings = hinter.settings.Settings()
 settings.load_settings()
