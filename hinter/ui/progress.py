@@ -1,9 +1,8 @@
-import dearpygui.dearpygui
+import hinter
 
 
 class Progress:
     current_percentage: int = 0
-    imgui: dearpygui.dearpygui = dearpygui.dearpygui
 
     def __init__(self, percentage: int, title: str, current_status: str):
         # Make sure percentage is 1-100
@@ -17,7 +16,7 @@ class Progress:
         height = 115
 
         # Show the popup
-        with self.imgui.window(
+        with hinter.imgui.window(
                 label=title,
                 modal=True,
                 tag='progress-popup',
@@ -28,15 +27,15 @@ class Progress:
                 no_collapse=True,
                 on_close=self.close,
                 pos=[
-                    int(self.imgui.get_viewport_width() / 2 - width / 2),
-                    int(self.imgui.get_viewport_height() / 2 - height / 2),
+                    int(hinter.imgui.get_viewport_width() / 2 - width / 2),
+                    int(hinter.imgui.get_viewport_height() / 2 - height / 2),
                 ]
         ):
-            self.imgui.add_text(tag='progress-status', default_value=current_status, wrap=width-20)
+            hinter.imgui.add_text(tag='progress-status', default_value=current_status, wrap=width-20)
 
-            self.imgui.add_spacer(tag='progress-spacer', height=10)
+            hinter.imgui.add_spacer(tag='progress-spacer', height=10)
 
-            self.imgui.add_progress_bar(
+            hinter.imgui.add_progress_bar(
                 tag='progress-bar',
                 parent='progress-popup',
                 default_value=self.current_percentage,
@@ -50,14 +49,14 @@ class Progress:
             return
 
         self.current_percentage = percentage
-        self.imgui.configure_item(item='progress-status', default_value=current_status)
-        self.imgui.set_value('progress-bar', 1/100 * self.current_percentage)
+        hinter.imgui.configure_item(item='progress-status', default_value=current_status)
+        hinter.imgui.set_value('progress-bar', 1/100 * self.current_percentage)
 
     # Ensure the popup can close itself
     def close(self):
-        self.imgui.delete_item(item='progress-popup')
-        self.imgui.delete_item(item='progress-status')
-        self.imgui.delete_item(item='progress-spacer')
-        self.imgui.delete_item(item='progress-bar')
-        self.imgui.delete_item(item='progress-spacer-2')
-        self.imgui.delete_item(item='progress-info')
+        hinter.imgui.delete_item(item='progress-popup')
+        hinter.imgui.delete_item(item='progress-status')
+        hinter.imgui.delete_item(item='progress-spacer')
+        hinter.imgui.delete_item(item='progress-bar')
+        hinter.imgui.delete_item(item='progress-spacer-2')
+        hinter.imgui.delete_item(item='progress-info')

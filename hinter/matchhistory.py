@@ -7,7 +7,6 @@ import pytz
 import timeago
 import timeago.locales.en  # Required for building to executable
 from PIL import Image, ImageOps
-import dearpygui.dearpygui
 
 import hinter
 
@@ -26,11 +25,8 @@ class MatchHistory:
     history: str = 'match_history_table-history-container'
     right_bar: str = 'match_history_table-right'
     ui: hinter.ui.main.UI
-    imgui: dearpygui.dearpygui = dearpygui.dearpygui
     SUMMONERS_RIFT = 11
-    players_played_with: hinter.PlayersPlayedWith = hinter.PlayersPlayedWith.PlayersPlayedWith()
-    lanes_played = {}
-    champions_played = {}
+    players_played_with: hinter.PlayersPlayedWith
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.User = None):
         # Load summoner information
@@ -42,6 +38,7 @@ class MatchHistory:
             return
 
         self.ui = ui
+        self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
 
         self.username = user.name
 
@@ -62,59 +59,59 @@ class MatchHistory:
         except Exception as e:
             self.delete_previous_screens(delete_current=True)
 
-            self.imgui.set_viewport_min_width(350)
-            self.imgui.set_viewport_width(350)
-            self.imgui.set_viewport_min_height(600)
-            self.imgui.set_viewport_height(600)
+            hinter.imgui.set_viewport_min_width(350)
+            hinter.imgui.set_viewport_width(350)
+            hinter.imgui.set_viewport_min_height(600)
+            hinter.imgui.set_viewport_height(600)
 
             if '503' in str(e):
                 region = cassiopeia.Region(hinter.settings.region)
                 platform = cassiopeia.Platform[region.name].value.lower()
 
-                with self.imgui.window(tag='error'):
-                    self.imgui.add_spacer(height=150)
+                with hinter.imgui.window(tag='error'):
+                    hinter.imgui.add_spacer(height=150)
 
                     text = 'Riot services are unavailable.'
-                    self.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_text(f'{text:^40}')
                     text = 'Please try later.'
-                    self.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_text(f'{text:^40}')
 
-                    self.imgui.add_spacer(height=40)
+                    hinter.imgui.add_spacer(height=40)
 
                     text = 'You can check the LoL status page:'
-                    self.imgui.add_text(f'{text:^40}')
-                    self.imgui.add_button(
+                    hinter.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_button(
                         label='Open status.rito Page',
                         callback=lambda: webbrowser.open(f'https://status.riotgames.com/lol?region={platform}'),
                         width=-1,
                     )
                     text = '(rarely posted if issues are unexpected)'
-                    self.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_text(f'{text:^40}')
 
-                self.imgui.set_primary_window('error', True)
-                self.imgui.start_dearpygui()
+                hinter.imgui.set_primary_window('error', True)
+                hinter.imgui.start_dearpygui()
                 self.ui.exit_callback()
                 exit(503)
             elif '403' in str(e):
-                with self.imgui.window(tag='error'):
-                    self.imgui.add_spacer(height=175)
+                with hinter.imgui.window(tag='error'):
+                    hinter.imgui.add_spacer(height=175)
                     text = 'This API key is invalid or expired.'
-                    self.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_text(f'{text:^40}')
                     text = 'Please enter a new one.'
-                    self.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_text(f'{text:^40}')
 
-                    self.imgui.add_spacer(height=20)
+                    hinter.imgui.add_spacer(height=20)
 
                     text = 'You can get a new one here:'
-                    self.imgui.add_text(f'{text:^40}')
-                    self.imgui.add_button(
+                    hinter.imgui.add_text(f'{text:^40}')
+                    hinter.imgui.add_button(
                         label='Open developer.rito Page',
                         callback=lambda: webbrowser.open('https://developer.riotgames.com'),
                         width=-1,
                     )
 
-                self.imgui.set_primary_window('error', True)
-                self.imgui.start_dearpygui()
+                hinter.imgui.set_primary_window('error', True)
+                hinter.imgui.start_dearpygui()
                 self.ui.exit_callback()
                 exit(403)
             else:
@@ -129,60 +126,60 @@ class MatchHistory:
         self.ui.new_screen(tag='match_history')
 
         # Set up the table
-        self.imgui.add_table(
+        hinter.imgui.add_table(
             tag=self.table,
             header_row=False,
             parent='match_history',
         )
-        self.imgui.add_table_row(
+        hinter.imgui.add_table_row(
             parent=self.table,
             tag=self.table_row,
         )
 
         # region Left Bar
         # Set up the left-bar
-        self.imgui.add_table_column(
+        hinter.imgui.add_table_column(
             parent=self.table,
             tag=self.left_bar,
             init_width_or_weight=0.2,
         )
-        with self.imgui.table_cell(parent=self.table_row):
-            with self.imgui.table(header_row=False, tag='match_history-friends-parent'):
-                self.imgui.add_table_column()
+        with hinter.imgui.table_cell(parent=self.table_row):
+            with hinter.imgui.table(header_row=False, tag='match_history-friends-parent'):
+                hinter.imgui.add_table_column()
 
                 # User name, centered
-                with self.imgui.table_row():
-                    with self.imgui.table(header_row=False):
+                with hinter.imgui.table_row():
+                    with hinter.imgui.table(header_row=False):
                         # Adjust widths to center username
                         #  at 40pt it can fit 17 characters, and max character length for names is 16
                         portion = 1.0 / 16
                         name_portion = portion * len(self.username)
                         spacer_portion = (1.0 - name_portion) / 2
 
-                        self.imgui.add_table_column(init_width_or_weight=spacer_portion)
-                        self.imgui.add_table_column(init_width_or_weight=name_portion)
-                        self.imgui.add_table_column(init_width_or_weight=spacer_portion)
+                        hinter.imgui.add_table_column(init_width_or_weight=spacer_portion)
+                        hinter.imgui.add_table_column(init_width_or_weight=name_portion)
+                        hinter.imgui.add_table_column(init_width_or_weight=spacer_portion)
 
                         # Center the username
-                        with self.imgui.table_row():
-                            self.imgui.add_spacer()
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
 
-                            self.imgui.add_text(self.username)
-                            self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['40 bold'])
+                            hinter.imgui.add_text(self.username)
+                            hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['40 bold'])
 
-                            self.imgui.add_spacer()
+                            hinter.imgui.add_spacer()
 
                 # Icon and level
-                with self.imgui.table_row():
-                    with self.imgui.table(header_row=False):
-                        self.imgui.add_table_column(init_width_or_weight=0.2)
-                        self.imgui.add_table_column(init_width_or_weight=0.6)
-                        self.imgui.add_table_column(init_width_or_weight=0.2)
+                with hinter.imgui.table_row():
+                    with hinter.imgui.table(header_row=False):
+                        hinter.imgui.add_table_column(init_width_or_weight=0.2)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.6)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.2)
 
-                        with self.imgui.table_row():
-                            self.imgui.add_spacer()
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
 
-                            with self.imgui.group(horizontal=True):
+                            with hinter.imgui.group(horizontal=True):
                                 icon_name = f'summoner_icon-{self.icon.id}'
 
                                 # TODO: Make a UI method from this
@@ -198,29 +195,29 @@ class MatchHistory:
                                 )
 
                                 # Show the icon
-                                self.imgui.add_image(texture_tag=summoner_icon_texture, tag='summoner_icon')
+                                hinter.imgui.add_image(texture_tag=summoner_icon_texture, tag='summoner_icon')
 
                                 # Show the rank name
-                                self.imgui.add_text(f'Level {self.level}')
-                                self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['32 bold'])
+                                hinter.imgui.add_text(f'Level {self.level}')
+                                hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['32 bold'])
 
-                            self.imgui.add_spacer()
+                            hinter.imgui.add_spacer()
 
                 # Rank
                 # TODO: Master+ has no division, display LP/position?
                 if self.rank is not None and hinter.settings.show_my_rank:
-                    with self.imgui.table_row():
-                        with self.imgui.group():
-                            self.imgui.add_spacer(height=20)
-                            with self.imgui.table(header_row=False):
-                                self.imgui.add_table_column(init_width_or_weight=0.275)
-                                self.imgui.add_table_column(init_width_or_weight=0.45)
-                                self.imgui.add_table_column(init_width_or_weight=0.275)
+                    with hinter.imgui.table_row():
+                        with hinter.imgui.group():
+                            hinter.imgui.add_spacer(height=20)
+                            with hinter.imgui.table(header_row=False):
+                                hinter.imgui.add_table_column(init_width_or_weight=0.275)
+                                hinter.imgui.add_table_column(init_width_or_weight=0.45)
+                                hinter.imgui.add_table_column(init_width_or_weight=0.275)
 
-                                with self.imgui.table_row():
-                                    self.imgui.add_spacer()
+                                with hinter.imgui.table_row():
+                                    hinter.imgui.add_spacer()
 
-                                    with self.imgui.group(horizontal=True):
+                                    with hinter.imgui.group(horizontal=True):
                                         # Show the icon
                                         rank_icon_texture = self.ui.load_image(
                                             'rank-' + self.rank.tier.name,
@@ -229,62 +226,62 @@ class MatchHistory:
                                             (477, 214, 810, 472),
                                             (86, 60),
                                         )
-                                        self.imgui.add_image(texture_tag=rank_icon_texture)
+                                        hinter.imgui.add_image(texture_tag=rank_icon_texture)
 
                                         # Show the rank name
                                         rank_name = self.rank.division.value
-                                        self.imgui.add_text(rank_name)
-                                        self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['56 bold'])
+                                        hinter.imgui.add_text(rank_name)
+                                        hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['56 bold'])
 
-                                    self.imgui.add_spacer()
+                                    hinter.imgui.add_spacer()
 
-                with self.imgui.table_row(tag='match_history-friends-ref'):
-                    self.imgui.add_spacer()
+                with hinter.imgui.table_row(tag='match_history-friends-ref'):
+                    hinter.imgui.add_spacer()
         # endregion Left Bar
 
         # region  Center (Match History container)
         # Set up the center column, just a container for match history
-        self.imgui.add_table_column(
+        hinter.imgui.add_table_column(
             parent=self.table,
             init_width_or_weight=0.60,
         )
         # Add a table that matches can be added to as rows, everything else is just a placeholder until the matches load
-        with self.imgui.table_cell(parent=self.table_row):
-            with self.imgui.table(header_row=False, tag=self.history, pad_outerX=True):
-                self.imgui.add_table_column(tag='match-history-delete-5')
-                self.imgui.add_table_column()  # Actual destination for matches
-                self.imgui.add_table_column(tag='match-history-delete-6')
+        with hinter.imgui.table_cell(parent=self.table_row):
+            with hinter.imgui.table(header_row=False, tag=self.history, pad_outerX=True):
+                hinter.imgui.add_table_column(tag='match-history-delete-5')
+                hinter.imgui.add_table_column()  # Actual destination for matches
+                hinter.imgui.add_table_column(tag='match-history-delete-6')
 
-                with self.imgui.table_row(tag='match-history-delete-1'):
-                    self.imgui.add_spacer(tag='match-history-delete-2')
-                    self.imgui.add_text(
+                with hinter.imgui.table_row(tag='match-history-delete-1'):
+                    hinter.imgui.add_spacer(tag='match-history-delete-2')
+                    hinter.imgui.add_text(
                         'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
                         '\nIt can take a couple minutes',
                         tag='match-history-delete-3',
                     )
-                    self.imgui.add_spacer(tag='match-history-delete-4')
+                    hinter.imgui.add_spacer(tag='match-history-delete-4')
         # endregion Center (Match History container)
 
         # region Right Bar
         # Set up the right-bar
-        self.imgui.add_table_column(
+        hinter.imgui.add_table_column(
             parent=self.table,
             tag=self.right_bar,
             init_width_or_weight=0.2,
         )
-        with self.imgui.table_cell(parent=self.table_row):
-            with self.imgui.table(header_row=False):
-                self.imgui.add_table_column()
+        with hinter.imgui.table_cell(parent=self.table_row):
+            with hinter.imgui.table(header_row=False):
+                hinter.imgui.add_table_column()
 
-                with self.imgui.table_row():
-                    self.imgui.add_text('role distribution, champ wr here')
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_text('role distribution, champ wr here')
         # endregion Right Bar
 
         # Display screen
-        self.imgui.set_viewport_min_width(hinter.settings.default_width)
-        self.imgui.set_viewport_width(hinter.settings.width)
-        self.imgui.set_viewport_min_height(hinter.settings.default_height)
-        self.imgui.set_viewport_height(hinter.settings.height)
+        hinter.imgui.set_viewport_min_width(hinter.settings.default_width)
+        hinter.imgui.set_viewport_width(hinter.settings.width)
+        hinter.imgui.set_viewport_min_height(hinter.settings.default_height)
+        hinter.imgui.set_viewport_height(hinter.settings.height)
         self.ui.new_screen(tag='match_history', set_primary=True)
 
         self.ui.render_frames(60, split=not render)
@@ -304,19 +301,19 @@ class MatchHistory:
 
         # Have filler if the user has not been in any games
         if not self.games:
-            with self.imgui.table_row(parent=self.history):
-                self.imgui.add_spacer()
-                self.imgui.add_text('There are no games for this user, yet!')
-                self.imgui.add_spacer()
+            with hinter.imgui.table_row(parent=self.history):
+                hinter.imgui.add_spacer()
+                hinter.imgui.add_text('There are no games for this user, yet!')
+                hinter.imgui.add_spacer()
             return
 
         # region Remove loading info
-        self.imgui.delete_item(item='match-history-delete-1')
-        self.imgui.delete_item(item='match-history-delete-2')
-        self.imgui.delete_item(item='match-history-delete-3')
-        self.imgui.delete_item(item='match-history-delete-4')
-        self.imgui.delete_item(item='match-history-delete-5')
-        self.imgui.delete_item(item='match-history-delete-6')
+        hinter.imgui.delete_item(item='match-history-delete-1')
+        hinter.imgui.delete_item(item='match-history-delete-2')
+        hinter.imgui.delete_item(item='match-history-delete-3')
+        hinter.imgui.delete_item(item='match-history-delete-4')
+        hinter.imgui.delete_item(item='match-history-delete-5')
+        hinter.imgui.delete_item(item='match-history-delete-6')
         # endregion Remove loading info
 
         row_count = 0
@@ -724,36 +721,36 @@ class MatchHistory:
             '''Display and organize game widgets'''
 
             counter = 0
-            self.imgui.add_table_row(parent=self.history, tag=f'match-{match.id}')
+            hinter.imgui.add_table_row(parent=self.history, tag=f'match-{match.id}')
 
-            with self.imgui.table(parent=f'match-{match.id}', header_row=False, no_clip=True):
+            with hinter.imgui.table(parent=f'match-{match.id}', header_row=False, no_clip=True):
                 # region Columns
-                self.imgui.add_table_column()  # Outcome, champ played, spells, runes
-                self.imgui.add_table_column()  # Lane, items
-                self.imgui.add_table_column()  # Game Type, kda
-                self.imgui.add_table_column()  # Vision, kp
-                self.imgui.add_table_column()  # CS
-                self.imgui.add_table_column()  # Match duration info, dmg
+                hinter.imgui.add_table_column()  # Outcome, champ played, spells, runes
+                hinter.imgui.add_table_column()  # Lane, items
+                hinter.imgui.add_table_column()  # Game Type, kda
+                hinter.imgui.add_table_column()  # Vision, kp
+                hinter.imgui.add_table_column()  # CS
+                hinter.imgui.add_table_column()  # Match duration info, dmg
                 # endregion Columns
 
                 # region Row 1: Outcome, Lane, Game Type, Match duration info
-                with self.imgui.table_row():
-                    self.imgui.add_text(outcome)
-                    self.imgui.bind_item_font(self.imgui.last_item(), self.ui.font['24 regular'])
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_text(outcome)
+                    hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['24 regular'])
 
-                    self.imgui.add_text(played_position)
+                    hinter.imgui.add_text(played_position)
 
-                    self.imgui.add_text(f'{queue:^15}')
+                    hinter.imgui.add_text(f'{queue:^15}')
 
-                    self.imgui.add_spacer()
-                    self.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
 
-                    self.imgui.add_text(f'{duration:>20}')
+                    hinter.imgui.add_text(f'{duration:>20}')
                 # endregion Row 1: Outcome, Lane, Game Type, Match duration info
 
                 # region Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
-                with self.imgui.table_row(height=rune_size[1]):
-                    with self.imgui.group(horizontal=True):
+                with hinter.imgui.table_row(height=rune_size[1]):
+                    with hinter.imgui.group(horizontal=True):
                         if not self.ui.check_image_cache('champion-' + player.champion.name):
                             champion_played = self.ui.load_image(
                                 'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
@@ -762,7 +759,7 @@ class MatchHistory:
                             champion_played = self.ui.load_image(champion_played, size=champ_size)
 
                         # Place a filler image for the champion icon (hack to span 2 rows)
-                        self.imgui.add_image(
+                        hinter.imgui.add_image(
                             texture_tag='CACHED_IMAGE-filler',
                             width=champ_size[0],
                             height=rune_size[1],
@@ -773,11 +770,11 @@ class MatchHistory:
 
                         champ_icons.append(f'champ-icon-{match.id}')
                         # Place the champion icon over the filler image
-                        self.imgui.add_image(
+                        hinter.imgui.add_image(
                             texture_tag=champion_played,
                             tag=f'champ-icon-{match.id}',
                             parent='match_history',
-                            pos=self.imgui.get_item_pos(f'champ-icon-holder-{match.id}')
+                            pos=hinter.imgui.get_item_pos(f'champ-icon-holder-{match.id}')
                         )
 
                         if not self.ui.check_image_cache('spell-' + spell_d.name):
@@ -786,10 +783,10 @@ class MatchHistory:
                             )
                         else:
                             spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
-                        self.imgui.add_image(texture_tag=spell_d_used)
+                        hinter.imgui.add_image(texture_tag=spell_d_used)
 
                         if queue == 'Arena':
-                            self.imgui.add_image(
+                            hinter.imgui.add_image(
                                 texture_tag='CACHED_IMAGE-filler',
                                 width=rune_size[0],
                                 height=rune_size[1],
@@ -798,13 +795,13 @@ class MatchHistory:
                             key_rune_used = self.ui.load_image(
                                 'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
                             )
-                            self.imgui.add_image(texture_tag=key_rune_used)
+                            hinter.imgui.add_image(texture_tag=key_rune_used)
                         else:
                             key_rune_used = self.ui.load_image(runes_taken['key']['image'], size=rune_size)
-                            self.imgui.add_image(texture_tag=key_rune_used)
+                            hinter.imgui.add_image(texture_tag=key_rune_used)
 
                     # Show the first 3 items
-                    with self.imgui.group(horizontal=True):
+                    with hinter.imgui.group(horizontal=True):
                         for item in items:
                             if counter < 3:
                                 # Load the image if it is not a placeholder
@@ -815,10 +812,10 @@ class MatchHistory:
                                         )
                                     else:
                                         image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
-                                    self.imgui.add_image(texture_tag=image)
+                                    hinter.imgui.add_image(texture_tag=image)
                                 # Handle cases where there are <3 items
                                 else:
-                                    self.imgui.add_image(
+                                    hinter.imgui.add_image(
                                         texture_tag='CACHED_IMAGE-filler',
                                         width=item_size[0],
                                         height=item_size[1],
@@ -827,27 +824,27 @@ class MatchHistory:
                                 continue
                             counter += 1
                         # Filler '4th item' in this row to show above trinket
-                        self.imgui.add_image(
+                        hinter.imgui.add_image(
                             texture_tag='CACHED_IMAGE-filler',
                             width=item_size[0],
                             height=item_size[1],
                         )
 
-                    self.imgui.add_text(f'{kda_display:^15}')
+                    hinter.imgui.add_text(f'{kda_display:^15}')
 
                     if match.map.id != self.SUMMONERS_RIFT:
                         vision_min = filler
-                    self.imgui.add_text(f'{vision_min:^20}')
+                    hinter.imgui.add_text(f'{vision_min:^20}')
 
-                    self.imgui.add_text(f'{cs_min:^15}')
+                    hinter.imgui.add_text(f'{cs_min:^15}')
 
-                    self.imgui.add_text(f'{damage_min:^20}')
+                    hinter.imgui.add_text(f'{damage_min:^20}')
                 # endregion Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
 
                 # region Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_spacer(width=champ_size[0])
+                with hinter.imgui.table_row():
+                    with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_spacer(width=champ_size[0])
 
                         if not self.ui.check_image_cache('spell-' + spell_f.name):
                             spell_f_used = self.ui.load_image(
@@ -855,10 +852,10 @@ class MatchHistory:
                             )
                         else:
                             spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
-                        self.imgui.add_image(texture_tag=spell_f_used)
+                        hinter.imgui.add_image(texture_tag=spell_f_used)
 
                         if queue == 'Arena':
-                            self.imgui.add_image(
+                            hinter.imgui.add_image(
                                 texture_tag='CACHED_IMAGE-filler',
                                 width=sec_rune_size[0],
                                 height=sec_rune_size[1],
@@ -870,17 +867,17 @@ class MatchHistory:
                                 secondary_rune_used,
                                 size=sec_rune_size,
                             )
-                            self.imgui.add_image(texture_tag=secondary_rune_used)
+                            hinter.imgui.add_image(texture_tag=secondary_rune_used)
                         else:
                             secondary_rune_used = self.ui.load_image(
                                 f'rune-{runes_taken["secondary"]["name"]}',
                                 size=sec_rune_size,
                             )
-                            self.imgui.add_image(texture_tag=secondary_rune_used)
+                            hinter.imgui.add_image(texture_tag=secondary_rune_used)
 
                     # Show the last 3 items, and the trinket
                     counter = 0
-                    with self.imgui.group(horizontal=True):
+                    with hinter.imgui.group(horizontal=True):
                         for item in items:
                             # Skip the first 3 items
                             if counter >= 3:
@@ -892,10 +889,10 @@ class MatchHistory:
                                         )
                                     else:
                                         image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
-                                    self.imgui.add_image(texture_tag=image)
+                                    hinter.imgui.add_image(texture_tag=image)
                                 # Handle cases where there are <3 items
                                 else:
-                                    self.imgui.add_image(
+                                    hinter.imgui.add_image(
                                         texture_tag='CACHED_IMAGE-filler',
                                         width=item_size[0],
                                         height=item_size[1],
@@ -904,21 +901,21 @@ class MatchHistory:
                             else:
                                 counter += 1
 
-                    self.imgui.add_text(f'{k_d_a_display:^15}')
+                    hinter.imgui.add_text(f'{k_d_a_display:^15}')
 
                     if match.map.id != self.SUMMONERS_RIFT:
                         vision = filler
-                    self.imgui.add_text(f'{vision:^20}')
+                    hinter.imgui.add_text(f'{vision:^20}')
 
-                    self.imgui.add_text(f'{total_cs:^15}')
+                    hinter.imgui.add_text(f'{total_cs:^15}')
 
-                    self.imgui.add_text(f'{damage:^20}')
+                    hinter.imgui.add_text(f'{damage:^20}')
                 # endregion Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
 
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=5)
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer(height=5)
 
-            self.imgui.set_table_row_color(
+            hinter.imgui.set_table_row_color(
                 table=self.history,
                 row=row_count,
                 color=background_color,
@@ -930,19 +927,19 @@ class MatchHistory:
         # region Friends Played With
         font = self.ui.font['20 regular']
         if len(self.players_played_with.friends) > 0:
-            with self.imgui.table_row(before='match_history-friends-ref'):
-                with self.imgui.group():
-                    self.imgui.add_spacer(height=35)
-                    self.imgui.add_text('Friends Played With', tag='match_history-friends-header')
-                    self.imgui.add_spacer(height=5)
-                    self.imgui.add_separator()
-                    self.imgui.add_spacer(height=10)
-            self.imgui.bind_item_font('match_history-friends-header', self.ui.font['24 bold'])
+            with hinter.imgui.table_row(before='match_history-friends-ref'):
+                with hinter.imgui.group():
+                    hinter.imgui.add_spacer(height=35)
+                    hinter.imgui.add_text('Friends Played With', tag='match_history-friends-header')
+                    hinter.imgui.add_spacer(height=5)
+                    hinter.imgui.add_separator()
+                    hinter.imgui.add_spacer(height=10)
+            hinter.imgui.bind_item_font('match_history-friends-header', self.ui.font['24 bold'])
 
             for PlayerPlayedWith in self.players_played_with.friends:
-                with self.imgui.table_row(before='match_history-friends-ref'):
-                    with self.imgui.group():
-                        with self.imgui.group(horizontal=True):
+                with hinter.imgui.table_row(before='match_history-friends-ref'):
+                    with hinter.imgui.group():
+                        with hinter.imgui.group(horizontal=True):
                             icon_name = f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}'
 
                             # TODO: Make a UI method from this
@@ -959,29 +956,30 @@ class MatchHistory:
                                 size=(30, 30),
                             )
 
-                            self.imgui.add_image(texture_tag=summoner_icon_texture)
+                            hinter.imgui.add_image(texture_tag=summoner_icon_texture)
 
-                            self.imgui.add_button(
+                            hinter.imgui.add_button(
                                 label=PlayerPlayedWith.username,
                                 enabled=False,
                                 tag=f'friend-{PlayerPlayedWith.clean_username}',
                             )
-                        self.imgui.add_spacer(height=2)
-                        self.imgui.add_text(
+                        hinter.imgui.add_spacer(height=2)
+                        hinter.imgui.add_text(
                             f'{PlayerPlayedWith.win_rate:>2.1f}% WR in {PlayerPlayedWith.games_played:>3} games'
                         )
-                        self.imgui.add_spacer(height=15)
+                        hinter.imgui.add_spacer(height=15)
 
-                with self.imgui.theme() as item_theme:
-                    with self.imgui.theme_component(self.imgui.mvButton, enabled_state=False):
-                        self.imgui.add_theme_color(self.imgui.mvThemeCol_Button, (255, 255, 255))
-                        self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonActive, (255, 255, 255))
-                        self.imgui.add_theme_color(self.imgui.mvThemeCol_ButtonHovered, (255, 255, 255))
-                        self.imgui.add_theme_color(self.imgui.mvThemeCol_Text, (0, 0, 0))
-                        self.imgui.add_theme_style(self.imgui.mvStyleVar_FrameRounding, 15)
-                        self.imgui.add_theme_style(self.imgui.mvStyleVar_FramePadding, 7, 5)
-                self.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
-                self.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+                with hinter.imgui.theme() as item_theme:
+                    with hinter.imgui.theme_component(hinter.imgui.mvButton, enabled_state=False):
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_Button, (255, 255, 255))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonActive, (255, 255, 255))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonHovered, (255, 255, 255))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_Text, (0, 0, 0))
+                        hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FrameRounding, 15)
+                        hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 7, 5)
+                hinter.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
+                hinter.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+
         # endregion Friends Played With
 
         # region Handler and Callback for moving champ icons when the window is resized
@@ -990,40 +988,32 @@ class MatchHistory:
             match_id = sender.split('-')[-1]
 
             # Move the image
-            self.imgui.set_item_pos(
+            hinter.imgui.set_item_pos(
                 item=f'champ-icon-{match_id}',
-                pos=self.imgui.get_item_pos(f'champ-icon-holder-{match_id}'),
+                pos=hinter.imgui.get_item_pos(f'champ-icon-holder-{match_id}'),
             )
 
         # Add a handler for when match data is visible, so we can get the position at that time
-        with self.imgui.item_handler_registry():
+        with hinter.imgui.item_handler_registry():
             for icon in champ_icons:
-                self.imgui.add_item_resize_handler(callback=resize_call, tag=f'resize_handler-{icon}')
-        self.imgui.bind_item_handler_registry(self.ui.screen, self.imgui.last_container())
+                hinter.imgui.add_item_resize_handler(callback=resize_call, tag=f'resize_handler-{icon}')
+        hinter.imgui.bind_item_handler_registry(self.ui.screen, hinter.imgui.last_container())
         # endregion Handler and Callback for moving champ icons when the window is resized
 
     def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
-        if self.imgui.does_item_exist('login'):
-            self.imgui.delete_item('login')
+        if hinter.imgui.does_item_exist('login'):
+            hinter.imgui.delete_item('login')
 
-        if self.imgui.does_item_exist('loading'):
-            self.imgui.delete_item('loading')
+        if hinter.imgui.does_item_exist('loading'):
+            hinter.imgui.delete_item('loading')
 
         if delete_history:
-            if self.imgui.does_item_exist('match_history'):
-                self.imgui.delete_item('match_history')
+            if hinter.imgui.does_item_exist('match_history'):
+                hinter.imgui.delete_item('match_history')
 
         if delete_current:
-            if self.imgui.does_item_exist(self.ui.screen):
-                self.imgui.delete_item(self.ui.screen)
-
-    def track_lanes(self, position, outcome):
-        # TODO: Implement lane popularity/wr
-        self.lanes_played
-
-    def track_champions(self, champion, outcome):
-        # TODO: Implement champion popularity/wr
-        self.champions_played
+            if hinter.imgui.does_item_exist(self.ui.screen):
+                hinter.imgui.delete_item(self.ui.screen)
 
     def __del__(self):
         self.ui.clear_screen()
