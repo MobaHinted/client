@@ -1,6 +1,7 @@
 from typing import Union
 
 import cassiopeia
+import hinter
 
 # TODO: Change imports like this one to just import hinter - in this case, maybe hinter.struct
 from hinter.struct.PlayerPlayedWith import PlayerPlayedWith
@@ -64,7 +65,7 @@ class PlayersPlayedWith:
 
     @property
     def friends(self) -> list[PlayerPlayedWith]:
-        return self._sort_players_played_with(allied=True, minimum_games=5)
+        return self._sort_players_played_with(allied=True, minimum_games=hinter.settings.friend_threshold)
 
     @property
     def enemies(self) -> list[PlayerPlayedWith]:

@@ -26,7 +26,7 @@ cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
 cassiopeia_settings = {
     "global": {
         "version_from_match": "version",
-        "default_region": 'NA'
+        "default_region": hinter.settings.region
     },
     'pipeline': {
         'Cache': {},

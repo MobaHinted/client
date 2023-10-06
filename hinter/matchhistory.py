@@ -15,7 +15,6 @@ import hinter
 class MatchHistory:
     # TODO: Make sure all of these are being filled in __init__
     games: cassiopeia.MatchHistory
-    games_shown: int = 100
     rank: Union[cassiopeia.Rank, None]
     average_kda: float
     level = 0
@@ -209,7 +208,7 @@ class MatchHistory:
 
                 # Rank
                 # TODO: Master+ has no division, display LP/position?
-                if self.rank is not None:
+                if self.rank is not None and hinter.settings.show_my_rank:
                     with self.imgui.table_row():
                         with self.imgui.group():
                             self.imgui.add_spacer(height=20)
@@ -323,7 +322,7 @@ class MatchHistory:
         row_count = 0
         # Loop through the first games
         # noinspection PyTypeChecker
-        for key, match in enumerate(self.games[0:self.games_shown]):
+        for key, match in enumerate(self.games[0:hinter.settings.match_history_count]):
             self.ui.render_frames(render)
 
             # region Cast or setup multiple variables

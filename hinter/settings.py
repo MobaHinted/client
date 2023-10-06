@@ -4,8 +4,6 @@ import os.path
 # noinspection PySimplifyBooleanCheck
 class Settings:
     settings_file = './data/settings.dat'
-    region = 'NA'
-    active_user = ''
     settings_loaded = False
     version = '0.0.0'
     x: int = 10  # Window Position
@@ -14,6 +12,63 @@ class Settings:
     default_height: int = 670
     width: int = 1780  # Window Size
     height: int = 670
+
+    # Settings Popup settings
+    overlay_milestones: bool = False
+    overlay_cs_tracker: bool = True
+    overlay_objectives: bool = False
+    overlay_spell_tracker: bool = True
+    overlay_jungle: bool = True
+    overlay_aram: bool = True
+    overlay_duos: bool = True
+    overlay_gold_diff: bool = True
+    overlay_map_check: bool = False
+    overlay_back_reminder: bool = False
+    overlay_trinket: bool = True
+    overlay_counter_items: bool = False
+
+    launch_on_startup: bool = False
+    automatic_updates: bool = True
+    close_to_tray: bool = False
+    bring_to_front: bool = False
+    save_window_position: bool = True
+    detect_new_accounts: bool = True
+
+    match_history_count: int = 50
+    friend_threshold: int = 5
+
+    show_my_rank: bool = True
+    show_ally_rank: bool = True
+    show_enemy_rank: bool = True
+    show_game_ranks: bool = True
+
+    show_current_session: bool = False
+    show_pregame_separate: bool = False
+    auto_close_pregame: bool = False
+    show_builds_separate: bool = False
+    auto_close_builds: bool = True
+    show_postgame_separate: bool = False
+
+    active_user: str = ''
+    region: str = 'NA'
+
+    pipeline: str = 'Fast, Accurate'
+    # TODO: Add actual cassiopeia settings
+    pipelines = {
+        'Most Private': {
+            'description': 'Riot Data > Riot (recommended to use your own key)',
+            'cassiopeia_setting': {}
+        },
+        'Private, Fast': {
+            'description': 'Riot Data > MobaHinted Proxy > Riot',
+            'cassiopeia_setting': {}
+        },
+        'Fast, Accurate': {
+            'description': 'Community Data > MobaHinted Proxy > Riot',
+            'cassiopeia_setting': {}
+        },
+    }
+    telemetry: bool = False
 
     def load_settings(self, refresh: bool = False):
         # Skip loading of settings if they are already loaded

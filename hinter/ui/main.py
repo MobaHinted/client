@@ -353,6 +353,34 @@ Open Source at github.com/zbee/mobahinted''',
         def close_popup():
             self.imgui.hide_item(item='settings-popup')
 
+        # Callback to save each setting, requires tag to be same as setting
+        def save_setting(sender: str, data):
+            hinter.settings.write_setting(sender, data)
+
+            if '_separate' in sender:
+                window = sender.split('_')[1]
+
+                if data:
+                    self.imgui.show_item(f'auto_close_{window}')
+                else:
+                    self.imgui.hide_item(f'auto_close_{window}')
+
+            if 'overlay_' in sender:
+                if data:
+                    self.imgui.show_item(f'{sender}-config')
+                else:
+                    self.imgui.hide_item(f'{sender}-config')
+
+            if 'pipeline' == sender:
+                for pipeline in hinter.settings.pipelines.keys():
+                    target = pipeline.replace(' ', '_').replace(',', '').lower()
+
+                    if pipeline == data:
+                        self.imgui.show_item(f'pipeline_description-{target}')
+                    else:
+                        self.imgui.hide_item(f'pipeline_description-{target}')
+                del pipeline, target
+
         # Show the popup
         with self.imgui.window(
                 label='Settings',
@@ -380,137 +408,54 @@ Open Source at github.com/zbee/mobahinted''',
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
 
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Milestone Notifications',
-                            default_value=False,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='CS Tracker and Stats Window',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
+                overlays = [
+                    {
+                        'overlay_milestones': 'Milestone Notifications',
+                        'overlay_cs_tracker': 'CS Tracker and Stats Window',
+                    },
+                    {
+                        'overlay_objectives': 'Objective Reminders',
+                        'overlay_spell_tracker': 'Enemy Spell Tracker',
+                    },
+                    {
+                        'overlay_jungle': 'Jungle Timers',
+                        'overlay_aram': 'ARAM Health Timers',
+                    },
+                    {
+                        'overlay_duos': 'Scoreboard Duos',
+                        'overlay_gold_diff': 'Scoreboard Item Gold Diff',
+                    },
+                    {
+                        'overlay_map_check': 'Map Check Reminder',
+                        'overlay_back_reminder': 'Back Reminder',
+                    },
+                    {
+                        'overlay_trinket': 'Use Trinket Reminder',
+                        'overlay_counter_items': 'Counter Item Suggestions',
+                    }
+                ]
 
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
+                for duo_of_overlays in overlays:
+                    with self.imgui.table_row():
+                        for tag, label in duo_of_overlays.items():
+                            with self.imgui.group(horizontal=True):
+                                self.imgui.add_checkbox(
+                                    label=label,
+                                    default_value=getattr(hinter.settings, tag),
+                                    tag=tag,
+                                    callback=save_setting
+                                )
+                                self.imgui.add_image_button(
+                                    texture_tag=settings_gear,
+                                    tag=f'{tag}-config',
+                                    show=getattr(hinter.settings, tag),
+                                )
+                            self.imgui.add_spacer()
 
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Objective Reminders',
-                            default_value=False,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Enemy Spell Tracker',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
+                    with self.imgui.table_row():
+                        self.imgui.add_spacer(height=20)
 
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
-
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Jungle Timers',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='ARAM Health Timers',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
-
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Scoreboard Duos',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Gold Diff Tracker',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
-
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Map Check Reminder',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Back Reminder',
-                            default_value=False,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
-
-                with self.imgui.table_row():
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Use Trinket Reminder',
-                            default_value=True,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-                    self.imgui.add_spacer()
-                    with self.imgui.group(horizontal=True):
-                        self.imgui.add_checkbox(
-                            label='Counter Item Suggestions',
-                            default_value=False,
-                        )
-                        self.imgui.add_image_button(
-                            texture_tag=settings_gear,
-                        )
-
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
+                del duo_of_overlays, overlays
 
                 with self.imgui.table_row():
                     self.imgui.add_button(label='View all Overlay positions')
@@ -532,37 +477,49 @@ Open Source at github.com/zbee/mobahinted''',
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Launch MobaHinted on system startup',
-                        default_value=False,
+                        default_value=hinter.settings.launch_on_startup,
+                        tag='launch_on_startup',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Keep MobaHinted up to date automatically',
-                        default_value=True,
+                        default_value=hinter.settings.automatic_updates,
+                        tag='automatic_updates',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Close MobaHinted to the tray',
-                        default_value=False,
+                        default_value=hinter.settings.close_to_tray,
+                        tag='close_to_tray',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Bring MobaHinted to the front on window change',
-                        default_value=False,
+                        default_value=hinter.settings.bring_to_front,
+                        tag='bring_to_front',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Always show MobaHinted in the same place',
-                        default_value=True,
+                        default_value=hinter.settings.save_window_position,
+                        tag='save_window_position',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label='Detect new accounts automatically',
-                        default_value=True,
+                        default_value=hinter.settings.detect_new_accounts,
+                        tag='detect_new_accounts',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
@@ -573,7 +530,9 @@ Open Source at github.com/zbee/mobahinted''',
                         label='Number of games to show in Match History',
                         min_value=20,
                         max_value=250,
-                        default_value=100,
+                        default_value=hinter.settings.match_history_count,
+                        tag='match_history_count',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
@@ -581,7 +540,9 @@ Open Source at github.com/zbee/mobahinted''',
                         label='Number of games for someone to be considered a Friend',
                         min_value=2,
                         max_value=10,
-                        default_value=5,
+                        default_value=hinter.settings.friend_threshold,
+                        tag='friend_threshold',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
@@ -590,25 +551,33 @@ Open Source at github.com/zbee/mobahinted''',
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show my rank to me",
-                        default_value=True,
+                        default_value=hinter.settings.show_my_rank,
+                        tag='show_my_rank',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show teammate ranks",
-                        default_value=True,
+                        default_value=hinter.settings.show_ally_rank,
+                        tag='show_ally_rank',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show enemy ranks",
-                        default_value=True,
+                        default_value=hinter.settings.show_enemy_rank,
+                        tag='show_enemy_rank',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show game average ranks",
-                        default_value=True,
+                        default_value=hinter.settings.show_game_ranks,
+                        tag='show_game_ranks',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
@@ -617,42 +586,62 @@ Open Source at github.com/zbee/mobahinted''',
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show the current-play-session window",
-                        default_value=False,
+                        default_value=hinter.settings.show_current_session,
+                        tag='show_current_session',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show pre-game/lobby info as a separate window",
-                        default_value=False,
+                        default_value=hinter.settings.show_pregame_separate,
+                        tag='show_pregame_separate',
+                        callback=save_setting,
+                    )
+
+                with self.imgui.table_row(show=hinter.settings.auto_close_pregame):
+                    self.imgui.add_checkbox(
+                        label="Automatically close the Show pre-game/lobby info window",
+                        default_value=hinter.settings.auto_close_pregame,
+                        indent=25,
+                        tag='auto_close_pregame',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show pre-game build suggestions as a separate window",
-                        default_value=False,
+                        default_value=hinter.settings.show_builds_separate,
+                        tag='show_builds_separate',
+                        callback=save_setting,
                     )
 
-                with self.imgui.table_row():
+                with self.imgui.table_row(show=hinter.settings.auto_close_pregame):
                     self.imgui.add_checkbox(
                         label="Automatically close the pre-game build suggestions window",
-                        default_value=True,
+                        default_value=hinter.settings.auto_close_builds,
                         indent=25,
+                        tag='auto_close_builds',
+                        callback=save_setting,
                     )
 
                 with self.imgui.table_row():
                     self.imgui.add_checkbox(
                         label="Show post-game as a separate window",
-                        default_value=False,
+                        default_value=hinter.settings.show_postgame_separate,
+                        tag='show_postgame_separate',
+                        callback=save_setting,
                     )
 
-                with self.imgui.table_row():
-                    self.imgui.add_spacer(height=20)
+                # Only suitable as a development tool
+                # with self.imgui.table_row():
+                #     self.imgui.add_spacer(height=20)
 
-                with self.imgui.table_row():
-                    self.imgui.add_button(
-                        label='Customize Theme',
-                        callback=lambda: (self.imgui.show_style_editor()),
-                    )
+                # with self.imgui.table_row():
+                #     self.imgui.add_button(
+                #         label='Customize Theme',
+                #         callback=lambda: (self.imgui.show_style_editor()),
+                #     )
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
@@ -718,25 +707,21 @@ Open Source at github.com/zbee/mobahinted''',
                     self.imgui.add_spacer(height=10)
 
                 with self.imgui.table_row():
-                    pipeline = 'MHK,CDragon'
-
-                    if pipeline == 'MHK,CDragon':
-                        with self.imgui.group(horizontal=True):
-                            self.imgui.add_combo(
-                                items=[
-                                    'Most Private',       # Riot dev key
-                                    'Private, Accurate',  # Riot dev key and CDragon
-                                    'Fast, Accurate',     # CDragon and MHK
-                                ],
-                                default_value='Fast, Accurate',
-                                width=165,
+                    with self.imgui.group(horizontal=True):
+                        self.imgui.add_combo(
+                            items=list(hinter.settings.pipelines.keys()),
+                            default_value=hinter.settings.pipeline,
+                            width=165,
+                            tag='pipeline',
+                            callback=save_setting,
+                        )
+                        for pipeline, details in hinter.settings.pipelines.items():
+                            safe_name = pipeline.replace(' ', '_').replace(',', '').lower()
+                            self.imgui.add_text(
+                                details['description'],
+                                tag=f'pipeline_description-{safe_name}',
+                                show=hinter.settings.pipeline == pipeline,
                             )
-                            self.imgui.add_text(': CommunityDragon > MobaHinted Proxy > Riot')
-                    if pipeline == 'Dev Key':
-                        with self.imgui.group(horizontal=True):
-                            self.imgui.add_button(label='MobaHinted', enabled=False)
-                            self.imgui.add_text('>')
-                            self.imgui.add_button(label='Riot', enabled=False)
 
                 with self.imgui.table_row():
                     self.imgui.add_spacer(height=20)
@@ -808,8 +793,8 @@ relevant to improving the application.''',
                 with self.imgui.table_row():
                     self.imgui.add_text(
                         '''This will remove all item/rune pages labelled as MobaHinted, default
-all MobaHinted settings, clear all added accounts, and clear all cached
-game data.'''
+all MobaHinted settings, clear all accounts tracked in MobaHinted, and
+clear all game data MobaHinted cached.'''
                     )
 
                 with self.imgui.table_row():
@@ -1078,11 +1063,12 @@ Open Source at github.com/zbee/mobahinted'''
     def exit_callback(self):
         window_position = self.imgui.get_viewport_pos()
 
-        hinter.settings.write_setting('x', window_position[0])
-        hinter.settings.write_setting('y', window_position[1])
+        if hinter.settings.save_window_position:
+            hinter.settings.write_setting('x', window_position[0])
+            hinter.settings.write_setting('y', window_position[1])
 
-        hinter.settings.write_setting('width', self.imgui.get_viewport_width())
-        hinter.settings.write_setting('height', self.imgui.get_viewport_height())
+            hinter.settings.write_setting('width', self.imgui.get_viewport_width())
+            hinter.settings.write_setting('height', self.imgui.get_viewport_height())
 
     def imgui_init(self, save: bool = False):
         """Method to load or save ImGUI's init file
