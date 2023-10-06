@@ -25,10 +25,10 @@ class MatchHistory:
     history: str
     right_bar: str
     ui: hinter.ui.main.UI
-    SUMMONERS_RIFT = 11  # TODO: Move this to hinter.constants
     players_played_with: hinter.PlayersPlayedWith
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.User = None):
+        
         # Load summoner information
         if user is not None:
             user = cassiopeia.get_summoner(name=user.username, region=hinter.settings.region)
@@ -524,7 +524,7 @@ class MatchHistory:
             # region Role
             # Only check any lane/role data if this is summoner's rift
             position: cassiopeia.data.Position = cassiopeia.data.Position.none
-            if match.map.id == self.SUMMONERS_RIFT:
+            if match.map.id == hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
                 # Determine role of player
                 role = str(player.stats.role)
                 lane = str(player.lane)
@@ -595,7 +595,7 @@ class MatchHistory:
                         position = cassiopeia.data.Position.top
 
             # Undo labelling if not on summoner's rift
-            if match.map.id != self.SUMMONERS_RIFT:
+            if match.map.id != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
                 played_position = ''
             # Change 'utility' to 'support'
             elif position == cassiopeia.data.Position.utility:
@@ -603,7 +603,7 @@ class MatchHistory:
             else:
                 played_position = position.name.capitalize()
 
-            # if match.map.id == self.SUMMONERS_RIFT:
+            # if match.map.id == hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
             #     self.track_lanes(
             #         played_position,
             #         outcome
@@ -833,7 +833,7 @@ class MatchHistory:
 
                     hinter.imgui.add_text(f'{kda_display:^15}')
 
-                    if match.map.id != self.SUMMONERS_RIFT:
+                    if match.map.id != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
                         vision_min = filler
                     hinter.imgui.add_text(f'{vision_min:^20}')
 
@@ -904,7 +904,7 @@ class MatchHistory:
 
                     hinter.imgui.add_text(f'{k_d_a_display:^15}')
 
-                    if match.map.id != self.SUMMONERS_RIFT:
+                    if match.map.id != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
                         vision = filler
                     hinter.imgui.add_text(f'{vision:^20}')
 

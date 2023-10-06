@@ -7,8 +7,9 @@ import numpy as np
 import requests
 import cassiopeia
 
-# TODO: Change imports like this one to just import hinter
 import hinter
+from hinter.data.constants import UI_FONT_SCALE
+# TODO: Change imports like this one to just import hinter
 import hinter.background.dataloader
 
 
@@ -24,7 +25,6 @@ class UI:
     move_on_callback: callable
     render: bool
     data_loader: hinter.background.dataloader.DataLoader
-    FONT_SCALE = 2  # TODO: Move this to hinter.constants
     imgui = hinter.imgui  # TODO: Remove this, import hinter.user and match history to __init__ and include that in main
 
     def __init__(self, move_on_callback):
@@ -34,28 +34,28 @@ class UI:
 
         # Set up Fira Code for use
         with hinter.imgui.font_registry():
-            self.font['regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 16 * self.FONT_SCALE)
-            self.font['medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 16 * self.FONT_SCALE)
-            self.font['bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 16 * self.FONT_SCALE)
-            self.font['20 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 20 * self.FONT_SCALE)
-            self.font['20 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 20 * self.FONT_SCALE)
-            self.font['20 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 20 * self.FONT_SCALE)
-            self.font['24 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 24 * self.FONT_SCALE)
-            self.font['24 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 24 * self.FONT_SCALE)
-            self.font['24 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 24 * self.FONT_SCALE)
-            self.font['32 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 32 * self.FONT_SCALE)
-            self.font['32 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 32 * self.FONT_SCALE)
-            self.font['32 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 32 * self.FONT_SCALE)
-            self.font['40 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 40 * self.FONT_SCALE)
-            self.font['40 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 40 * self.FONT_SCALE)
-            self.font['40 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 40 * self.FONT_SCALE)
-            self.font['48 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 48 * self.FONT_SCALE)
-            self.font['48 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 48 * self.FONT_SCALE)
-            self.font['48 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 48 * self.FONT_SCALE)
-            self.font['56 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 56 * self.FONT_SCALE)
-            self.font['56 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 56 * self.FONT_SCALE)
-            self.font['56 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 56 * self.FONT_SCALE)
-        hinter.imgui.set_global_font_scale(1 / self.FONT_SCALE)
+            self.font['regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 16 * UI_FONT_SCALE)
+            self.font['medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 16 * UI_FONT_SCALE)
+            self.font['bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 16 * UI_FONT_SCALE)
+            self.font['20 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 20 * UI_FONT_SCALE)
+            self.font['20 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 20 * UI_FONT_SCALE)
+            self.font['20 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 20 * UI_FONT_SCALE)
+            self.font['24 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 24 * UI_FONT_SCALE)
+            self.font['24 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 24 * UI_FONT_SCALE)
+            self.font['24 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 24 * UI_FONT_SCALE)
+            self.font['32 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 32 * UI_FONT_SCALE)
+            self.font['32 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 32 * UI_FONT_SCALE)
+            self.font['32 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 32 * UI_FONT_SCALE)
+            self.font['40 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 40 * UI_FONT_SCALE)
+            self.font['40 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 40 * UI_FONT_SCALE)
+            self.font['40 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 40 * UI_FONT_SCALE)
+            self.font['48 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 48 * UI_FONT_SCALE)
+            self.font['48 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 48 * UI_FONT_SCALE)
+            self.font['48 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 48 * UI_FONT_SCALE)
+            self.font['56 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 56 * UI_FONT_SCALE)
+            self.font['56 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 56 * UI_FONT_SCALE)
+            self.font['56 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 56 * UI_FONT_SCALE)
+        hinter.imgui.set_global_font_scale(1 / UI_FONT_SCALE)
         hinter.imgui.bind_font(self.font['medium'])
 
         hinter.imgui.setup_dearpygui()
@@ -1055,7 +1055,7 @@ Open Source at github.com/zbee/mobahinted'''
         )
 
         # Account for the font scale and padding
-        scale = 1 / self.FONT_SCALE
+        scale = 1 / UI_FONT_SCALE
         return [
             int(text_size[0] * scale) + padding[0],
             int(text_size[1] * scale) + padding[1],

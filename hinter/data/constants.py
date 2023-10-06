@@ -1,0 +1,7 @@
+__all__ = [
+    'UI_FONT_SCALE',
+    'SUMMONERS_RIFT_MAP_ID'
+]
+
+UI_FONT_SCALE = 2
+SUMMONERS_RIFT_MAP_ID = 11
