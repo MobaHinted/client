@@ -28,7 +28,7 @@ class MatchHistory:
     players_played_with: hinter.PlayersPlayedWith
 
     def __init__(self, ui: hinter.ui.main.UI, user: hinter.User = None):
-        
+
         # Load summoner information
         if user is not None:
             user = cassiopeia.get_summoner(name=user.username, region=hinter.settings.region)
@@ -143,7 +143,7 @@ class MatchHistory:
             tag='match_history_table-left',
             init_width_or_weight=0.2,
         )
-        with hinter.imgui.table_cell(parent=self.table_row):
+        with (hinter.imgui.table_cell(parent=self.table_row)):
             with hinter.imgui.table(header_row=False, tag='match_history-friends-parent'):
                 hinter.imgui.add_table_column()
 
@@ -184,10 +184,12 @@ class MatchHistory:
 
                                 # TODO: Make a UI method from this
                                 if not self.ui.check_image_cache(icon_name):
-                                    mask = Image.open('./assets/circular_mask.png').convert('L')
+                                    mask = Image.open(
+                                        f'{hinter.data.constants.PATH_ASSETS}circular_mask.png'
+                                    ).convert('L')
                                     icon = ImageOps.fit(self.icon.image, mask.size, centering=(0.5, 0.5))
                                     icon.putalpha(mask)
-                                    icon.save(f'./data/image_cache/{icon_name}.png')
+                                    icon.save(f'{hinter.data.constants.PATH_IMAGES}{icon_name}.png')
 
                                 summoner_icon_texture = self.ui.load_image(
                                     icon_name,
@@ -221,8 +223,9 @@ class MatchHistory:
                                         # Show the icon
                                         rank_icon_texture = self.ui.load_image(
                                             'rank-' + self.rank.tier.name,
-                                            self.ui.FILE,
-                                            './data/ranked-emblem/emblem-' + self.rank.tier.name + '.png',
+                                            hinter.data.constants.IMAGE_TYPE_FILE,
+                                            hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-'
+                                            + self.rank.tier.name + '.png',
                                             (477, 214, 810, 472),
                                             (86, 60),
                                         )
@@ -754,7 +757,8 @@ class MatchHistory:
                     with hinter.imgui.group(horizontal=True):
                         if not self.ui.check_image_cache('champion-' + player.champion.name):
                             champion_played = self.ui.load_image(
-                                'champion-' + player.champion.name, self.ui.PIL, champion_played, size=champ_size
+                                'champion-' + player.champion.name, hinter.data.constants.IMAGE_TYPE_PIL,
+                                champion_played, size=champ_size
                             )
                         else:
                             champion_played = self.ui.load_image(champion_played, size=champ_size)
@@ -780,7 +784,8 @@ class MatchHistory:
 
                         if not self.ui.check_image_cache('spell-' + spell_d.name):
                             spell_d_used = self.ui.load_image(
-                                'spell-' + spell_d.name, self.ui.PIL, spell_d_used, size=spell_size
+                                'spell-' + spell_d.name, hinter.data.constants.IMAGE_TYPE_PIL, spell_d_used,
+                                size=spell_size
                             )
                         else:
                             spell_d_used = self.ui.load_image(spell_d_used, size=spell_size)
@@ -794,7 +799,8 @@ class MatchHistory:
                             )
                         elif not self.ui.check_image_cache(f'rune-{runes_taken["key"]["name"]}'):
                             key_rune_used = self.ui.load_image(
-                                'rune-' + runes_taken['key']['name'], self.ui.PIL, key_rune_used, size=rune_size
+                                'rune-' + runes_taken['key']['name'], hinter.data.constants.IMAGE_TYPE_PIL,
+                                key_rune_used, size=rune_size
                             )
                             hinter.imgui.add_image(texture_tag=key_rune_used)
                         else:
@@ -809,7 +815,8 @@ class MatchHistory:
                                 if item['item'] != 'filler':
                                     if not self.ui.check_image_cache(f'item-{item["item"]}'):
                                         image = self.ui.load_image(
-                                            'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
+                                            'item-' + str(item['item']), hinter.data.constants.IMAGE_TYPE_PIL,
+                                            item['image'], size=item_size
                                         )
                                     else:
                                         image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
@@ -849,7 +856,8 @@ class MatchHistory:
 
                         if not self.ui.check_image_cache('spell-' + spell_f.name):
                             spell_f_used = self.ui.load_image(
-                                'spell-' + spell_f.name, self.ui.PIL, spell_f_used, size=spell_size
+                                'spell-' + spell_f.name, hinter.data.constants.IMAGE_TYPE_PIL, spell_f_used,
+                                size=spell_size
                             )
                         else:
                             spell_f_used = self.ui.load_image(spell_f_used, size=spell_size)
@@ -864,7 +872,7 @@ class MatchHistory:
                         elif not self.ui.check_image_cache(f'rune-{runes_taken["secondary"]["name"]}'):
                             secondary_rune_used = self.ui.load_image(
                                 'rune-' + runes_taken['secondary']['name'],
-                                self.ui.PIL,
+                                hinter.data.constants.IMAGE_TYPE_PIL,
                                 secondary_rune_used,
                                 size=sec_rune_size,
                             )
@@ -886,7 +894,8 @@ class MatchHistory:
                                 if item['item'] != 'filler':
                                     if not self.ui.check_image_cache(f'item-{item["item"]}'):
                                         image = self.ui.load_image(
-                                            'item-' + str(item['item']), self.ui.PIL, item['image'], size=item_size
+                                            'item-' + str(item['item']), hinter.data.constants.IMAGE_TYPE_PIL,
+                                            item['image'], size=item_size
                                         )
                                     else:
                                         image = self.ui.load_image(f'item-{item["item"]}', size=item_size)
@@ -945,12 +954,12 @@ class MatchHistory:
 
                             # TODO: Make a UI method from this
                             if not self.ui.check_image_cache(icon_name):
-                                mask = Image.open('./assets/circular_mask.png').convert('L')
+                                mask = Image.open(f'{hinter.data.constants.PATH_ASSETS}circular_mask.png').convert('L')
                                 icon = ImageOps.fit(
                                     PlayerPlayedWith.summoner.profile_icon.image, mask.size, centering=(0.5, 0.5)
                                 )
                                 icon.putalpha(mask)
-                                icon.save(f'./data/image_cache/{icon_name}.png')
+                                icon.save(f'{hinter.data.constants.PATH_IMAGES}{icon_name}.png')
 
                             summoner_icon_texture = self.ui.load_image(
                                 icon_name,

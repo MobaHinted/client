@@ -5,6 +5,7 @@ import zipfile
 import cassiopeia
 import requests
 
+import hinter
 import hinter.ui.progress
 
 
@@ -18,7 +19,7 @@ class DataLoader:
         self.current_patch = cassiopeia.get_version(region=hinter.settings.region)
         print('CURRENT PATCH DATA: ' + self.current_patch)
 
-        if not os.path.exists('./data/Emblem_Platinum.png'):
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-platinum.png'):
             self.load_all()
 
     def load_all(self, refresh: bool = False, popup: bool = True):
@@ -71,23 +72,27 @@ class DataLoader:
 
     def load_rank_icons(self, refresh: bool = False):
         # Verify that emblems are not present, or a refresh is requested
-        if not os.path.exists('./data/Emblem_Platinum.png') or refresh:
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-platinum.png') or refresh:
             # Download ranked emblems
             emblems = requests.get(self.url_ranked_emblems)
-            open('./data/emblems.zip', 'wb').write(emblems.content)
+            open(hinter.data.constants.PATH_DATA + 'emblems.zip', 'wb').write(emblems.content)
+
             # Unzip ranked emblems
-            with zipfile.ZipFile('./data/emblems.zip', 'r') as emblems_zip:
-                emblems_zip.extractall('./data/')
+            with zipfile.ZipFile(hinter.data.constants.PATH_DATA + 'emblems.zip', 'r') as emblems_zip:
+                emblems_zip.extractall(hinter.data.constants.PATH_DATA)
+
             # Remove zip of ranked emblems
             os.remove('./data/emblems.zip')
 
         # Verify that position icons are not present, or a refresh is requested
-        if not os.path.exists('./data/Position_Plat-Mid.png') or refresh:
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_LANES + 'Position_Plat-Mid.png') or refresh:
             # Download position icons
             positions = requests.get(self.url_ranked_positions)
-            open('./data/positions.zip', 'wb').write(positions.content)
+            open(hinter.data.constants.PATH_DATA + 'positions.zip', 'wb').write(positions.content)
+
             # Unzip position icons
-            with zipfile.ZipFile('./data/positions.zip', 'r') as positions_zip:
-                positions_zip.extractall('./data/')
+            with zipfile.ZipFile(hinter.data.constants.PATH_DATA + 'positions.zip', 'r') as positions_zip:
+                positions_zip.extractall(hinter.data.constants.PATH_RANKED_LANES)
+
             # Remove zip of position icons
-            os.remove('./data/positions.zip')
+            os.remove(hinter.data.constants.PATH_DATA + 'positions.zip')

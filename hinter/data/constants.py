@@ -1,7 +1,36 @@
 __all__ = [
     'UI_FONT_SCALE',
-    'SUMMONERS_RIFT_MAP_ID'
+    'SUMMONERS_RIFT_MAP_ID',
+    'IMAGE_TYPE_PIL',
+    'IMAGE_TYPE_FILE',
+    'IMAGE_TYPE_REMOTE',
+    'PATH_ASSETS',
+    'PATH_DATA',
+    'PATH_CASSIOPEIA',
+    'PATH_IMAGES',
+    'PATH_RANKED_EMBLEMS',
+    'PATH_RANKED_LANES',
+    'PATH_IMGUI_FILE',
+    'PATH_SETTINGS_FILE',
+    'PATH_USERS_FILE',
 ]
 
 UI_FONT_SCALE = 2
+
 SUMMONERS_RIFT_MAP_ID = 11
+
+IMAGE_TYPE_PIL = 'pil'
+IMAGE_TYPE_FILE = 'file'
+IMAGE_TYPE_REMOTE = 'remote'
+
+PATH_ASSETS = './assets/'
+PATH_DATA = './data/'
+
+PATH_CASSIOPEIA = PATH_DATA + 'cassiopeia/'
+PATH_IMAGES = PATH_DATA + 'image_cache/'
+PATH_RANKED_EMBLEMS = PATH_DATA + 'ranked_emblems/'
+PATH_RANKED_LANES = PATH_DATA + 'ranked_lanes/'
+
+PATH_IMGUI_FILE = PATH_DATA + 'imgui.ini'
+PATH_SETTINGS_FILE = PATH_DATA + 'settings.dat'
+PATH_USERS_FILE = PATH_DATA + 'users.dat'

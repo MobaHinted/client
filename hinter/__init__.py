@@ -21,9 +21,10 @@ settings = hinter.settings.Settings()
 settings.load_settings()
 
 # Get ready for Cassiopeia
-if not os.path.exists('./data/cassiopeia'):
-    os.mkdir('./data/cassiopeia')
-cassiopeia_path = os.getcwd() + '\\data\\cassiopeia'
+if not os.path.exists(hinter.data.constants.PATH_CASSIOPEIA):
+    os.mkdir(hinter.data.constants.PATH_CASSIOPEIA)
+windows_path = hinter.data.constants.PATH_CASSIOPEIA.split('/')
+cassiopeia_path = os.getcwd() + '\\' + '\\'.join(windows_path[1:3])
 
 # TODO: load pipeline from settings
 cassiopeia_settings = {

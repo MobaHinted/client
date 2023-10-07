@@ -5,14 +5,10 @@ import hinter
 
 
 class Users:
-    users_list = './data/users.dat'
+    users_list = hinter.data.constants.PATH_USERS_FILE
     current_list_cache: List[hinter.User.User] = []  # TODO: only list users on the region
 
     def list_users(self, ui=None) -> List[hinter.User.User]:
-        # Open user file
-        if not os.path.exists('./data/'):
-            os.mkdir('./data')
-
         if not os.path.exists(self.users_list):
             open(self.users_list, 'w+')
             return []

@@ -8,7 +8,7 @@ import requests
 import cassiopeia
 
 import hinter
-from hinter.data.constants import UI_FONT_SCALE
+from hinter.data.constants import UI_FONT_SCALE, PATH_ASSETS
 # TODO: Change imports like this one to just import hinter
 import hinter.background.dataloader
 
@@ -16,9 +16,6 @@ import hinter.background.dataloader
 class UI:
     screen: str = 'login'
     font: dict = {}
-    PIL = 'pil'
-    FILE = 'file'
-    REMOTE = 'remote'
     user_available: bool = False
     data_loader: hinter.background.dataloader.DataLoader
     filler_image: str
@@ -34,29 +31,22 @@ class UI:
 
         # Set up Fira Code for use
         with hinter.imgui.font_registry():
-            self.font['regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 16 * UI_FONT_SCALE)
-            self.font['medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 16 * UI_FONT_SCALE)
-            self.font['bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 16 * UI_FONT_SCALE)
-            self.font['20 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 20 * UI_FONT_SCALE)
-            self.font['20 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 20 * UI_FONT_SCALE)
-            self.font['20 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 20 * UI_FONT_SCALE)
-            self.font['24 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 24 * UI_FONT_SCALE)
-            self.font['24 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 24 * UI_FONT_SCALE)
-            self.font['24 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 24 * UI_FONT_SCALE)
-            self.font['32 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 32 * UI_FONT_SCALE)
-            self.font['32 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 32 * UI_FONT_SCALE)
-            self.font['32 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 32 * UI_FONT_SCALE)
-            self.font['40 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 40 * UI_FONT_SCALE)
-            self.font['40 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 40 * UI_FONT_SCALE)
-            self.font['40 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 40 * UI_FONT_SCALE)
-            self.font['48 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 48 * UI_FONT_SCALE)
-            self.font['48 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 48 * UI_FONT_SCALE)
-            self.font['48 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 48 * UI_FONT_SCALE)
-            self.font['56 regular'] = hinter.imgui.add_font('./assets/fcr.ttf', 56 * UI_FONT_SCALE)
-            self.font['56 medium'] = hinter.imgui.add_font('./assets/fcm.ttf', 56 * UI_FONT_SCALE)
-            self.font['56 bold'] = hinter.imgui.add_font('./assets/fcb.ttf', 56 * UI_FONT_SCALE)
-        hinter.imgui.set_global_font_scale(1 / UI_FONT_SCALE)
-        hinter.imgui.bind_font(self.font['medium'])
+            sizes = [16, 20, 24, 32, 40, 48, 56]
+            for size in sizes:
+                self.font[f'{size} regular'] = hinter.imgui.add_font(
+                    f'{hinter.data.constants.PATH_ASSETS}fcr.ttf',
+                    size * hinter.data.constants.UI_FONT_SCALE
+                )
+                self.font[f'{size} medium'] = hinter.imgui.add_font(
+                    f'{hinter.data.constants.PATH_ASSETS}fcm.ttf',
+                    size * hinter.data.constants.UI_FONT_SCALE
+                )
+                self.font[f'{size} bold'] = hinter.imgui.add_font(
+                    f'{hinter.data.constants.PATH_ASSETS}fcb.ttf',
+                    size * hinter.data.constants.UI_FONT_SCALE
+                )
+        hinter.imgui.set_global_font_scale(1 / hinter.data.constants.UI_FONT_SCALE)
+        hinter.imgui.bind_font(self.font['16 medium'])
 
         hinter.imgui.setup_dearpygui()
 
@@ -69,14 +59,19 @@ class UI:
             width=350,
             min_height=600,
             height=600,
-            small_icon='./assets/logo.ico',
-            large_icon='./assets/logo.ico',
+            small_icon=f'{hinter.data.constants.PATH_ASSETS}logo.ico',
+            large_icon=f'{hinter.data.constants.PATH_ASSETS}logo.ico',
             x_pos=hinter.settings.x,
             y_pos=hinter.settings.y,
         )
         hinter.imgui.set_exit_callback(self.exit_callback)
 
-        self.filler_image = self.load_image('filler', self.FILE, './assets/filler.png', size=(1, 1))
+        self.filler_image = self.load_image(
+            'filler',
+            hinter.data.constants.IMAGE_TYPE_FILE,
+            f'{hinter.data.constants.PATH_ASSETS}filler.png',
+            size=(1, 1)
+        )
 
         # region Login flow
         # TODO: Move this to a private method
@@ -338,7 +333,8 @@ Open Source at github.com/zbee/mobahinted''',
     def ready_settings_window(self):
         settings_gear = self.load_image(
             'settings_gear',
-            self.FILE, './assets/settings.png',
+            hinter.data.constants.IMAGE_TYPE_FILE,
+            f'{hinter.data.constants.PATH_ASSETS}settings.png',
             size=(16, 16)
         )
 
@@ -956,11 +952,11 @@ Open Source at github.com/zbee/mobahinted'''
         :Example:
 
         .. code-block:: python
-            img = self.ui.load_image(self.ui.PIL, '/path/to/img', size=[64, 64])
+            img = self.ui.load_image(hinter.data.constants.IMAGE_TYPE_PIL, '/path/to/img', size=(64, 64))
             self.ui.imgui.add_image(texture_tag=img)
         """
         img: Image
-        image_path = f'./data/image_cache/{image_name}.png'
+        image_path = f'{hinter.data.constants.PATH_IMAGES}{image_name}.png'
         tag = f'CACHED_IMAGE-{image_name}'
         cached = False
 
@@ -969,20 +965,20 @@ Open Source at github.com/zbee/mobahinted'''
             return tag
 
         # Verify folder exists
-        if not os.path.exists('./data/image_cache/'):
-            os.mkdir('./data/image_cache/')
+        if not os.path.exists(hinter.data.constants.PATH_IMAGES):
+            os.mkdir(hinter.data.constants.PATH_IMAGES)
 
         # Load the image if it is already cached
         if os.path.exists(image_path) and not force_fresh:
-            image_type = self.FILE
+            image_type = hinter.data.constants.IMAGE_TYPE_FILE
             image = image_path
             cached = True
 
-        if image_type == self.PIL:
+        if image_type == hinter.data.constants.IMAGE_TYPE_PIL:
             img = image
-        elif image_type == self.FILE:
+        elif image_type == hinter.data.constants.IMAGE_TYPE_FILE:
             img = Image.open(image)
-        elif image_type == self.REMOTE:
+        elif image_type == hinter.data.constants.IMAGE_TYPE_REMOTE:
             img = Image.open(requests.get(image, stream=True).raw)
         else:
             print('hinter.UI: Cannot load image with un-handled type', image_name, image_type, image)
@@ -1030,7 +1026,7 @@ Open Source at github.com/zbee/mobahinted'''
         :param image_name: The name of the image to check.
         :return: A boolean specifying whether the image is cached.
         """
-        return os.path.exists(f'./data/image_cache/{image_name}.png')
+        return os.path.exists(f'{hinter.data.constants.PATH_IMAGES}{image_name}.png')
 
     def text_size(self, text: Union[str, int], font: str, padding: Union[list[int], None] = None) -> list[int]:
         """A method to get the size of a string as displayed by ImGUI
@@ -1082,11 +1078,9 @@ Open Source at github.com/zbee/mobahinted'''
         :param save: Whether we are saving or loading an init file
         """
         saving = save
-        init_file = './data/imgui.ini'
+        init_file = hinter.data.constants.PATH_IMGUI_FILE
 
         # Make the directory and file as needed
-        if not os.path.exists('./data/'):
-            os.mkdir('./data')
         if not os.path.exists(init_file):
             open(init_file, 'w+')
             # Don't load a brand new, empty file

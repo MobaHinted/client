@@ -1,9 +1,10 @@
 import os.path
+from hinter.data.constants import PATH_SETTINGS_FILE, PATH_DATA
 
 
 # noinspection PySimplifyBooleanCheck
 class Settings:
-    settings_file = './data/settings.dat'
+    settings_file = PATH_SETTINGS_FILE
     settings_loaded = False
     version = '0.0.0'
     x: int = 10  # Window Position
@@ -77,8 +78,8 @@ class Settings:
             return
 
         # Verify folder and file exist
-        if not os.path.exists('./data/'):
-            os.mkdir('./data')
+        if not os.path.exists(PATH_DATA):
+            os.mkdir(PATH_DATA)
         if not os.path.exists(self.settings_file):
             open(self.settings_file, 'w+')
             return
@@ -112,13 +113,6 @@ class Settings:
         self.settings_loaded = True
 
     def write_setting(self, setting, value):
-        # Verify folder and file exist
-        if not os.path.exists('./data/'):
-            os.mkdir('./data')
-        if not os.path.exists(self.settings_file):
-            open(self.settings_file, 'w+')
-            return
-
         # Remove the setting if currently set
         if getattr(self, setting, None) is not None:
             settings_file_original = open(self.settings_file, 'r').readlines()
