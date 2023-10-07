@@ -8,7 +8,6 @@ import requests
 import cassiopeia
 
 import hinter
-from hinter.data.constants import UI_FONT_SCALE, PATH_ASSETS
 # TODO: Change imports like this one to just import hinter
 import hinter.background.dataloader
 
@@ -1051,7 +1050,7 @@ Open Source at github.com/zbee/mobahinted'''
         )
 
         # Account for the font scale and padding
-        scale = 1 / UI_FONT_SCALE
+        scale = 1 / hinter.data.constants.UI_FONT_SCALE
         return [
             int(text_size[0] * scale) + padding[0],
             int(text_size[1] * scale) + padding[1],
