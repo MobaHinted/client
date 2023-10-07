@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 import zipfile
 
@@ -82,7 +83,17 @@ class DataLoader:
                 emblems_zip.extractall(hinter.data.constants.PATH_DATA)
 
             # Remove zip of ranked emblems
-            os.remove('./data/emblems.zip')
+            os.remove(hinter.data.constants.PATH_DATA + 'emblems.zip')
+
+            # Rename the folder in the zip
+            shutil.move(
+                hinter.data.constants.PATH_DATA + 'ranked-emblem',
+                hinter.data.constants.PATH_RANKED_EMBLEMS
+            )
+
+        # Make the ranked lanes folder if needed
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_LANES):
+            os.mkdir(hinter.data.constants.PATH_RANKED_LANES)
 
         # Verify that position icons are not present, or a refresh is requested
         if not os.path.exists(hinter.data.constants.PATH_RANKED_LANES + 'Position_Plat-Mid.png') or refresh:
