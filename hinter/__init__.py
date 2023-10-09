@@ -14,7 +14,7 @@ import hinter.data
 # noinspection PyUnresolvedReferences
 import dearpygui.dearpygui as imgui  # For all the modules to use
 
-# TODO: Move more imports here
+# TODO: Move more imports here, like UI and MatchHistory
 
 # Set up settings
 settings = hinter.settings.Settings()
