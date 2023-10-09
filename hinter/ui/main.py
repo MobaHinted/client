@@ -1093,3 +1093,69 @@ Open Source at github.com/zbee/mobahinted'''
             hinter.imgui.configure_app(init_file=init_file, load_init_file=True)
         else:
             hinter.imgui.save_init_file(init_file)
+
+    def error_screens(self, error):
+        if hinter.imgui.does_item_exist('login'):
+            hinter.imgui.delete_item('login')
+
+        if hinter.imgui.does_item_exist('loading'):
+            hinter.imgui.delete_item('loading')
+
+        hinter.imgui.set_viewport_min_width(350)
+        hinter.imgui.set_viewport_width(350)
+        hinter.imgui.set_viewport_min_height(600)
+        hinter.imgui.set_viewport_height(600)
+
+        if '503' in str(error):
+            region = cassiopeia.Region(hinter.settings.region)
+            platform = cassiopeia.Platform[region.name].value.lower()
+
+            with hinter.imgui.window(tag='error'):
+                hinter.imgui.add_spacer(height=150)
+
+                text = 'Riot services are unavailable.'
+                hinter.imgui.add_text(f'{text:^40}')
+                text = 'Please try later.'
+                hinter.imgui.add_text(f'{text:^40}')
+
+                hinter.imgui.add_spacer(height=40)
+
+                text = 'You can check the LoL status page:'
+                hinter.imgui.add_text(f'{text:^40}')
+                hinter.imgui.add_button(
+                    label='Open status.rito Page',
+                    callback=lambda: webbrowser.open(f'https://status.riotgames.com/lol?region={platform}'),
+                    width=-1,
+                )
+                text = '(rarely posted if issues are unexpected)'
+                hinter.imgui.add_text(f'{text:^40}')
+
+            hinter.imgui.set_primary_window('error', True)
+            hinter.imgui.start_dearpygui()
+            self.exit_callback()
+            exit(503)
+        elif '403' in str(error):
+            with hinter.imgui.window(tag='error'):
+                hinter.imgui.add_spacer(height=175)
+                text = 'This API key is invalid or expired.'
+                hinter.imgui.add_text(f'{text:^40}')
+                text = 'Please enter a new one.'
+                hinter.imgui.add_text(f'{text:^40}')
+
+                hinter.imgui.add_spacer(height=20)
+
+                text = 'You can get a new one here:'
+                hinter.imgui.add_text(f'{text:^40}')
+                hinter.imgui.add_button(
+                    label='Open developer.rito Page',
+                    callback=lambda: webbrowser.open('https://developer.riotgames.com'),
+                    width=-1,
+                )
+
+            hinter.imgui.set_primary_window('error', True)
+            hinter.imgui.start_dearpygui()
+            self.exit_callback()
+            exit(403)
+        else:
+            print(error)
+            exit('unknown error')

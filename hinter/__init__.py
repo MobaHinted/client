@@ -12,7 +12,7 @@ import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
 import hinter.users
 import hinter.data
 # noinspection PyUnresolvedReferences
-import dearpygui.dearpygui as imgui
+import dearpygui.dearpygui as imgui  # For all the modules to use
 
 # TODO: Move more imports here
 

@@ -1,10 +1,10 @@
 import hinter.ui.main as ui
-import hinter.matchhistory
+# noinspection PyPep8Naming
+import hinter.match_history.match_data as MatchData
 
 
 def continue_drawing(ui, render):
-    match_history = hinter.matchhistory.MatchHistory(ui)
-    match_history.show_match_screen(render)
+    MatchData.MatchData(ui, render)
 
 
 UI = ui.UI(continue_drawing)
