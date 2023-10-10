@@ -55,6 +55,8 @@ class MatchData(MatchHistory):
             match: cassiopeia.Match
             self._assemble_basic_match_info(match)
             self._calculate_match_data(match)
+            self._get_items()
+            self._get_runes()
             MatchDisplay.display_match(self.history, self.ui, render, self.game, row_count)
             row_count += 1
 
@@ -156,65 +158,6 @@ class MatchData(MatchHistory):
 
     def _calculate_match_data(self, match: cassiopeia.Match):
         player: cassiopeia.core.match.Participant = self.game['player']
-
-        # region Runes Taken
-        # Structure what runes the player took
-        if self.game['queue'] != 'Arena':
-            runes_taken = {
-                'key': {
-                    'name': str,
-                    'image': Union[Image.Image, str],
-                    'path': str,
-                },
-                'secondary': {
-                    'name': str,
-                    'image': Union[Image.Image, str],
-                },
-                'runes': [],
-            }
-
-            # Resolve what runes the player took
-            for _, rune in enumerate(player.runes):
-                rune: cassiopeia.Rune
-
-                # Store keystone information
-                if rune.is_keystone:
-                    # noinspection PyTypedDict
-                    runes_taken['key']['name'] = rune.name
-                    runes_taken['key']['path'] = rune.path.name
-
-                    if not self.ui.check_image_cache('rune-' + rune.name):
-                        runes_taken['key']['image'] = rune.image.image
-                    else:
-                        # noinspection PyTypedDict
-                        runes_taken['key']['image'] = 'rune-' + rune.name
-
-                # Store secondary rune tree information
-                if rune.path.name != runes_taken['key']['path']:
-                    runes_taken['secondary']['name'] = rune.path.name
-
-                    if not self.ui.check_image_cache('rune-' + rune.path.name):
-                        runes_taken['secondary']['image'] = rune.path.image
-                    else:
-                        runes_taken['secondary']['image'] = 'rune-' + rune.path.name
-
-                # Store list of actual runes used
-                runes_taken['runes'].append(rune.name)
-        else:
-            # TODO: Patch runes trying to be read in cassiopeia on arena modes
-            runes_taken = {
-                'key': {
-                    'name': 'na',
-                    'image': 'na',
-                    'path': 'na',
-                },
-                'secondary': {
-                    'name': 'na',
-                    'image': 'na',
-                },
-                'runes': [],
-            }
-        # endregion Runes Taken
 
         # region Match Timing
         # Calculate match length in minutes
@@ -344,20 +287,6 @@ class MatchData(MatchHistory):
         # TODO: track role played here
         # endregion Role
 
-        # region Runes
-        # Load the keystone rune
-        self.game['key_rune_used'] = {
-            'name': runes_taken['key']['name'],
-            'image': runes_taken['key']['image']
-        }
-
-        # Load the secondary rune tree
-        self.game['secondary_rune_used'] = {
-            'name': runes_taken['secondary']['name'],
-            'image': runes_taken['secondary']['image']
-        }
-        # endregion Runes
-
         # region KDA and KP
         # Calculate KDA
         kills_assists = player.stats.kills + player.stats.assists
@@ -394,7 +323,7 @@ class MatchData(MatchHistory):
 
         # Show vision score and kill participation
         self.game['vision'] = (str(player.stats.vision_score) + ' Vis - ' +
-                  str(kill_participation) + '% KP')
+                               str(kill_participation) + '% KP')
         # endregion Vision
 
         # region Creep Score (CS) stats
@@ -405,11 +334,8 @@ class MatchData(MatchHistory):
         self.game['total_cs'] = f'{cs_gotten:,} CS'
         # endregion Creep Score (CS) stats
 
-        # region Items
-        self.game['items'] = self._get_items(player.stats.items)
-        # endregion Items
-
-    def _get_items(self, player_items):
+    def _get_items(self):
+        player_items = self.game['player'].stats.items
         items = []
 
         trinket = {
@@ -463,4 +389,78 @@ class MatchData(MatchHistory):
 
         items.append(trinket)
 
-        return items
+        self.game['items'] = items
+
+    def _get_runes(self):
+        player: cassiopeia.core.match.Participant = self.game['player']
+
+        # region Runes Taken
+        # Structure what runes the player took
+        if self.game['queue'] != 'Arena':
+            runes_taken = {
+                'key': {
+                    'name': str,
+                    'image': Union[Image.Image, str],
+                    'path': str,
+                },
+                'secondary': {
+                    'name': str,
+                    'image': Union[Image.Image, str],
+                },
+                'runes': [],
+            }
+
+            # Resolve what runes the player took
+            for _, rune in enumerate(player.runes):
+                rune: cassiopeia.Rune
+
+                # Store keystone information
+                if rune.is_keystone:
+                    # noinspection PyTypedDict
+                    runes_taken['key']['name'] = rune.name
+                    runes_taken['key']['path'] = rune.path.name
+
+                    if not self.ui.check_image_cache('rune-' + rune.name):
+                        runes_taken['key']['image'] = rune.image.image
+                    else:
+                        # noinspection PyTypedDict
+                        runes_taken['key']['image'] = 'rune-' + rune.name
+
+                # Store secondary rune tree information
+                if rune.path.name != runes_taken['key']['path']:
+                    runes_taken['secondary']['name'] = rune.path.name
+
+                    if not self.ui.check_image_cache('rune-' + rune.path.name):
+                        runes_taken['secondary']['image'] = rune.path.image
+                    else:
+                        runes_taken['secondary']['image'] = 'rune-' + rune.path.name
+
+                # Store list of actual runes used
+                runes_taken['runes'].append(rune.name)
+        else:
+            # TODO: Patch runes trying to be read in cassiopeia on arena modes
+            runes_taken = {
+                'key': {
+                    'name': 'na',
+                    'image': 'na',
+                    'path': 'na',
+                },
+                'secondary': {
+                    'name': 'na',
+                    'image': 'na',
+                },
+                'runes': [],
+            }
+        # endregion Runes Taken
+        # Load the keystone rune
+        self.game['key_rune_used'] = {
+            'name': runes_taken['key']['name'],
+            'image': runes_taken['key']['image']
+        }
+
+        # Load the secondary rune tree
+        self.game['secondary_rune_used'] = {
+            'name': runes_taken['secondary']['name'],
+            'image': runes_taken['secondary']['image']
+        }
+
