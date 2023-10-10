@@ -1,9 +1,11 @@
 import cassiopeia
+import hinter
 
 
 class PlayerPlayedWith:
     username: str
     clean_username: str
+    owning_user: str
     player: cassiopeia.core.match.Participant
     summoner: cassiopeia.core.match.Summoner  # TODO: why is the /last/ summoner used for icon?
     ally: bool
@@ -34,6 +36,8 @@ class PlayerPlayedWith:
                 'friend': same_team_as_user,
             }
         )
+
+        self.owning_user = hinter.settings.active_user
 
     def add(self, champion: cassiopeia.core.match.Champion, user_outcome: str, same_team_as_user: bool):
         outcome = True if user_outcome == 'Victory' else False if user_outcome == 'Defeat' else None

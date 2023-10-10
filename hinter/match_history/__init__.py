@@ -59,7 +59,7 @@ class MatchHistory:
         self.show_match_screen(render)
 
     def show_match_screen(self, render: bool = True):
-        self.delete_previous_screens()
+        self.delete_previous_screens(True, True)
         self.ui.new_screen(tag='match_history')
 
         # Set up the table

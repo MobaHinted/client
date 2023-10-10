@@ -10,11 +10,13 @@ from hinter.struct.PlayerPlayedWith import PlayerPlayedWith
 
 
 class PlayersPlayedWith:
-    _players_played_with: dict[str, PlayerPlayedWith] = {}
+    _players_played_with: dict[str, PlayerPlayedWith]
 
     # TODO: Add docstrings for everything, make a function to cache the data, and load from it
 
     def __init__(self, load_from_cache: bool = False):
+        self._players_played_with = {}
+
         if load_from_cache:
             self._load_from_cache()
 
@@ -68,13 +70,27 @@ class PlayersPlayedWith:
             pickle.dump(self._players_played_with, friends_file, pickle.HIGHEST_PROTOCOL)
 
     def _load_from_cache(self):
+        # Don't try to load if the file doesn't exist
+        if not os.path.exists(hinter.data.constants.PATH_FRIENDS_FILE):
+            print('hinter.struct.PlayersPlayedWith: No friends file found')
+            return
+
         # Don't try to load an empty file
         if os.stat(hinter.data.constants.PATH_FRIENDS_FILE).st_size == 0:
-            print('hinter.match_history.display_matches: No data in friends file')
+            print('hinter.struct.PlayersPlayedWith: No data in friends file')
             return
 
         with open(hinter.data.constants.PATH_FRIENDS_FILE, 'rb') as friends_file:
-            self._players_played_with = pickle.load(friends_file)
+            players_played_with = pickle.load(friends_file)
+
+        # Don't load friends from another user
+        print(hinter.settings.active_user)
+        for player in players_played_with.values():
+            if player.owning_user != hinter.settings.active_user:
+                print('hinter.struct.PlayersPlayedWith: Skipping cached friends from another user')
+                return
+
+        self._players_played_with = players_played_with
 
     @property
     def _sorted_players_played_with(self) -> list[PlayerPlayedWith]:
