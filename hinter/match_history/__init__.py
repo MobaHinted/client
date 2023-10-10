@@ -22,10 +22,10 @@ class MatchHistory:
     left_bar: str
     history: str
     right_bar: str
-    ui: hinter.ui.main.UI
+    ui: hinter.UIFunctionality
     players_played_with: hinter.PlayersPlayedWith
 
-    def __init__(self, ui: hinter.ui.main.UI, render: bool = True):
+    def __init__(self, ui: hinter.UIFunctionality, render: bool = True):
         # Load summoner information
         user = cassiopeia.get_summoner(name=hinter.settings.active_user, region=hinter.settings.region)
 

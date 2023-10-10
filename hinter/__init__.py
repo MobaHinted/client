@@ -5,14 +5,19 @@ import cassiopeia
 import cassiopeia_diskstore  # Required for building to executable
 from dotenv import load_dotenv
 
+import dearpygui.dearpygui as imgui  # For all the modules to use
+
 import hinter.settings
 import hinter.struct.User as User
 import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
 import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
 import hinter.users
 import hinter.data
+import hinter.background.dataloader as DataLoader
+import hinter.ui
+import hinter.ui.progress as Progress
+from hinter.ui.functionality import UIFunctionality
 # noinspection PyUnresolvedReferences
-import dearpygui.dearpygui as imgui  # For all the modules to use
 
 # TODO: Move more imports here, like UI and MatchHistory
 

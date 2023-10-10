@@ -1,4 +1,4 @@
-import hinter.ui.main as ui
+import hinter
 # noinspection PyPep8Naming
 import hinter.match_history.match_data as MatchData
 
@@ -7,7 +7,7 @@ def continue_drawing(ui, render):
     MatchData.MatchData(ui, render)
 
 
-UI = ui.UI(continue_drawing)
+UI = hinter.UIFunctionality(continue_drawing)
 
 UI.imgui.start_dearpygui()
 UI.imgui.destroy_context()

@@ -19,9 +19,9 @@ class MatchData(MatchHistory):
     champ_icons: list
     player: cassiopeia.core.match.Participant
     players_played_with: hinter.struct.PlayersPlayedWith
-    ui: hinter.ui.main.UI
+    ui: hinter.UIFunctionality
 
-    def __init__(self, ui: hinter.ui.main.UI, render: bool):
+    def __init__(self, ui: hinter.UIFunctionality, render: bool):
         super().__init__(ui, render)
         self.ui = ui
         self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()

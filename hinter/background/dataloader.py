@@ -7,7 +7,6 @@ import cassiopeia
 import requests
 
 import hinter
-import hinter.ui.progress
 
 
 class DataLoader:
@@ -23,6 +22,7 @@ class DataLoader:
         if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-platinum.png'):
             self.load_all()
 
+    # noinspection PyUnboundLocalVariable
     def load_all(self, refresh: bool = False, popup: bool = True):
 
         # Save refresh variable, so we don't have to pass it into every method
@@ -37,7 +37,7 @@ class DataLoader:
         if popup:
             # Open the download popup, start downloading data and updating the
             #  progress bar as we go
-            progress_popup = hinter.ui.progress.Progress(
+            progress_popup = hinter.Progress.Progress(
                 0, title, 'Downloading and processing: Champions'
             )
         cassiopeia.get_champions(region=hinter.settings.region)

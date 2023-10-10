@@ -60,7 +60,7 @@ def display_match(table, ui, render, game, row_count):
 
                 # Place a filler image for the champion icon (hack to span 2 rows)
                 hinter.imgui.add_image(
-                    texture_tag='CACHED_IMAGE-filler',
+                    texture_tag=ui.filler_image,
                     width=champ_size[0],
                     height=rune_size[1],
                     tag=f'champ-icon-holder-{game["match_id"]}',
@@ -257,7 +257,7 @@ def add_row_handlers(screen):
 
 
 # noinspection DuplicatedCode
-def show_friends_played_with(ui: hinter.ui.main.UI, players_played_with: hinter.struct.PlayersPlayedWith):
+def show_friends_played_with(ui: hinter.UIFunctionality, players_played_with: hinter.struct.PlayersPlayedWith):
     font = ui.font['20 regular']
     if len(players_played_with.friends) > 0:
         with hinter.imgui.table_row(before='match_history-friends-ref'):
