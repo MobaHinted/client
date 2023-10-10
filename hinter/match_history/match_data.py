@@ -18,7 +18,7 @@ class MatchData(MatchHistory):
     game: dict
     champ_icons: list
     player: cassiopeia.core.match.Participant
-    players_played_with: hinter.struct.PlayersPlayedWith
+    players_played_with: hinter.PlayersPlayedWith.PlayersPlayedWith
     ui: hinter.UIFunctionality
 
     def __init__(self, ui: hinter.UIFunctionality, render: bool):
@@ -69,14 +69,10 @@ class MatchData(MatchHistory):
             'map_id': match.map.id,
         }
 
-        # region Cast or setup multiple variables
+        # region Setup multiple variables
         team_kills: int = 0
         team_damage: int = 0
-
-        loss_color = [220, 158, 158, 40]
-        victory_color = [151, 199, 154, 60]
-        remake_color = [255, 255, 255, 10]
-        # endregion Cast or setup multiple variables
+        # endregion Setup multiple variables
 
         # region Determine type of game
         # Handle old matches that can't be loaded
@@ -123,14 +119,14 @@ class MatchData(MatchHistory):
         # region Resolve ending condition of game
         if match.is_remake:
             win = 'Remake'
-            self.game['background_color'] = remake_color
+            self.game['background_color'] = hinter.data.constants.MATCH_COLOR_REMAKE
         else:
             if self.game['player'].stats.win:
                 win = 'Victory'
-                self.game['background_color'] = victory_color
+                self.game['background_color'] = hinter.data.constants.MATCH_COLOR_WIN
             else:
                 win = 'Defeat'
-                self.game['background_color'] = loss_color
+                self.game['background_color'] = hinter.data.constants.MATCH_COLOR_LOSS
 
         self.game['outcome'] = win
         # endregion Resolve ending condition of game
@@ -463,4 +459,3 @@ class MatchData(MatchHistory):
             'name': runes_taken['secondary']['name'],
             'image': runes_taken['secondary']['image']
         }
-
