@@ -53,15 +53,15 @@ class MatchData(MatchHistory):
         # noinspection PyTypeChecker
         for _, match in enumerate(self.games[0:hinter.settings.match_history_count]):
             match: cassiopeia.Match
-            self.assemble_basic_match_info(match)
-            self.calculate_match_data(match)
+            self._assemble_basic_match_info(match)
+            self._calculate_match_data(match)
             MatchDisplay.display_match(self.history, self.ui, render, self.game, row_count)
             row_count += 1
 
         MatchDisplay.add_row_handlers('match_history')
         MatchDisplay.show_friends_played_with(self.ui, self.players_played_with)
 
-    def assemble_basic_match_info(self, match: cassiopeia.Match):
+    def _assemble_basic_match_info(self, match: cassiopeia.Match):
         self.game = {
             'match_id': match.id,
             'map_id': match.map.id,
@@ -154,7 +154,7 @@ class MatchData(MatchHistory):
         self.game['team_damage'] = team_damage
         # endregion Determine player's team's kill count
 
-    def calculate_match_data(self, match: cassiopeia.Match):
+    def _calculate_match_data(self, match: cassiopeia.Match):
         player: cassiopeia.core.match.Participant = self.game['player']
 
         # region Runes Taken
@@ -406,6 +406,10 @@ class MatchData(MatchHistory):
         # endregion Creep Score (CS) stats
 
         # region Items
+        self.game['items'] = self._get_items(player.stats.items)
+        # endregion Items
+
+    def _get_items(self, player_items):
         items = []
 
         trinket = {
@@ -419,7 +423,7 @@ class MatchData(MatchHistory):
         ]
 
         # Arrange player items into a list, item id and the image
-        for item in player.stats.items:
+        for item in player_items:
             if item is None:
                 items.append(
                     {
@@ -458,5 +462,5 @@ class MatchData(MatchHistory):
                 )
 
         items.append(trinket)
-        self.game['items'] = items
-        # endregion Items
+
+        return items
