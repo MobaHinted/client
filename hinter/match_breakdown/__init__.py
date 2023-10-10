@@ -10,4 +10,6 @@ class MatchBreakdown:
         hinter.UI.new_screen('match_breakdown')
         hinter.UI.new_screen('match_breakdown', set_primary=True)
 
+        # TODO: Why does this work, but not clicking a user from the menu?
+
         hinter.imgui.add_text('Match Breakdown', parent='match_breakdown')

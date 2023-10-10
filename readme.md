@@ -1,4 +1,4 @@
-# MobaHinted
+# MobaHinted [![Maintainability](https://api.codeclimate.com/v1/badges/c6eec1b3999f91697774/maintainability)](https://codeclimate.com/github/zbee/mobahinted/maintainability)
 This is a tool for League of Legends that will have functionality similar to
 Blitz / Mobalytics primarily, with the exclusion of ads, paid features, and the
 inclusion of it just actually working while having everything you need.
