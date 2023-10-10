@@ -89,7 +89,7 @@ class Users:
         # Check for duplicate in current user list
         for user in self.current_list_cache:
             if user.username == username:
-                ui.show_info_popup(
+                hinter.Popups.show_info_popup(
                     'Duplicate username',
                     'This account is already in your list!'
                 )
@@ -98,7 +98,7 @@ class Users:
         # Check user exists on Riot's side
         user = hinter.User.User(username)
         if not user.user_exists:
-            ui.show_info_popup(
+            hinter.Popups.show_info_popup(
                 'Nonexistent user',
                 'This account does not exist in this region!'
             )
@@ -176,7 +176,7 @@ class Users:
             if user.username == username:
                 found = True
         if not found:
-            ui.show_info_popup(
+            hinter.Popups.show_info_popup(
                 'Nonexistent username',
                 'This account was never added, and has not been removed!'
             )
@@ -198,7 +198,7 @@ class Users:
 
         # Throw an error if nothing could be removed
         if not removed:
-            ui.show_info_popup(
+            hinter.Popups.show_info_popup(
                 'Nonexistent username',
                 'This account could not be found, and has not been removed!'
             )
@@ -214,7 +214,7 @@ class Users:
         user_list_file.close()
 
         # Confirm user was removed and reload menu
-        ui.show_info_popup(
+        hinter.Popups.show_info_popup(
             'User removed',
             'This account was removed!'
         )

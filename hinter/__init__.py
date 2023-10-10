@@ -11,15 +11,17 @@ import hinter.settings
 import hinter.struct.User as User
 import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
 import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
-import hinter.users
 import hinter.data
 import hinter.background.dataloader as DataLoader
 import hinter.ui
 import hinter.ui.progress as Progress
 from hinter.ui.functionality import UIFunctionality
+import hinter.ui.popups as Popups
+import hinter.users
+from hinter.ui.menu import UIMenus
 # noinspection PyUnresolvedReferences
 
-# TODO: Move more imports here, like UI and MatchHistory
+# TODO: Move MatchHistory here
 
 # Set up settings
 settings = hinter.settings.Settings()

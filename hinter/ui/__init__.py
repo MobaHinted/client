@@ -9,7 +9,7 @@ class UI:
     move_on_callback: callable
     user_available: bool
     render: bool
-    data_loader: hinter.DataLoader
+    data_loader: hinter.DataLoader.DataLoader
 
     def __init__(self, move_on_callback: callable):
         self.move_on_callback = move_on_callback
