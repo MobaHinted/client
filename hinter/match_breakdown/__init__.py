@@ -12,4 +12,4 @@ class MatchBreakdown:
 
         # TODO: Why does this work, but not clicking a user from the menu?
 
-        hinter.imgui.add_text('Match Breakdown', parent='match_breakdown')
+        hinter.imgui.add_text(f'Match Breakdown: {self.match.id}', parent='match_breakdown')

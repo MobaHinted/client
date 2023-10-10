@@ -84,7 +84,6 @@ class PlayersPlayedWith:
             players_played_with = pickle.load(friends_file)
 
         # Don't load friends from another user
-        print(hinter.settings.active_user)
         for player in players_played_with.values():
             if player.owning_user != hinter.settings.active_user:
                 print('hinter.struct.PlayersPlayedWith: Skipping cached friends from another user')
