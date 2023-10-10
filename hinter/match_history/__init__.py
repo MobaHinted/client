@@ -203,6 +203,13 @@ class MatchHistory:
                         tag='match-history-delete-3',
                     )
                     hinter.imgui.add_spacer(tag='match-history-delete-4')
+
+        with hinter.imgui.theme() as item_theme:
+            with hinter.imgui.theme_component(hinter.imgui.mvTable):
+                hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_HeaderHovered, (255, 255, 255, 50))
+                hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_HeaderActive, (255, 255, 255, 50))
+                hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_Header, (0, 0, 0, 0))
+        hinter.imgui.bind_item_theme('match_history_table-history-container', item_theme)
         # endregion Center (Match History container)
 
         # region Right Bar

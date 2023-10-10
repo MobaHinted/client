@@ -60,7 +60,7 @@ class UIMenus:
                         # TODO: changing users here doesn't work. can't determine why
                         callback=lambda sender: (
                             hinter.users.select_user(sender.split('-')[-1]),
-                            self.ui.move_on_callback(ui=self, render=not self.ui.render),
+                            self.ui.move_on_callback(ui=hinter.UI, render=not self.ui.render),
                             print('selecting new user:' + sender.split('-')[-1])
                         ),
                         shortcut=selected,

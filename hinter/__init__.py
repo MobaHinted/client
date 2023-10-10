@@ -19,9 +19,13 @@ from hinter.ui.functionality import UIFunctionality
 import hinter.ui.popups as Popups
 import hinter.users
 from hinter.ui.menu import UIMenus
+from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 # noinspection PyUnresolvedReferences
 
 # TODO: Move MatchHistory here
+
+UI: UIFunctionality
+Menu: UIMenus
 
 # Set up settings
 settings = hinter.settings.Settings()

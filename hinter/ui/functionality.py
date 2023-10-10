@@ -28,18 +28,19 @@ class UIFunctionality(hinter.ui.UI):
         if hinter.imgui.does_item_exist(tag):
             # Empty the old window
             self.clear_screen()
-        else:
-            # Add a new window
-            hinter.imgui.add_window(tag=tag)
+
+        # Add a new window
+        hinter.imgui.add_window(tag=tag)
 
         # Save the new window tag
         self.screen = tag
 
         # Add the menu bar back
         self.render_frames()
+        hinter.Menu.add_menu()
 
     def clear_screen(self):
-        hinter.imgui.delete_item(item=self.screen, children_only=True)
+        hinter.imgui.delete_item(item=self.screen)
 
     def get_center(self, window: str = None):
         if window is not None:

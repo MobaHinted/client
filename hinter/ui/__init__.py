@@ -4,7 +4,7 @@ import hinter
 
 
 class UI:
-    screen: str = 'login'
+    screen: str
     font: dict
     move_on_callback: callable
     user_available: bool
@@ -135,6 +135,7 @@ class UI:
         self.move_on_callback(ui=self, render=self.render)
 
     def login_flow(self):
+        self.screen = 'login'
         with hinter.imgui.window(tag=self.screen):
             with hinter.imgui.table(header_row=False):
                 hinter.imgui.add_table_column(init_width_or_weight=0.15)
