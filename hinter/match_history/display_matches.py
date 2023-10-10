@@ -90,7 +90,7 @@ def display_match(table, ui, render, game, row_count):
 
                 if game['queue'] == 'Arena':
                     hinter.imgui.add_image(
-                        texture_tag='CACHED_IMAGE-filler',
+                        texture_tag=ui.filler_image,
                         width=rune_size[0],
                         height=rune_size[1],
                     )
@@ -122,7 +122,7 @@ def display_match(table, ui, render, game, row_count):
                         # Handle cases where there are <3 items
                         else:
                             hinter.imgui.add_image(
-                                texture_tag='CACHED_IMAGE-filler',
+                                texture_tag=ui.filler_image,
                                 width=item_size[0],
                                 height=item_size[1],
                             )
@@ -131,7 +131,7 @@ def display_match(table, ui, render, game, row_count):
                     counter += 1
                 # Filler '4th item' in this row to show above trinket
                 hinter.imgui.add_image(
-                    texture_tag='CACHED_IMAGE-filler',
+                    texture_tag=ui.filler_image,
                     width=item_size[0],
                     height=item_size[1],
                 )
@@ -165,7 +165,7 @@ def display_match(table, ui, render, game, row_count):
 
                 if game['queue'] == 'Arena':
                     hinter.imgui.add_image(
-                        texture_tag='CACHED_IMAGE-filler',
+                        texture_tag=ui.filler_image,
                         width=sec_rune_size[0],
                         height=sec_rune_size[1],
                     )
@@ -203,7 +203,7 @@ def display_match(table, ui, render, game, row_count):
                         # Handle cases where there are <3 items
                         else:
                             hinter.imgui.add_image(
-                                texture_tag='CACHED_IMAGE-filler',
+                                texture_tag=ui.filler_image,
                                 width=item_size[0],
                                 height=item_size[1],
                             )
