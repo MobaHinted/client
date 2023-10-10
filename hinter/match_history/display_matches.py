@@ -1,3 +1,5 @@
+from typing import Union
+
 from PIL import Image, ImageOps
 
 import hinter
@@ -49,7 +51,7 @@ def display_match(table, ui, render, game, row_count):
                     champion_played = game['player'].champion.image.image
                 else:
                     champion_played = 'champion-' + game['player'].champion.name
-                
+
                 if not ui.check_image_cache('champion-' + game['player'].champion.name):
                     champion_played = ui.load_image(
                         'champion-' + game['player'].champion.name, hinter.data.constants.IMAGE_TYPE_PIL,
@@ -257,10 +259,24 @@ def add_row_handlers(screen):
 
 
 # noinspection DuplicatedCode
-def show_friends_played_with(ui: hinter.UIFunctionality, players_played_with: hinter.struct.PlayersPlayedWith):
+def show_friends_played_with(
+        ui: hinter.UIFunctionality,
+        players_played_with: Union[hinter.PlayersPlayedWith.PlayersPlayedWith, str],
+):
     font = ui.font['20 regular']
+
+    # Load cached friends
+    if players_played_with == 'cached':
+        players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith(load_from_cache=True)
+
     if len(players_played_with.friends) > 0:
-        with hinter.imgui.table_row(before='match_history-friends-ref'):
+        # Delete cached friends
+        if hinter.imgui.does_item_exist('friends-spacer'):
+            hinter.imgui.delete_item(item='friends-spacer')
+            for PlayerPlayedWith in players_played_with.friends:
+                hinter.imgui.delete_item(item=f'friend_row-{PlayerPlayedWith.clean_username}')
+
+        with hinter.imgui.table_row(before='match_history-friends-ref', tag='friends-spacer'):
             with hinter.imgui.group():
                 hinter.imgui.add_spacer(height=35)
                 hinter.imgui.add_text('Friends Played With', tag='match_history-friends-header')
@@ -270,7 +286,10 @@ def show_friends_played_with(ui: hinter.UIFunctionality, players_played_with: hi
         hinter.imgui.bind_item_font('match_history-friends-header', ui.font['24 bold'])
 
         for PlayerPlayedWith in players_played_with.friends:
-            with hinter.imgui.table_row(before='match_history-friends-ref'):
+            with hinter.imgui.table_row(
+                    before='match_history-friends-ref',
+                    tag=f'friend_row-{PlayerPlayedWith.clean_username}'
+            ):
                 with hinter.imgui.group():
                     with hinter.imgui.group(horizontal=True):
                         icon_name = f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}'
@@ -312,3 +331,5 @@ def show_friends_played_with(ui: hinter.UIFunctionality, players_played_with: hi
                     hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 7, 5)
             hinter.imgui.bind_item_theme(f'friend-{PlayerPlayedWith.clean_username}', item_theme)
             hinter.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
+
+        players_played_with.cache()

@@ -1,3 +1,5 @@
+import os
+import pickle
 from typing import Union
 
 import cassiopeia
@@ -12,8 +14,9 @@ class PlayersPlayedWith:
 
     # TODO: Add docstrings for everything, make a function to cache the data, and load from it
 
-    def __init__(self):
-        pass
+    def __init__(self, load_from_cache: bool = False):
+        if load_from_cache:
+            self._load_from_cache()
 
     def add(self, player: cassiopeia.core.match.Participant, user_outcome: str, same_team_as_user: bool):
         if player.summoner.sanitized_name not in self._players_played_with.keys():
@@ -56,6 +59,22 @@ class PlayersPlayedWith:
             key=lambda x: x.win_rate,
             reverse=True
         )
+
+    def cache(self):
+        if not os.path.exists(hinter.data.constants.PATH_FRIENDS_FILE):
+            open(hinter.data.constants.PATH_FRIENDS_FILE, 'w+')
+
+        with open(hinter.data.constants.PATH_FRIENDS_FILE, 'wb') as friends_file:
+            pickle.dump(self._players_played_with, friends_file, pickle.HIGHEST_PROTOCOL)
+
+    def _load_from_cache(self):
+        # Don't try to load an empty file
+        if os.stat(hinter.data.constants.PATH_FRIENDS_FILE).st_size == 0:
+            print('hinter.match_history.display_matches: No data in friends file')
+            return
+
+        with open(hinter.data.constants.PATH_FRIENDS_FILE, 'rb') as friends_file:
+            self._players_played_with = pickle.load(friends_file)
 
     @property
     def _sorted_players_played_with(self) -> list[PlayerPlayedWith]:

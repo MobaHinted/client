@@ -4,6 +4,7 @@ import cassiopeia
 from PIL import Image, ImageOps
 
 import hinter
+import hinter.match_history.display_matches as MatchDisplay
 
 __all__ = [
     'MatchHistory',
@@ -176,6 +177,8 @@ class MatchHistory:
 
                 with hinter.imgui.table_row(tag='match_history-friends-ref'):
                     hinter.imgui.add_spacer()
+
+        MatchDisplay.show_friends_played_with(self.ui, 'cached')
         # endregion Left Bar
 
         # region  Center (Match History container)
