@@ -229,11 +229,12 @@ def display_match(table, ui, render, game, row_count):
                 hinter.imgui.add_spacer(height=5)
 
         # Selectable to be able to click row
-        hinter.imgui.add_selectable(
-            span_columns=True,
-            height=115,
-            callback=lambda: hinter.MatchBreakdown(game["match_id"]),
-        )
+        if game['queue'] != 'Arena':
+            hinter.imgui.add_selectable(
+                span_columns=True,
+                height=115,
+                callback=lambda: hinter.MatchBreakdown(game["match_id"]),
+            )
 
     hinter.imgui.set_table_row_color(
         table=table,

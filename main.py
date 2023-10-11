@@ -1,12 +1,12 @@
 import hinter
 # noinspection PyPep8Naming
-import hinter.match_history.match_data as MatchData
+import hinter.match_history.history_data as History
 
 
 def continue_drawing(ui, render):
     hinter.Menu = hinter.UIMenus(ui)
     hinter.UI = ui
-    MatchData.MatchData(ui, render)
+    History.HistoryData(ui, render)
 
 
 hinter.UI = hinter.UIFunctionality(continue_drawing)

@@ -14,7 +14,7 @@ import hinter
 
 
 # noinspection DuplicatedCode
-class MatchData(MatchHistory):
+class HistoryData(MatchHistory):
     game: dict
     champ_icons: list
     player: cassiopeia.core.match.Participant
@@ -62,6 +62,8 @@ class MatchData(MatchHistory):
 
         MatchDisplay.add_row_handlers('match_history')
         MatchDisplay.show_friends_played_with(self.ui, self.players_played_with)
+
+    # TODO: Move the actual data getting and formatting to background.match_data
 
     def _assemble_basic_match_info(self, match: cassiopeia.Match):
         self.game = {
@@ -164,7 +166,7 @@ class MatchData(MatchHistory):
         match_minutes = round(match_minutes, 2)
 
         # Calculate when the match happened
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now()
         now = pytz.utc.localize(now)
         match_time = datetime.datetime.fromisoformat(
             str(match.creation)
@@ -201,7 +203,10 @@ class MatchData(MatchHistory):
         position: cassiopeia.data.Position = cassiopeia.data.Position.none
         if match.map.id == hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
             # Determine role of player
-            role = str(player.stats.role)
+            if hasattr(player.stats, 'role'):
+                role = str(player.stats.role)
+            else:
+                role = str(player.role)
             lane = str(player.lane)
 
             cassiopeia.core.Items(region=hinter.settings.region)
