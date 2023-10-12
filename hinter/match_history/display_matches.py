@@ -301,22 +301,12 @@ def show_friends_played_with(
             ):
                 with hinter.imgui.group():
                     with hinter.imgui.group(horizontal=True):
-                        icon_name = f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}'
-
-                        # TODO: Make a UI method from this
-                        if not ui.check_image_cache(icon_name):
-                            mask = Image.open(f'{hinter.data.constants.PATH_ASSETS}circular_mask.png').convert('L')
-                            icon = ImageOps.fit(
-                                PlayerPlayedWith.summoner.profile_icon.image, mask.size, centering=(0.5, 0.5)
-                            )
-                            icon.putalpha(mask)
-                            icon.save(f'{hinter.data.constants.PATH_IMAGES}{icon_name}.png')
-
-                        summoner_icon_texture = ui.load_image(
-                            icon_name,
+                        summoner_icon_texture = ui.load_and_round_image(
+                            f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}',
+                            hinter.data.constants.IMAGE_TYPE_PIL,
+                            PlayerPlayedWith.summoner.profile_icon,
                             size=(30, 30),
                         )
-
                         hinter.imgui.add_image(texture_tag=summoner_icon_texture)
 
                         hinter.imgui.add_button(

@@ -117,23 +117,12 @@ class MatchHistory:
                             hinter.imgui.add_spacer()
 
                             with hinter.imgui.group(horizontal=True):
-                                icon_name = f'summoner_icon-{self.icon.id}'
-
-                                # TODO: Make a UI method from this
-                                if not self.ui.check_image_cache(icon_name):
-                                    mask = Image.open(
-                                        f'{hinter.data.constants.PATH_ASSETS}circular_mask.png'
-                                    ).convert('L')
-                                    icon = ImageOps.fit(self.icon.image, mask.size, centering=(0.5, 0.5))
-                                    icon.putalpha(mask)
-                                    icon.save(f'{hinter.data.constants.PATH_IMAGES}{icon_name}.png')
-
-                                summoner_icon_texture = self.ui.load_image(
-                                    icon_name,
+                                summoner_icon_texture = self.ui.load_and_round_image(
+                                    f'summoner_icon-{self.icon.id}',
+                                    hinter.data.constants.IMAGE_TYPE_PIL,
+                                    self.icon,
                                     size=(35, 35),
                                 )
-
-                                # Show the icon
                                 hinter.imgui.add_image(texture_tag=summoner_icon_texture, tag='summoner_icon')
 
                                 # Show the rank name

@@ -6,6 +6,7 @@ import PIL.Image as Image
 import cassiopeia
 import numpy as np
 import requests
+from PIL import ImageOps
 
 import hinter
 
@@ -84,6 +85,7 @@ class UIFunctionality(hinter.ui.UI):
 
         hinter.imgui.split_frame()
 
+    # noinspection PyMethodMayBeStatic
     def render_frames(self, frames: int = 1, split: bool = False):
         if split:
             hinter.imgui.split_frame(delay=frames)
@@ -105,7 +107,7 @@ class UIFunctionality(hinter.ui.UI):
     def load_image(self,
                    image_name: str,
                    image_type: str = None,
-                   image: Union[str, Image.Image] = None,
+                   image: Union[str, Image.Image, object] = None,
                    crop: tuple[int, int, int, int] = None,
                    size: tuple[int, int] = None,
                    force_fresh: bool = False) -> str:
@@ -140,7 +142,7 @@ class UIFunctionality(hinter.ui.UI):
         :Example:
 
         .. code-block:: python
-            img = self.ui.load_image(hinter.data.constants.IMAGE_TYPE_PIL, '/path/to/img', size=(64, 64))
+            img = self.ui.load_image('filler', hinter.data.constants.IMAGE_TYPE_FILE, '/path/to/img', size=(64, 64))
             self.ui.imgui.add_image(texture_tag=img)
         """
         img: Image
@@ -151,19 +153,25 @@ class UIFunctionality(hinter.ui.UI):
         # Short-circuit if the image is already loaded into the registry
         if hinter.imgui.does_alias_exist(tag) and not force_fresh:
             return tag
+        elif hinter.imgui.does_alias_exist(tag) and force_fresh:
+            hinter.imgui.delete_item(tag)
 
         # Verify folder exists
         if not os.path.exists(hinter.data.constants.PATH_IMAGES):
             os.mkdir(hinter.data.constants.PATH_IMAGES)
 
         # Load the image if it is already cached
-        if os.path.exists(image_path) and not force_fresh:
+        if self.check_image_cache(image_name) and not force_fresh:
             image_type = hinter.data.constants.IMAGE_TYPE_FILE
             image = image_path
             cached = True
 
         if image_type == hinter.data.constants.IMAGE_TYPE_PIL:
             img = image
+
+            # With this, we can pass in cassiopeia images, without making a call if they are cached
+            if hasattr(img, 'image'):
+                img = img.image
         elif image_type == hinter.data.constants.IMAGE_TYPE_FILE:
             img = Image.open(image)
         elif image_type == hinter.data.constants.IMAGE_TYPE_REMOTE:
@@ -216,6 +224,39 @@ class UIFunctionality(hinter.ui.UI):
         """
         return os.path.exists(f'{hinter.data.constants.PATH_IMAGES}{image_name}.png')
 
+    def load_and_round_image(self,
+                             image_name: str,
+                             image_type: str = None,
+                             image: Union[str, Image.Image, object] = None,
+                             crop: tuple[int, int, int, int] = None,
+                             size: tuple[int, int] = None,
+                             force_fresh: bool = False) -> str:
+        image_path = f'{hinter.data.constants.PATH_IMAGES}{image_name}.png'
+
+        # Cache the image if not already done
+        if not self.check_image_cache(image_name) or force_fresh:
+            self.load_image(image_name, image_type, image, crop, size, force_fresh)
+
+        # Round the image
+        image = Image.open(image_path)
+        mask = Image.open(f'{hinter.data.constants.PATH_ASSETS}circular_mask.png').convert('L')
+        icon = ImageOps.fit(
+            image, mask.size, centering=(0.5, 0.5)
+        )
+        icon.putalpha(mask)
+        icon.save(image_path)
+
+        # Return the texture tag
+        return self.load_image(
+            image_name,
+            hinter.data.constants.IMAGE_TYPE_FILE,
+            image_path,
+            crop,
+            size,
+            True
+        )
+
+    # noinspection PyMethodMayBeStatic
     def text_size(self, text: Union[str, int], font: str, padding: Union[list[int], None] = None) -> list[int]:
         """A method to get the size of a string as displayed by ImGUI
 
