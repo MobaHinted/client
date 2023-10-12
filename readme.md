@@ -23,9 +23,9 @@ You can stay tuned by Watching the project in the top right, or checking the
 
 This is roughly in the order they will be developed.
 
-- [X] Match History
+- [X] ~~Match History~~
 - [ ] Post-Game Breakdown
-- [X] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
+- [X] ~~Teammate Performance (like op.gg has, telling you your win-rate with specific friends)~~
   - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
 - [ ] Overlays
