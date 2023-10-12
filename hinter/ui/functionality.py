@@ -116,9 +116,6 @@ class UIFunctionality(hinter.ui.UI):
         This accepts several different types of images, loads them however they need loaded, caches them, adds
         them to the dearpygui texture registry, and returns a texture tag to use in :func:`dearpygui.add_image`.
 
-        .. warning::
-            This method does not handle unregistering textures, that should be done manually.
-
         :param image_name: A unique name for the image, to be used to name the texture. If this is the only parameter,
             then the image must already exist in the cache.
         :param image_type: (Optional, requires an image) A constant from hinter.UI specifying the type of image you are
@@ -130,7 +127,8 @@ class UIFunctionality(hinter.ui.UI):
         :return: A string specifying the texture tag to use in :func:`dearpygui.add_image`.
 
         .. seealso::
-            :func:`hinter.UI.PIL`, :func:`hinter.UI.FILE`, :func:`hinter.UI.REMOTE`
+            :func:`hinter.data.constants.IMAGE_TYPE_PIL`, :func:`hinter.data.constants.IMAGE_TYPE_FILE`,
+            :func:`hinter.data.constants.IMAGE_TYPE_REMOTE`
 
             :func:`PIL.Image.crop`, :func:`PIL.Image.resize`
 
@@ -231,6 +229,13 @@ class UIFunctionality(hinter.ui.UI):
                              crop: tuple[int, int, int, int] = None,
                              size: tuple[int, int] = None,
                              force_fresh: bool = False) -> str:
+        """A method to load and round an image, for use in :func:`dearpygui.add_image`.
+
+        This accepts the same parameters as :func:`hinter.ui.UIFunctionality.load_image`, but will also round the image.
+
+        .. seealso::
+            :func:`hinter.ui.UIFunctionality.load_image`
+        """
         image_path = f'{hinter.data.constants.PATH_IMAGES}{image_name}.png'
 
         # Cache the image if not already done

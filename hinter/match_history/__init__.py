@@ -121,7 +121,7 @@ class MatchHistory:
                                     f'summoner_icon-{self.icon.id}',
                                     hinter.data.constants.IMAGE_TYPE_PIL,
                                     self.icon,
-                                    size=(35, 35),
+                                    size=hinter.data.constants.ICON_SIZE_SUMMONER,
                                 )
                                 hinter.imgui.add_image(texture_tag=summoner_icon_texture, tag='summoner_icon')
 
@@ -152,8 +152,8 @@ class MatchHistory:
                                             hinter.data.constants.IMAGE_TYPE_FILE,
                                             hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-'
                                             + self.rank.tier.name + '.png',
-                                            (477, 214, 810, 472),
-                                            (86, 60),
+                                            hinter.data.constants.ICON_CROP_RANK,
+                                            hinter.data.constants.ICON_SIZE_RANK,
                                         )
                                         hinter.imgui.add_image(texture_tag=rank_icon_texture)
 

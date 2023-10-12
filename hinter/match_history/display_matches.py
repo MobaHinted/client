@@ -1,7 +1,5 @@
 from typing import Union
 
-from PIL import Image, ImageOps
-
 import hinter
 
 champ_icons = []
@@ -10,11 +8,6 @@ champ_icons = []
 # noinspection DuplicatedCode
 def display_match(table, ui, render, game, row_count):
     global champ_icons
-    champ_size = (64, 64)
-    rune_size = (30, 30)
-    sec_rune_size = (22, 22)
-    spell_size = (30, 30)
-    item_size = (30, 30)
     counter = 0
 
     hinter.imgui.add_table_row(parent=table, tag=f'match-{game["match_id"]}')
@@ -46,26 +39,21 @@ def display_match(table, ui, render, game, row_count):
             # endregion Row 1: Outcome, Lane, Game Type, Match duration info
 
             # region Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
-            with hinter.imgui.table_row(height=rune_size[1]):
+            with hinter.imgui.table_row():
                 with hinter.imgui.group(horizontal=True):
-                    if not ui.check_image_cache('champion-' + game['player'].champion.name):
-                        champion_played = game['player'].champion.image.image
-                    else:
-                        champion_played = 'champion-' + game['player'].champion.name
-
-                    if not ui.check_image_cache('champion-' + game['player'].champion.name):
-                        champion_played = ui.load_image(
-                            'champion-' + game['player'].champion.name, hinter.data.constants.IMAGE_TYPE_PIL,
-                            champion_played, size=champ_size
-                        )
-                    else:
-                        champion_played = ui.load_image(champion_played, size=champ_size)
+                    # TODO: Replace other image caching checkers with this
+                    champion_played = ui.load_image(
+                        f'champion-{game["player"].champion.name}',
+                        hinter.data.constants.IMAGE_TYPE_PIL,
+                        game['player'].champion.image,
+                        size=hinter.data.constants.ICON_SIZE_CHAMPION,
+                    )
 
                     # Place a filler image for the champion icon (hack to span 2 rows)
                     hinter.imgui.add_image(
                         texture_tag=ui.filler_image,
-                        width=champ_size[0],
-                        height=rune_size[1],
+                        width=hinter.data.constants.ICON_SIZE_CHAMPION[0],
+                        height=hinter.data.constants.ICON_SIZE_CHAMPION[1],
                         tag=f'champ-icon-holder-{game["match_id"]}',
                     )
                     # Draw a frame
@@ -85,27 +73,35 @@ def display_match(table, ui, render, game, row_count):
                             'spell-' + game['spell_d']['name'],
                             hinter.data.constants.IMAGE_TYPE_PIL,
                             game['spell_d']['image'],
-                            size=spell_size
+                            size=hinter.data.constants.ICON_SIZE_SPELL,
                         )
                     else:
-                        game['spell_d']['image'] = ui.load_image(game['spell_d']['image'], size=spell_size)
+                        game['spell_d']['image'] = ui.load_image(
+                            game['spell_d']['image'],
+                            size=hinter.data.constants.ICON_SIZE_SPELL,
+                        )
                     hinter.imgui.add_image(texture_tag=game['spell_d']['image'])
 
+                    hinter.imgui.add_spacer()
                     if game['queue'] == 'Arena':
                         hinter.imgui.add_image(
                             texture_tag=ui.filler_image,
-                            width=rune_size[0],
-                            height=rune_size[1],
+                            width=hinter.data.constants.ICON_SIZE_RUNE[0],
+                            height=hinter.data.constants.ICON_SIZE_RUNE[1],
                         )
                     elif not ui.check_image_cache(f'rune-{game["key_rune_used"]["name"]}'):
                         key_rune_used = ui.load_image(
-                            'rune-' + game['key_rune_used']['name'],
+                            f'rune-{game["key_rune_used"]["name"]}',
                             hinter.data.constants.IMAGE_TYPE_PIL,
-                            game['key_rune_used']['image'], size=rune_size
+                            game['key_rune_used']['image'],
+                            size=hinter.data.constants.ICON_SIZE_RUNE,
                         )
                         hinter.imgui.add_image(texture_tag=key_rune_used)
                     else:
-                        key_rune_used = ui.load_image(game['key_rune_used']['image'], size=rune_size)
+                        key_rune_used = ui.load_image(
+                            game['key_rune_used']['image'],
+                            size=hinter.data.constants.ICON_SIZE_RUNE
+                        )
                         hinter.imgui.add_image(texture_tag=key_rune_used)
 
                 # Show the first 3 items
@@ -117,17 +113,21 @@ def display_match(table, ui, render, game, row_count):
                                 if not ui.check_image_cache(f'item-{item["item"]}'):
                                     image = ui.load_image(
                                         'item-' + str(item['item']), hinter.data.constants.IMAGE_TYPE_PIL,
-                                        item['image'], size=item_size
+                                        item['image'],
+                                        size=hinter.data.constants.ICON_SIZE_ITEM
                                     )
                                 else:
-                                    image = ui.load_image(f'item-{item["item"]}', size=item_size)
+                                    image = ui.load_image(
+                                        f'item-{item["item"]}',
+                                        size=hinter.data.constants.ICON_SIZE_ITEM
+                                    )
                                 hinter.imgui.add_image(texture_tag=image)
                             # Handle cases where there are <3 items
                             else:
                                 hinter.imgui.add_image(
                                     texture_tag=ui.filler_image,
-                                    width=item_size[0],
-                                    height=item_size[1],
+                                    width=hinter.data.constants.ICON_SIZE_ITEM[0],
+                                    height=hinter.data.constants.ICON_SIZE_ITEM[1],
                                 )
                         else:
                             continue
@@ -135,8 +135,8 @@ def display_match(table, ui, render, game, row_count):
                     # Filler '4th item' in this row to show above trinket
                     hinter.imgui.add_image(
                         texture_tag=ui.filler_image,
-                        width=item_size[0],
-                        height=item_size[1],
+                        width=hinter.data.constants.ICON_SIZE_ITEM[0],
+                        height=hinter.data.constants.ICON_SIZE_ITEM[1],
                     )
 
                 hinter.imgui.add_text(f'{game["kda_display"]:^15}')
@@ -153,37 +153,41 @@ def display_match(table, ui, render, game, row_count):
             # region Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
             with hinter.imgui.table_row():
                 with hinter.imgui.group(horizontal=True):
-                    hinter.imgui.add_spacer(width=champ_size[0])
+                    hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
 
                     if not ui.check_image_cache('spell-' + game['spell_f']['name']):
                         spell_f_used = ui.load_image(
                             'spell-' + game['spell_f']['name'],
                             hinter.data.constants.IMAGE_TYPE_PIL,
                             game['spell_f']['image'],
-                            size=spell_size
+                            size=hinter.data.constants.ICON_SIZE_SPELL,
                         )
                     else:
-                        spell_f_used = ui.load_image(game['spell_f']['image'], size=spell_size)
+                        spell_f_used = ui.load_image(
+                            game['spell_f']['image'],
+                            size=hinter.data.constants.ICON_SIZE_SPELL,
+                        )
                     hinter.imgui.add_image(texture_tag=spell_f_used)
 
+                    hinter.imgui.add_spacer(width=4)
                     if game['queue'] == 'Arena':
                         hinter.imgui.add_image(
                             texture_tag=ui.filler_image,
-                            width=sec_rune_size[0],
-                            height=sec_rune_size[1],
+                            width=hinter.data.constants.ICON_SIZE_SECONDARY_RUNE[0],
+                            height=hinter.data.constants.ICON_SIZE_SECONDARY_RUNE[1],
                         )
                     elif not ui.check_image_cache(f'rune-{game["secondary_rune_used"]["name"]}'):
                         secondary_rune_used = ui.load_image(
                             'rune-' + game['secondary_rune_used']['name'],
                             hinter.data.constants.IMAGE_TYPE_PIL,
                             game['secondary_rune_used']['image'],
-                            size=sec_rune_size,
+                            size=hinter.data.constants.ICON_SIZE_SECONDARY_RUNE,
                         )
                         hinter.imgui.add_image(texture_tag=secondary_rune_used)
                     else:
                         secondary_rune_used = ui.load_image(
                             f'rune-{game["secondary_rune_used"]["name"]}',
-                            size=sec_rune_size,
+                            size=hinter.data.constants.ICON_SIZE_SECONDARY_RUNE,
                         )
                         hinter.imgui.add_image(texture_tag=secondary_rune_used)
 
@@ -198,17 +202,20 @@ def display_match(table, ui, render, game, row_count):
                                 if not ui.check_image_cache(f'item-{item["item"]}'):
                                     image = ui.load_image(
                                         'item-' + str(item['item']), hinter.data.constants.IMAGE_TYPE_PIL,
-                                        item['image'], size=item_size
+                                        item['image'], size=hinter.data.constants.ICON_SIZE_ITEM
                                     )
                                 else:
-                                    image = ui.load_image(f'item-{item["item"]}', size=item_size)
+                                    image = ui.load_image(
+                                        f'item-{item["item"]}',
+                                        size=hinter.data.constants.ICON_SIZE_ITEM
+                                    )
                                 hinter.imgui.add_image(texture_tag=image)
                             # Handle cases where there are <3 items
                             else:
                                 hinter.imgui.add_image(
                                     texture_tag=ui.filler_image,
-                                    width=item_size[0],
-                                    height=item_size[1],
+                                    width=hinter.data.constants.ICON_SIZE_ITEM[0],
+                                    height=hinter.data.constants.ICON_SIZE_ITEM[1],
                                 )
                         # Just iterate to the 4th item
                         else:
