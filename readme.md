@@ -25,7 +25,8 @@ This is roughly in the order they will be developed.
 
 - [X] Match History
 - [ ] Post-Game Breakdown
-- [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
+- [X] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
+  - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
 - [ ] Overlays
   - [ ] Milestone Notifications
@@ -52,12 +53,12 @@ This is roughly in the order they will be developed.
 When this is at a usable point (e.g. Rito accepts my app, and there are enough features to make it even vaguely
 competitive), I'll release a binary for Windows, and all you will have to do is download and run that.
 
-To spin it up in the mean-time you should just need Python 3 and to run the following command
+To spin it up in the mean-time you should just need Python 3 (built on 3.12) and to run the following command
 to set up the virtual environment and install the requirements.
 
 1. `virtualenv venv
     && pip install -r requirements.txt`
-    
+
 2. You'll also need an `.env` file setup with the following variables.
    - `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
 
@@ -66,7 +67,7 @@ to set up the virtual environment and install the requirements.
 >
 > (If you're building this project yourself though, then I assume the circumstances
 are such that you should use your own development key)
- 
+
 
 3. Then you can build the executable, or execute the program directly.
 
@@ -101,15 +102,13 @@ find one.
 If you want to code on this, try fixing an issue, or implementing something from
 the ToDo list, and opening a pull request.
 
-If you want to thank me, then send me an email, report an issue, or star this
-repository; there is also a Sponsor option on the Github page for one-off gifts,
-go crazy.
+If you want to thank me, then email me, report an issue, or star this
+repository; there are also a Sponsor options on the Github page, go crazy.
 
 ## License
-This software is licensed under GPLv3, and as such can be shared freely.
-Crediting me is good.
+This software is licensed under GPLv3, and as such can be shared and modified freely.
 
-"Copyright 2020 Ethan Henderson <ethan@zbee.codes>"
+Copyright 2023 Ethan Henderson <ethan@zbee.codes>
 
 ```
     This program is free software: you can redistribute it and/or modify
@@ -128,7 +127,7 @@ Crediting me is good.
 
 ### Attribution
 
-MobaHinted  is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially
+MobaHinted is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially
 involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or
 registered trademarks of Riot Games, Inc.
 
@@ -138,9 +137,17 @@ registered trademarks of Riot Games, Inc.
 Copyright (c) 2017 Rob Rua, Jason Maldonis - 
 Licensed under the MIT License
 
-[Kernel](https://github.com/meraki-analytics/kernel)
+[Kernel](https://github.com/meraki-analytics/kernel), 
 Copyright (c) 2017 Meraki Analytics, LLC - 
 Licensed under the MIT License
+
+[lcu-driver](https://github.com/sousa-andre/lcu-driver), 
+Copyright (c) 2019 André Sousa - 
+Licensed under the MIT License
+
+[Fira Code](https://github.com/tonsky/FiraCode), 
+Copyright (c) 2014 The Fira Code Project Authors - 
+Licensed under the OFL License
 
 [Requests](https://github.com/psf/requests), 
 Copyright 2019 Kenneth Reitz - 
@@ -154,10 +161,6 @@ Licensed under the 3-Clause BSD License
 Copyright (c) 2016 hustcc - 
 Licensed under the MIT License
 
-[Fira Code](https://github.com/tonsky/FiraCode), 
-Copyright (c) 2014 The Fira Code Project Authors - 
-Licensed under the OFL License
-
 [NumPy](https://github.com/numpy/numpy), 
 Copyright (c) 2005 NumPy Developers - 
-Licensed under the BSD License
+Licensed under the 3-Clause BSD License
