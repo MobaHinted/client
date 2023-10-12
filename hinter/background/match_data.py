@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import cached_property
 from typing import TypedDict, Required, Union
 
 import cassiopeia
@@ -20,7 +21,7 @@ class GameReturn(TypedDict, total=False):
     teams_damage: Required[list[int]]
     teams_outcomes: Required[list[str]]
     teams_background_colors: Required[list[list[int]]]  # List of lists as it's split by team
-    players_summoner_spells: Required[list[list[str]]]
+    players_summoner_spells: Required[list[list[list[str]]]]
     players_roles: Required[list[list[str]]]
     players_kdas: Required[list[list[str]]]
     players_k_d_as: Required[list[list[str]]]
@@ -68,11 +69,13 @@ class MatchData:
     blue_team: int  # The keys to use when splitting the match data by team
     red_team: int
     _match: cassiopeia.core.match.Match
+    _match_minutes: Union[float, None]
     _teams_damage_values: Union[list[int], None]
     _teams_background_colors_values: Union[list[list[int]], None]
 
     def __init__(self, game: int, user: str = None):
         self.game = None
+        self._match_minutes = None
         self._teams_damage_values = None
         self._teams_background_colors_values = None
         self._match = hinter.cassiopeia.get_match(game, hinter.settings.region)
@@ -94,6 +97,12 @@ class MatchData:
             map_id=self._map_id,
             queue=self._queue,
             match_duration=self._match_duration,
+            players=self._players,
+            teams_kills=self._teams_kills,
+            teams_damage=self._teams_damage,
+            teams_outcomes=self._teams_outcomes,
+            teams_background_colors=self._teams_background_colors,
+            players_summoner_spells=self._players_summoner_spells,
         )
 
     def _format_game_for(self, user) -> None:
@@ -107,15 +116,15 @@ class MatchData:
 
         return teamed_data
 
-    @property
+    @cached_property
     def _match_id(self) -> int:
         return int(self._match.id)
 
-    @property
+    @cached_property
     def _map_id(self) -> int:
         return self._match.map.id
 
-    @property
+    @cached_property
     def _queue(self) -> str:
         # noinspection PyBroadException
         try:
@@ -151,7 +160,7 @@ class MatchData:
 
         return queue
 
-    @property
+    @cached_property
     def _match_duration(self) -> str:
         match_length_parts = str(self._match.duration).split(':')
         match_minutes = int(match_length_parts[0] * 60)
@@ -172,7 +181,7 @@ class MatchData:
         duration += timeago.format(match_time, now)
         return duration.replace('utes', '')
 
-    @property
+    @cached_property
     def _players(self) -> list[list[cassiopeia.core.match.Participant]]:
         blue_team = []
         red_team = []
@@ -185,7 +194,7 @@ class MatchData:
 
         return self._assemble_into_teams(blue_team, red_team)
 
-    @property
+    @cached_property
     def _teams_kills(self) -> list[int]:
         teams_kills = [0, 0]
         teams_damage = [0, 0]
@@ -199,7 +208,7 @@ class MatchData:
 
         return teams_kills
 
-    @property
+    @cached_property
     def _teams_damage(self) -> list[int]:
         if self._teams_damage_values is None:
             # noinspection PyStatementEffect
@@ -207,7 +216,7 @@ class MatchData:
 
         return self._teams_damage_values
 
-    @property
+    @cached_property
     def _teams_outcomes(self) -> list[str]:
         # Short-circuit for remakes
         if self._match.is_remake:
@@ -230,7 +239,7 @@ class MatchData:
 
         return teams_outcomes
 
-    @property
+    @cached_property
     def _teams_background_colors(self) -> list[list[int]]:
         if self._teams_background_colors_values is None:
             # noinspection PyStatementEffect
@@ -238,9 +247,25 @@ class MatchData:
 
         return self._teams_background_colors_values
 
-    @property
-    def _players_summoner_spells(self) -> list[list[str]]:
-        pass
+    @cached_property
+    def _players_summoner_spells(self) -> list[list[list[str]]]:
+        players_summoner_spells = []
 
+        for team, players in enumerate(self._players):
+            for player in players:
+                players_summoner_spells[team].append([
+                    hinter.UI.load_image(
+                        f'spell-{player.summoner_spell_d.name}',
+                        hinter.data.constants.IMAGE_TYPE_PIL,
+                        player.summoner_spell_d.image,
+                        size=hinter.data.constants.ICON_SIZE_SPELL,
+                    ),
+                    hinter.UI.load_image(
+                        f'spell-{player.summoner_spell_f.name}',
+                        hinter.data.constants.IMAGE_TYPE_PIL,
+                        player.summoner_spell_f.image,
+                        size=hinter.data.constants.ICON_SIZE_SPELL,
+                    ),
+                ])
 
-
+        return players_summoner_spells
