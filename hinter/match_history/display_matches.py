@@ -53,7 +53,7 @@ def display_match(table, ui, render, game, row_count):
                     hinter.imgui.add_image(
                         texture_tag=ui.filler_image,
                         width=hinter.data.constants.ICON_SIZE_CHAMPION[0],
-                        height=hinter.data.constants.ICON_SIZE_CHAMPION[1],
+                        height=hinter.data.constants.ICON_SIZE_RUNE[1],
                         tag=f'champ-icon-holder-{game["match_id"]}',
                     )
                     # Draw a frame
