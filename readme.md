@@ -45,7 +45,7 @@ This is roughly in the order they will be developed.
 - [ ] Champion Suggestion (based on your pool, and performance with teammates)
 - [ ] Ban Suggestion (based on your lane WRs, and performance with teammates)
 - [ ] Item / Rune / Spell suggestions and importing (2 of the most popular, then try to have a variety - like some tools
-      don't offer AP twitch anymore but if that's what you want ..., etc)
+      don't offer AP twitch anymore but if that's what you want ..., etc.)
 - [ ] Riot API Caching/Proxying with Kernel
 
 ## Setup
@@ -61,13 +61,6 @@ to set up the virtual environment and install the requirements.
 
 2. You'll also need an `.env` file setup with the following variables.
    - `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
-
-> ~~You can skip this step, but then the queries will go through my
-[kernel](https://github.com/meraki-analytics/kernel) API proxy server.~~ (This is no longer currently implemented, it will be added again before release.)
->
-> (If you're building this project yourself though, then I assume the circumstances
-are such that you should use your own development key)
-
 
 3. Then you can build the executable, or execute the program directly.
 
@@ -103,12 +96,12 @@ If you want to code on this, try fixing an issue, or implementing something from
 the ToDo list, and opening a pull request.
 
 If you want to thank me, then email me, report an issue, or star this
-repository; there are also a Sponsor options on the Github page, go crazy.
+repository; there are also a Sponsor options on the GitHub page, go crazy.
 
 ## License
 This software is licensed under GPLv3, and as such can be shared and modified freely.
 
-Copyright 2023 Ethan Henderson <ethan@zbee.codes>
+Copyright 2020 Ethan Henderson <ethan@zbee.codes>
 
 ```
     This program is free software: you can redistribute it and/or modify
