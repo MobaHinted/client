@@ -19,7 +19,7 @@ class GameReturn(TypedDict, total=False):
     teams_kills: Required[list[int]]
     teams_damage: Required[list[int]]
     teams_outcomes: Required[list[str]]
-    teams_background_colors: Required[list[list[float]]]  # List of lists as it's split by team
+    teams_background_colors: Required[list[list[int]]]  # List of lists as it's split by team
     players_summoner_spells: Required[list[list[str]]]
     players_roles: Required[list[list[str]]]
     players_kdas: Required[list[list[str]]]
@@ -68,9 +68,13 @@ class MatchData:
     blue_team: int  # The keys to use when splitting the match data by team
     red_team: int
     _match: cassiopeia.core.match.Match
+    _teams_damage_values: Union[list[int], None]
+    _teams_background_colors_values: Union[list[list[int]], None]
 
     def __init__(self, game: int, user: str = None):
         self.game = None
+        self._teams_damage_values = None
+        self._teams_background_colors_values = None
         self._match = hinter.cassiopeia.get_match(game, hinter.settings.region)
 
         # Just done here programmatically, so it's easier to adjust for if ever needed,
@@ -95,7 +99,7 @@ class MatchData:
     def _format_game_for(self, user) -> None:
         pass
 
-    def _assemble_in_teams(self, blue_team_data: list, red_team_data: list) -> list:
+    def _assemble_into_teams(self, blue_team_data: list, red_team_data: list) -> list[list]:
         teamed_data = []
         # Again done here like this to adjust or support other game modes
         teamed_data[self.blue_team] = blue_team_data
@@ -164,6 +168,79 @@ class MatchData:
 
         # Format match timing and how long ago it was
         # duration = str(self._match.duration) + ' long - '  # HH:MM:SS display
-        duration = f'{match_minutes:>2.0f}min - '
+        duration = f'{self._match_minutes:>2.0f}min - '
         duration += timeago.format(match_time, now)
         return duration.replace('utes', '')
+
+    @property
+    def _players(self) -> list[list[cassiopeia.core.match.Participant]]:
+        blue_team = []
+        red_team = []
+
+        for participant in self._match.participants:
+            if participant.side == cassiopeia.data.Side.blue:
+                blue_team.append(participant)
+            else:
+                red_team.append(participant)
+
+        return self._assemble_into_teams(blue_team, red_team)
+
+    @property
+    def _teams_kills(self) -> list[int]:
+        teams_kills = [0, 0]
+        teams_damage = [0, 0]
+
+        for team, players in enumerate(self._players):
+            for player in players:
+                teams_kills[team] += player.stats.kills
+                teams_damage[team] += player.stats.total_damage_dealt_to_champions
+
+        self._teams_damage_values = teams_damage
+
+        return teams_kills
+
+    @property
+    def _teams_damage(self) -> list[int]:
+        if self._teams_damage_values is None:
+            # noinspection PyStatementEffect
+            self._teams_kills
+
+        return self._teams_damage_values
+
+    @property
+    def _teams_outcomes(self) -> list[str]:
+        # Short-circuit for remakes
+        if self._match.is_remake:
+            self._teams_background_colors_values = [
+                hinter.data.constants.MATCH_COLOR_REMAKE,
+                hinter.data.constants.MATCH_COLOR_REMAKE
+            ]
+            return ['Remake', 'Remake']
+
+        teams_outcomes = []
+        background_colors = []
+
+        for team, player in enumerate(self._players):
+            if player[0].stats.win:
+                teams_outcomes[team] = 'Victory'
+                background_colors[team] = hinter.data.constants.MATCH_COLOR_WIN
+            else:
+                teams_outcomes[team] = 'Defeat'
+                background_colors[team] = hinter.data.constants.MATCH_COLOR_LOSS
+
+        return teams_outcomes
+
+    @property
+    def _teams_background_colors(self) -> list[list[int]]:
+        if self._teams_background_colors_values is None:
+            # noinspection PyStatementEffect
+            self._teams_outcomes
+
+        return self._teams_background_colors_values
+
+    @property
+    def _players_summoner_spells(self) -> list[list[str]]:
+        pass
+
+
+
