@@ -2,7 +2,7 @@
 cassiopeia @ git+https://github.com/zbee/cassiopeia.git
 #cassiopeia-diskstore~=1.1.3 #didn't version bump with my PR, so we'll use my fork
 cassiopeia-diskstore @ git+https://github.com/zbee/cassiopeia-datastores.git#egg=cassiopeia-diskstore&subdirectory=cassiopeia-diskstore
-# Has to be included as a git dependency anyways, so we'll use my fork to cache play-rate data
+# Has to be included as a git dependency anyways
 role-identification @ git+https://github.com/zbee/role-identification@master
 
 requests~=2.31.0

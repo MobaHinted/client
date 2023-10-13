@@ -1,3 +1,6 @@
+#     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
+#  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+
 import os.path
 import time
 from hinter.data.constants import PATH_SETTINGS_FILE, PATH_DATA

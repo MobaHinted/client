@@ -2,14 +2,16 @@
 This is a tool for League of Legends that will have functionality similar to
 Blitz / Mobalytics primarily, with the exclusion of ads, paid features, and the
 inclusion of it just actually working while having everything you need.
+It's faster, lighter, more reliable, more customizable, and with more overlays.
 
 Made out of grief from both Mobalytics and Blitz commonly just not even having correct builds or
 stats on matchups or even failing to import at critical moments, and completely
 missing features like suggesting counter picks from your champion pool - not to mention all the ads.
 
-It won't have crazy in-depth statistics on people like Mobalytics does,
-but just go use that if you want to look at someone specific - that isn't largely
-helpful to look at in game anyway.
+It doesn't have crazy in-depth stats like Mobalytics, super nice visuals of Blitz, or the
+particularly in-depth player tags or data-syncing of Porofessor, but it does have easy to
+understand information of every type you could want in a clean and concise format, as well
+as all the overlays those other clients have AND more that they don't.
 
 ## Status
 
@@ -96,26 +98,26 @@ If you want to code on this, try fixing an issue, or implementing something from
 the ToDo list, and opening a pull request.
 
 If you want to thank me, then email me, report an issue, or star this
-repository; there are also a Sponsor options on the GitHub page, go crazy.
+repository; there are also Sponsor options on the GitHub page, go crazy.
 
 ## License
 This software is licensed under GPLv3, and as such can be shared and modified freely.
 
-Copyright 2020 Ethan Henderson <ethan@zbee.codes>
+`MobaHinted  Copyright (C) 2020  Ethan Henderson <ethan@zbee.codes>`
 
 ```
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
 ### Attribution

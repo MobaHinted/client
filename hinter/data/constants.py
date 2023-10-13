@@ -1,3 +1,6 @@
+#     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
+#  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+
 __all__ = [
     'UI_FONT_SCALE',
     'SUMMONERS_RIFT_MAP_ID',

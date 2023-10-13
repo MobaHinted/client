@@ -1,3 +1,6 @@
+#     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
+#  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+
 import os
 
 os.system('pyinstaller --onefile -p=.\\venv\\Lib\\site-packages -i .\\assets\\logo.ico main.py')
