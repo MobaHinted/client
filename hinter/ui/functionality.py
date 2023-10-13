@@ -8,6 +8,8 @@ import numpy as np
 import requests
 from PIL import ImageOps
 
+from cassiopeia.core.staticdata.common import Image as CassiopeiaImage
+
 import hinter
 
 
@@ -107,7 +109,7 @@ class UIFunctionality(hinter.ui.UI):
     def load_image(self,
                    image_name: str,
                    image_type: str = None,
-                   image: Union[str, Image.Image, object] = None,
+                   image: Union[str, Image.Image, CassiopeiaImage] = None,
                    crop: tuple[int, int, int, int] = None,
                    size: tuple[int, int] = None,
                    force_fresh: bool = False) -> str:
@@ -166,9 +168,8 @@ class UIFunctionality(hinter.ui.UI):
 
         if image_type == hinter.data.constants.IMAGE_TYPE_PIL:
             img = image
-
             # With this, we can pass in cassiopeia images, without making a call if they are cached
-            if hasattr(img, 'image'):
+            if type(img) is CassiopeiaImage:
                 img = img.image
         elif image_type == hinter.data.constants.IMAGE_TYPE_FILE:
             img = Image.open(image)
@@ -225,7 +226,7 @@ class UIFunctionality(hinter.ui.UI):
     def load_and_round_image(self,
                              image_name: str,
                              image_type: str = None,
-                             image: Union[str, Image.Image, object] = None,
+                             image: Union[str, Image.Image, CassiopeiaImage] = None,
                              crop: tuple[int, int, int, int] = None,
                              size: tuple[int, int] = None,
                              force_fresh: bool = False) -> str:
