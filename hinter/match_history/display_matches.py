@@ -3,11 +3,13 @@ from typing import Union
 import hinter
 
 champ_icons = []
+selectables = []
 
 
 # noinspection DuplicatedCode
 def display_match(table, ui, render, game, row_count):
     global champ_icons
+    global selectables
     counter = 0
 
     hinter.imgui.add_table_row(parent=table, tag=f'match-{game["match_id"]}')
@@ -223,8 +225,9 @@ def display_match(table, ui, render, game, row_count):
 
                 hinter.imgui.add_text(f'{game["k_d_a_display"]:^15}')
 
+                # Only show KP if it's not Summoner's Rift
                 if game['map_id'] != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
-                    game['vision'] = ''
+                    game['vision'] = game['vision'].split('- ')[1]
                 hinter.imgui.add_text(f'{game["vision"]:^20}')
 
                 hinter.imgui.add_text(f'{game["total_cs"]:^15}')
@@ -241,7 +244,10 @@ def display_match(table, ui, render, game, row_count):
                 span_columns=True,
                 height=115,
                 callback=lambda: hinter.MatchBreakdown(game["match_id"]),
+                tag=f'selectable-{game["match_id"]}',
+                enabled=False,
             )
+            selectables.append(f'selectable-{game["match_id"]}')
 
     hinter.imgui.set_table_row_color(
         table=table,
@@ -255,6 +261,10 @@ def display_match(table, ui, render, game, row_count):
 # Handler and Callback for moving champ icons when the window is resized
 def add_row_handlers(screen):
     global champ_icons
+    global selectables
+
+    for selectable in selectables:
+        hinter.imgui.configure_item(selectable, enabled=True)
 
     # noinspection DuplicatedCode
     def resize_call(sender):
