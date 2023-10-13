@@ -2,7 +2,6 @@
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
 import hinter
-import cassiopeia
 
 
 class MatchBreakdown:
