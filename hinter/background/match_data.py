@@ -3,6 +3,8 @@ from functools import cached_property
 from typing import TypedDict, Required, Union
 
 import cassiopeia
+import roleidentification.utilities as cassiopeia_role_identification
+from cassiopeia.core.staticdata.common import Image as CassiopeiaImage
 import pytz
 import timeago
 
@@ -20,9 +22,10 @@ class GameReturn(TypedDict, total=False):
     teams_kills: Required[list[int]]
     teams_damage: Required[list[int]]
     teams_outcomes: Required[list[str]]
+    teams_bans: Required[list[list[CassiopeiaImage]]]
     teams_background_colors: Required[list[list[int]]]  # List of lists as it's split by team
     players_summoner_spells: Required[list[list[list[str]]]]
-    players_roles: Required[list[list[str]]]
+    players_roles: Required[list[list[cassiopeia.data.Lane]]]
     players_kdas: Required[list[list[str]]]
     players_k_d_as: Required[list[list[str]]]
     players_damage: Required[list[list[int]]]
@@ -65,7 +68,7 @@ class GameReturn(TypedDict, total=False):
 
 
 class MatchData:
-    game: Union[GameReturn, None]
+    match: GameReturn
     blue_team: int  # The keys to use when splitting the match data by team
     red_team: int
     _match: cassiopeia.core.match.Match
@@ -74,7 +77,7 @@ class MatchData:
     _teams_background_colors_values: Union[list[list[int]], None]
 
     def __init__(self, game: int, user: str = None):
-        self.game = None
+        self._ = None
         self._match_minutes = None
         self._teams_damage_values = None
         self._teams_background_colors_values = None
@@ -92,7 +95,7 @@ class MatchData:
             self._format_game_for(user)
 
     def _format_game(self) -> None:
-        self.game = GameReturn(
+        self.match = GameReturn(
             match_id=self._match_id,
             map_id=self._map_id,
             queue=self._queue,
@@ -101,15 +104,17 @@ class MatchData:
             teams_kills=self._teams_kills,
             teams_damage=self._teams_damage,
             teams_outcomes=self._teams_outcomes,
+            teams_bans=self._teams_bans,
             teams_background_colors=self._teams_background_colors,
             players_summoner_spells=self._players_summoner_spells,
+            players_roles=self._players_roles,
         )
 
     def _format_game_for(self, user) -> None:
         pass
 
     def _assemble_into_teams(self, blue_team_data: list, red_team_data: list) -> list[list]:
-        teamed_data = []
+        teamed_data = [self._, self._]
         # Again done here like this to adjust or support other game modes
         teamed_data[self.blue_team] = blue_team_data
         teamed_data[self.red_team] = red_team_data
@@ -226,8 +231,8 @@ class MatchData:
             ]
             return ['Remake', 'Remake']
 
-        teams_outcomes = []
-        background_colors = []
+        teams_outcomes = [self._, self._]
+        background_colors = [self._, self._]
 
         for team, player in enumerate(self._players):
             if player[0].stats.win:
@@ -240,6 +245,17 @@ class MatchData:
         return teams_outcomes
 
     @cached_property
+    def _teams_bans(self) -> list[list[CassiopeiaImage]]:
+        teams_bans = [[], []]
+
+        for ban in self._match.blue_team.bans:
+            teams_bans[self.blue_team].append(ban.image)
+        for ban in self._match.red_team.bans:
+            teams_bans[self.blue_team].append(ban.image)
+
+        return teams_bans
+
+    @cached_property
     def _teams_background_colors(self) -> list[list[int]]:
         if self._teams_background_colors_values is None:
             # noinspection PyStatementEffect
@@ -249,7 +265,7 @@ class MatchData:
 
     @cached_property
     def _players_summoner_spells(self) -> list[list[list[str]]]:
-        players_summoner_spells = []
+        players_summoner_spells = [[], []]
 
         for team, players in enumerate(self._players):
             for player in players:
@@ -269,3 +285,41 @@ class MatchData:
                 ])
 
         return players_summoner_spells
+
+    # noinspection DuplicatedCode
+    @cached_property
+    def _players_roles(self) -> list[list[cassiopeia.data.Lane]]:
+        champion_order = [[], []]
+        players_roles = [
+            [self._, self._, self._, self._, self._],
+            [self._, self._, self._, self._, self._],
+        ]
+
+        # TODO: Add item hinting
+
+        # First set up the order the champions should be in
+        for team, players in enumerate(self._players):
+            for player in players:
+                champion_order[team].append(player.champion.id)
+
+        # Then get the roles for each champion on blue team
+        blue_team_roles = cassiopeia_role_identification.get_team_roles(
+            self._match.blue_team,
+            hinter.ChampionRoleData
+        )
+        for position, champion in blue_team_roles.items():
+            order = champion_order[self.blue_team].index(champion.id)
+            lane = cassiopeia.data.Lane.from_match_naming_scheme(position.name.upper())
+            players_roles[self.blue_team][order] = lane
+
+        # Do the sam for red team
+        red_team_roles = cassiopeia_role_identification.get_team_roles(
+            self._match.red_team,
+            hinter.ChampionRoleData
+        )
+        for position, champion in red_team_roles.items():
+            order = champion_order[self.red_team].index(champion.id)
+            lane = cassiopeia.data.Lane.from_match_naming_scheme(position.name.upper())
+            players_roles[self.red_team][order] = lane
+
+        return players_roles
