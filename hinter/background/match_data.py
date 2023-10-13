@@ -28,12 +28,12 @@ class GameReturn(TypedDict, total=False):
     players_roles: Required[list[list[cassiopeia.data.Lane]]]
     players_kdas: Required[list[list[str]]]
     players_k_d_as: Required[list[list[str]]]
+    players_kps: Required[list[list[float]]]
     players_damage: Required[list[list[int]]]
     players_damage_of_team: Required[list[list[int]]]
     players_damage_per_min: Required[list[list[int]]]
     players_vision: Required[list[list[int]]]
     players_vision_per_min: Required[list[list[float]]]
-    players_kp: Required[list[list[float]]]
     players_cs: Required[list[list[int]]]
     players_cs_per_min: Required[list[list[float]]]
     players_items: Required[list[list[list[dict]]]]
@@ -75,12 +75,18 @@ class MatchData:
     _match_minutes: Union[float, None]
     _teams_damage_values: Union[list[int], None]
     _teams_background_colors_values: Union[list[list[int]], None]
+    _players_k_d_as_values: Union[list[list[str]], None]
+    _players_kps_values: Union[list[list[float]], None]
+    _ = None
+    naught = 0.000000001
 
     def __init__(self, game: int, user: str = None):
-        self._ = None
         self._match_minutes = None
         self._teams_damage_values = None
         self._teams_background_colors_values = None
+        self._players_k_d_as_values = None
+        self._players_kps_values = None
+
         self._match = hinter.cassiopeia.get_match(game, hinter.settings.region)
 
         # Just done here programmatically, so it's easier to adjust for if ever needed,
@@ -108,6 +114,9 @@ class MatchData:
             teams_background_colors=self._teams_background_colors,
             players_summoner_spells=self._players_summoner_spells,
             players_roles=self._players_roles,
+            players_kdas=self._players_kdas,
+            players_k_d_as=self._players_k_d_as,
+            players_kps=self._players_kps,
         )
 
     def _format_game_for(self, user) -> None:
@@ -323,3 +332,50 @@ class MatchData:
             players_roles[self.red_team][order] = lane
 
         return players_roles
+
+    # noinspection PyTypeChecker
+    @cached_property
+    def _players_kdas(self) -> list[list[str]]:
+        players_kdas = [[], []]
+        players_k_d_as = [[], []]
+        players_kps = [[], []]
+        total_kills = [0, 0]
+
+        for team, players in enumerate(self._players):
+            for player in players:
+                total_kills[team] += player.stats.kills
+
+        for team, players in enumerate(self._players):
+            for player in players:
+                kda = (player.stats.kills + player.stats.assists) / (player.stats.deaths + self.naught)
+                players_kdas[team].append(
+                    f'{kda:.1f}'
+                )
+                players_k_d_as[team].append(
+                    f'{player.stats.kills} / {player.stats.deaths} / {player.stats.assists}'
+                )
+                players_kps[team].append(int(round(
+                    (player.stats.kills + player.stats.assists) / (total_kills[team] + self.naught),
+                    0
+                )))
+
+        self._players_k_d_as_values = players_k_d_as
+        self._players_kps_values = players_kps
+        return players_kdas
+
+    @cached_property
+    def _players_k_d_as(self) -> list[list[str]]:
+        if self._players_k_d_as_values is None:
+            # noinspection PyStatementEffect
+            self._players_kdas
+
+        return self._players_k_d_as_values
+
+    @cached_property
+    def _players_kps(self) -> list[list[float]]:
+        if self._players_kps_values is None:
+            # noinspection PyStatementEffect
+            self._players_kdas
+
+        return self._players_kps_values
+
