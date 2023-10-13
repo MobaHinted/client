@@ -21,6 +21,7 @@ __all__ = [
     'PATH_IMAGES',
     'PATH_RANKED_EMBLEMS',
     'PATH_RANKED_LANES',
+    'PATH_CHAMPION_ROLE_DATA_FILE',
     'PATH_IMGUI_FILE',
     'PATH_SETTINGS_FILE',
     'PATH_USERS_FILE',
@@ -56,6 +57,7 @@ PATH_IMAGES = PATH_DATA + 'image_cache/'
 PATH_RANKED_EMBLEMS = PATH_DATA + 'ranked_emblems/'
 PATH_RANKED_LANES = PATH_DATA + 'ranked_lanes/'
 
+PATH_CHAMPION_ROLE_DATA_FILE = PATH_DATA + 'champion_roles.dat'
 PATH_IMGUI_FILE = PATH_DATA + 'imgui.ini'
 PATH_SETTINGS_FILE = PATH_DATA + 'settings.dat'
 PATH_USERS_FILE = PATH_DATA + 'users.dat'
