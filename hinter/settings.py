@@ -39,7 +39,7 @@ class Settings:
     save_window_position: bool = True
     detect_new_accounts: bool = True
 
-    match_history_count: int = 50
+    match_history_count: int = 20
     friend_threshold: int = 5
 
     show_my_rank: bool = True
