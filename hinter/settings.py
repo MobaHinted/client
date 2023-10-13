@@ -154,8 +154,8 @@ class Settings:
         # Reload settings file
         self.load_settings(refresh=True)
 
-
-def is_file_older_than_x_days(file, days=1):
-    file_time = os.path.getmtime(file)
-    # Check against 24 hours
-    return (time.time() - file_time) / 3600 > 24*days
+    # noinspection PyMethodMayBeStatic
+    def is_file_older_than_x_days(self, file, days=1):
+        file_time = os.path.getmtime(file)
+        # Check against 24 hours
+        return (time.time() - file_time) / 3600 > 24*days

@@ -32,6 +32,10 @@ from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 UI: UIFunctionality
 Menu: UIMenus
 
+# Set up settings
+settings = hinter.settings.Settings()
+settings.load_settings()
+
 # region Champion Role Data
 # Check if we need to update the champion role data
 champion_role_data_exists = os.path.exists(hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE)
@@ -56,10 +60,6 @@ else:
 
 del champion_role_data_exists, want_new_champion_role_data
 # endregion Champion Role Data
-
-# Set up settings
-settings = hinter.settings.Settings()
-settings.load_settings()
 
 # region Casiopeia-Diskstore path
 # Get ready for Cassiopeia
