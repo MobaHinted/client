@@ -170,7 +170,7 @@ class MatchHistory:
                 with hinter.imgui.table_row(tag='match_history-friends-ref'):
                     hinter.imgui.add_spacer()
 
-        MatchDisplay.show_friends_played_with(self.ui, 'cached')
+        MatchDisplay.show_friends_played_with('cached')
         # endregion Left Bar
 
         # region  Center (Match History container)

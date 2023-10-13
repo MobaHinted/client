@@ -25,6 +25,7 @@ import hinter.ui.popups as Popups
 import hinter.users
 from hinter.ui.menu import UIMenus
 from hinter.background.match_data import MatchData as MatchData
+from hinter.background.match_data import GameReturn as GameData
 from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 
 # TODO: Move MatchHistory here
