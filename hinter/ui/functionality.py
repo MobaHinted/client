@@ -12,6 +12,8 @@ import requests
 from PIL import ImageOps
 
 from cassiopeia.core.staticdata.common import Image as CassiopeiaImage
+from cassiopeia.core.staticdata.rune import RuneImage as CassiopeiaRuneImage
+from cassiopeia.core.staticdata.rune import RunePath as CassiopeiaRunePathImage
 from cassiopeia.core.staticdata.profileicon import ProfileIcon as CassiopeiaProfileIcon
 
 import hinter
@@ -113,7 +115,14 @@ class UIFunctionality(hinter.ui.UI):
     def load_image(self,
                    image_name: str,
                    image_type: str = None,
-                   image: Union[str, Image.Image, CassiopeiaImage, CassiopeiaProfileIcon] = None,
+                   image: Union[
+                       str,
+                       Image.Image,
+                       CassiopeiaImage,
+                       CassiopeiaRuneImage,
+                       CassiopeiaRunePathImage,
+                       CassiopeiaProfileIcon,
+                   ] = None,
                    crop: tuple[int, int, int, int] = None,
                    size: tuple[int, int] = None,
                    force_fresh: bool = False) -> str:
@@ -150,6 +159,7 @@ class UIFunctionality(hinter.ui.UI):
             self.ui.imgui.add_image(texture_tag=img)
         """
         img: Image
+        image_name = image_name.replace(' ', '_').replace(':', '').lower()
         image_path = f'{hinter.data.constants.PATH_IMAGES}{image_name}.png'
         tag = f'CACHED_IMAGE-{image_name}'
         cached = False
@@ -173,9 +183,12 @@ class UIFunctionality(hinter.ui.UI):
         if image_type == hinter.data.constants.IMAGE_TYPE_PIL:
             img = image
             # With this, we can pass in cassiopeia images, without making a call if they are cached
-            if type(img) is CassiopeiaImage:
-                img = img.image
-            if type(img) is CassiopeiaProfileIcon:
+            if (
+                    type(img) is CassiopeiaImage or
+                    type(img) is CassiopeiaRuneImage or
+                    type(img) is CassiopeiaRunePathImage or
+                    type(img) is CassiopeiaProfileIcon
+            ):
                 img = img.image
         elif image_type == hinter.data.constants.IMAGE_TYPE_FILE:
             img = Image.open(image)
@@ -189,13 +202,13 @@ class UIFunctionality(hinter.ui.UI):
         if crop is not None and not cached:
             img = img.crop(crop)
 
-        # Cache the image
-        if not cached:
-            img.save(image_path)
-
         # Resize if desired
         if size is not None:
             img = img.resize(size)
+
+        # Cache the image
+        if not cached:
+            img.save(image_path)
 
         # Create the texture from the image
         texture = img.convert('RGBA')
@@ -232,7 +245,14 @@ class UIFunctionality(hinter.ui.UI):
     def load_and_round_image(self,
                              image_name: str,
                              image_type: str = None,
-                             image: Union[str, Image.Image, CassiopeiaImage, CassiopeiaProfileIcon] = None,
+                             image: Union[
+                                 str,
+                                 Image.Image,
+                                 CassiopeiaImage,
+                                 CassiopeiaRuneImage,
+                                 CassiopeiaRunePathImage,
+                                 CassiopeiaProfileIcon,
+                             ] = None,
                              crop: tuple[int, int, int, int] = None,
                              size: tuple[int, int] = None,
                              force_fresh: bool = False) -> str:
