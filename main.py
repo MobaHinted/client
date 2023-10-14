@@ -11,7 +11,6 @@ def continue_drawing(render):
 
 
 hinter.UI = hinter.UIFunctionality(continue_drawing)
-hinter.Menu = hinter.UIMenus()
 
 hinter.UI.imgui.start_dearpygui()
 hinter.UI.imgui.destroy_context()

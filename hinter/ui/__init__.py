@@ -60,6 +60,8 @@ class UI:
         )
         hinter.imgui.set_exit_callback(self.exit_callback)
 
+        hinter.UI = self
+
         if hinter.settings.active_user == '':
             self.login_flow()
         else:

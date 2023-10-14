@@ -13,7 +13,16 @@ class UIMenus:
         if hinter.imgui.does_item_exist('menu'):
             hinter.imgui.delete_item(item='menu')
 
-        with hinter.imgui.menu_bar(tag='menu', parent=self.ui.screen):
+        with hinter.imgui.menu_bar(tag='menu', parent=hinter.UI.screen):
+            # region History Menu
+            hinter.imgui.add_menu_item(
+                label='Match History',
+                callback=lambda: (
+                    hinter.UI.move_on_callback(render=not hinter.UI.render),
+                ),
+            )
+            # endregion History Menu
+
             # region Settings Menu
             hinter.imgui.add_menu_item(
                 label='Settings',
@@ -23,15 +32,7 @@ class UIMenus:
                 ),
             )
             self.ready_settings_window()
-
-            # region Data Menu
-            with hinter.imgui.menu(label='Data', tag='menu-data'):
-                hinter.imgui.add_menu_item(
-                    label='Reload all data',
-                    parent='menu-data',
-                    callback=lambda: hinter.UI.data_loader.load_all(refresh=True)
-                )
-            # endregion Data Menu
+            # endregion Settings Menu
 
             # region User Menu
             with hinter.imgui.menu(label='User', tag='menu-user'):
@@ -59,7 +60,7 @@ class UIMenus:
                         # TODO: changing users here doesn't work. can't determine why
                         callback=lambda sender: (
                             hinter.users.select_user(sender.split('-')[-1]),
-                            hinter.UI.move_on_callback(render=not hinter.UI.render),
+                            hinter.UI.move_on_callback(not hinter.UI.render),
                             print('selecting new user:' + sender.split('-')[-1])
                         ),
                         shortcut=selected,
@@ -111,14 +112,15 @@ class UIMenus:
 
                 # noinspection SpellCheckingInspection
                 hinter.imgui.add_menu_item(
-                    label='''Made by zbee, mostly in season 13
-    Copyright 2020 Ethan Henderson
-    Available under the GPLv3 license
-    Open Source at github.com/zbee/mobahinted''',
+                    label='''Made by zbee, mostly in season 13.
+MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>
+Licensed under GPLv3 - Full license text available below:
+Open Source at github.com/zbee/mobahinted''',
                     enabled=False,
                 )
             # endregion About Menu
 
+    # noinspection PyMethodMayBeStatic
     def ready_settings_window(self):
         settings_gear = hinter.UI.load_image(
             'settings_gear',
@@ -176,7 +178,7 @@ class UIMenus:
         ):
             users = hinter.users.list_users()
 
-            # TODO: Move to ui.settings, add generators for behavior section like the overlay section has
+            # TODO: add generators for behavior section like the overlay section has
             with hinter.imgui.table(header_row=False, no_clip=True):
                 hinter.imgui.add_table_column()
                 hinter.imgui.add_table_column()
@@ -597,7 +599,8 @@ clear all game data MobaHinted cached.'''
                     # noinspection SpellCheckingInspection
                     hinter.imgui.add_text(
                         '''Made by zbee, mostly in season 13.
-Copyright 2020 Ethan Henderson. Available under the GPLv3 license.
+MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>
+Licensed under GPLv3 - Full license text available below:
 Open Source at github.com/zbee/mobahinted'''
                     )
 
@@ -623,7 +626,8 @@ Open Source at github.com/zbee/mobahinted'''
                     hinter.imgui.add_button(
                         label='Support the Project',
                         width=570,
-                        callback=lambda: webbrowser.open('https://paypal.me/zbee0'),
+                        callback=lambda: webbrowser.open('https://mobahinted.lol/sponsor'),
+                        # TODO: Implement this sponsor popup
                     )
                 # endregion About Section
 

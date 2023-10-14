@@ -31,7 +31,7 @@ from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 # TODO: Move MatchHistory here
 
 UI: UIFunctionality
-Menu: UIMenus
+Menu: UIMenus = hinter.UIMenus()
 
 # Set up settings
 settings = hinter.settings.Settings()
