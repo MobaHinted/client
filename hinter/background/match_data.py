@@ -527,7 +527,7 @@ class MatchData:
                 if teams_kills[team] == 0:
                     kp = 0
                 else:
-                    kp = int(round((player.stats.kills + player.stats.assists) / teams_kills[team], 0))
+                    kp = int(round((player.stats.kills + player.stats.assists) / teams_kills[team] * 100, 0))
                 players_kps[team].append(f'{kp}%')
 
         self._players_k_d_as_values = players_k_d_as

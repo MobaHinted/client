@@ -8,9 +8,6 @@ import webbrowser
 
 class UIMenus:
 
-    def __init__(self, ui):
-        self.ui = ui
-
     def add_menu(self):
         # Delete the old menu bar, if it exists, and add a new one
         if hinter.imgui.does_item_exist('menu'):
@@ -22,18 +19,17 @@ class UIMenus:
                 label='Settings',
                 callback=lambda: (
                     hinter.imgui.show_item(item='settings-popup'),
-                    self.ui.center_window('settings-popup'),
+                    hinter.UI.center_window('settings-popup'),
                 ),
             )
             self.ready_settings_window()
-            # endregion Settings Menu
 
             # region Data Menu
             with hinter.imgui.menu(label='Data', tag='menu-data'):
                 hinter.imgui.add_menu_item(
                     label='Reload all data',
                     parent='menu-data',
-                    callback=lambda: self.ui.data_loader.load_all(refresh=True)
+                    callback=lambda: hinter.UI.data_loader.load_all(refresh=True)
                 )
             # endregion Data Menu
 
@@ -47,7 +43,7 @@ class UIMenus:
                 self.add_menu_separator()
 
                 # List each user, with the option to remove that user
-                users = hinter.users.list_users(self.ui.screen)
+                users = hinter.users.list_users(hinter.UI.screen)
                 for user in users:
                     username = user.username
 
@@ -63,7 +59,7 @@ class UIMenus:
                         # TODO: changing users here doesn't work. can't determine why
                         callback=lambda sender: (
                             hinter.users.select_user(sender.split('-')[-1]),
-                            self.ui.move_on_callback(ui=hinter.UI, render=not self.ui.render),
+                            hinter.UI.move_on_callback(render=not hinter.UI.render),
                             print('selecting new user:' + sender.split('-')[-1])
                         ),
                         shortcut=selected,
@@ -124,7 +120,7 @@ class UIMenus:
             # endregion About Menu
 
     def ready_settings_window(self):
-        settings_gear = self.ui.load_image(
+        settings_gear = hinter.UI.load_image(
             'settings_gear',
             hinter.data.constants.IMAGE_TYPE_FILE,
             f'{hinter.data.constants.PATH_ASSETS}settings.png',

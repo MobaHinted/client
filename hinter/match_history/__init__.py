@@ -26,14 +26,12 @@ class MatchHistory:
     left_bar: str
     history: str
     right_bar: str
-    ui: hinter.UIFunctionality
     players_played_with: hinter.PlayersPlayedWith
 
-    def __init__(self, ui: hinter.UIFunctionality, render: bool = True):
+    def __init__(self, render: bool = True):
         # Load summoner information
         user = cassiopeia.get_summoner(name=hinter.settings.active_user, region=hinter.settings.region)
 
-        self.ui = ui
         self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
 
         self.username = user.name
@@ -53,7 +51,7 @@ class MatchHistory:
 
         # Error out if that code doesn't work, which indicates an API issue
         except Exception as e:
-            self.ui.error_screens(e)
+            hinter.UI.error_screens(e)
 
         self.level = user.level
         self.icon = user.profile_icon
@@ -63,7 +61,7 @@ class MatchHistory:
 
     def show_match_screen(self, render: bool = True):
         self.delete_previous_screens(True, True)
-        self.ui.new_screen(tag='match_history')
+        hinter.UI.new_screen(tag='match_history')
 
         # Set up the table
         self.table = hinter.imgui.add_table(
@@ -105,7 +103,7 @@ class MatchHistory:
                             hinter.imgui.add_spacer()
 
                             hinter.imgui.add_text(self.username)
-                            hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['40 bold'])
+                            hinter.imgui.bind_item_font(hinter.imgui.last_item(), hinter.UI.font['40 bold'])
 
                             hinter.imgui.add_spacer()
 
@@ -120,7 +118,7 @@ class MatchHistory:
                             hinter.imgui.add_spacer()
 
                             with hinter.imgui.group(horizontal=True):
-                                summoner_icon_texture = self.ui.load_and_round_image(
+                                summoner_icon_texture = hinter.UI.load_and_round_image(
                                     f'summoner_icon-{self.icon.id}',
                                     hinter.data.constants.IMAGE_TYPE_PIL,
                                     self.icon,
@@ -130,7 +128,7 @@ class MatchHistory:
 
                                 # Show the rank name
                                 hinter.imgui.add_text(f'Level {self.level}')
-                                hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['32 bold'])
+                                hinter.imgui.bind_item_font(hinter.imgui.last_item(), hinter.UI.font['32 bold'])
 
                             hinter.imgui.add_spacer()
 
@@ -150,7 +148,7 @@ class MatchHistory:
 
                                     with hinter.imgui.group(horizontal=True):
                                         # Show the icon
-                                        rank_icon_texture = self.ui.load_image(
+                                        rank_icon_texture = hinter.UI.load_image(
                                             'rank-' + self.rank.tier.name,
                                             hinter.data.constants.IMAGE_TYPE_FILE,
                                             hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-'
@@ -163,7 +161,7 @@ class MatchHistory:
                                         # Show the rank name
                                         rank_name = self.rank.division.value
                                         hinter.imgui.add_text(rank_name)
-                                        hinter.imgui.bind_item_font(hinter.imgui.last_item(), self.ui.font['56 bold'])
+                                        hinter.imgui.bind_item_font(hinter.imgui.last_item(), hinter.UI.font['56 bold'])
 
                                     hinter.imgui.add_spacer()
 
@@ -224,9 +222,9 @@ class MatchHistory:
         hinter.imgui.set_viewport_width(hinter.settings.width)
         hinter.imgui.set_viewport_min_height(hinter.settings.default_height)
         hinter.imgui.set_viewport_height(hinter.settings.height)
-        self.ui.new_screen(tag='match_history', set_primary=True)
+        hinter.UI.new_screen(tag='match_history', set_primary=True)
 
-        self.ui.render_frames(60, split=not render)
+        hinter.UI.render_frames(60, split=not render)
 
     def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
         if hinter.imgui.does_item_exist('login'):
@@ -240,5 +238,5 @@ class MatchHistory:
                 hinter.imgui.delete_item('match_history')
 
         if delete_current:
-            if hinter.imgui.does_item_exist(self.ui.screen):
-                hinter.imgui.delete_item(self.ui.screen)
+            if hinter.imgui.does_item_exist(hinter.UI.screen):
+                hinter.imgui.delete_item(hinter.UI.screen)

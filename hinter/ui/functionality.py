@@ -155,8 +155,8 @@ class UIFunctionality(hinter.ui.UI):
         :Example:
 
         .. code-block:: python
-            img = self.ui.load_image('filler', hinter.data.constants.IMAGE_TYPE_FILE, '/path/to/img', size=(64, 64))
-            self.ui.imgui.add_image(texture_tag=img)
+            img = hinter.UI.load_image('filler', hinter.data.constants.IMAGE_TYPE_FILE, '/path/to/img', size=(64, 64))
+            hinter.UI.imgui.add_image(texture_tag=img)
         """
         img: Image
         image_name = image_name.replace(' ', '_').replace(':', '').lower()

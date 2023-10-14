@@ -135,7 +135,7 @@ class UI:
         hinter.imgui.show_viewport()
         hinter.imgui.render_dearpygui_frame()
         self.render = True
-        self.move_on_callback(ui=self, render=self.render)
+        self.move_on_callback(render=self.render)
 
     def login_flow(self):
         self.screen = 'login'
@@ -208,5 +208,5 @@ class UI:
             hinter.settings.write_setting('active_user', username)
             self.data_loader = hinter.DataLoader.DataLoader()
             self.render = False
-            self.move_on_callback(ui=self, render=self.render)
+            self.move_on_callback(render=self.render)
             hinter.imgui.render_dearpygui_frame()

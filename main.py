@@ -6,13 +6,12 @@ import hinter
 import hinter.match_history.history_data as History
 
 
-def continue_drawing(ui, render):
-    hinter.Menu = hinter.UIMenus(ui)
-    hinter.UI = ui
-    History.HistoryData(ui, render)
+def continue_drawing(render):
+    History.HistoryData(render)
 
 
 hinter.UI = hinter.UIFunctionality(continue_drawing)
+hinter.Menu = hinter.UIMenus()
 
 hinter.UI.imgui.start_dearpygui()
 hinter.UI.imgui.destroy_context()
