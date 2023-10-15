@@ -18,6 +18,7 @@ class HistoryData(MatchHistory):
     def __init__(self, render: bool):
         super().__init__(render)
         self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
+        # TODO: Put this call in a thread
         self.load_matches()
 
     def load_matches(self, render: bool = True):

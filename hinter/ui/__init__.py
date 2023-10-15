@@ -137,6 +137,7 @@ class UI:
         hinter.imgui.show_viewport()
         hinter.imgui.render_dearpygui_frame()
         self.render = True
+        # TODO: put this in a thread
         self.move_on_callback(render=self.render)
 
     def login_flow(self):

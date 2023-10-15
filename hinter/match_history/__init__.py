@@ -187,6 +187,7 @@ class MatchHistory:
 
                 with hinter.imgui.table_row(tag='match-history-delete-1'):
                     hinter.imgui.add_spacer(tag='match-history-delete-2')
+                    # TODO: Add back the loading indicator, once load_matches is threaded
                     hinter.imgui.add_text(
                         'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
                         '\nIt can take a couple minutes',
