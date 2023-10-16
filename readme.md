@@ -21,6 +21,9 @@ before, so I'm sure there will be lots of hiccups.
 You can stay tuned by Watching the project in the top right, or checking the
 [Todo List](https://github.com/zbee/mobahinted/projects/1).
 
+Current Status:
+![Screenshot of current status](./assets/status.jpg)
+
 ### Planned Features
 
 This is roughly in the order they will be developed.
