@@ -287,8 +287,8 @@ class UIFunctionality(hinter.ui.UI):
             if size[0] < 128 or size[1] < 128:
                 # If it's too small, get a bigger image for the rounding, while keeping the ratio
                 temp_size = (
-                    math.ceil(128/min(size)*size[0]),
-                    math.ceil(128/min(size)*size[1])
+                    math.ceil(128 / min(size) * size[0]),
+                    math.ceil(128 / min(size) * size[1])
                 )
 
             self.load_image(image_name, image_type, image, crop, temp_size, force_fresh)
@@ -313,7 +313,12 @@ class UIFunctionality(hinter.ui.UI):
         )
 
     # noinspection PyMethodMayBeStatic
-    def text_size(self, text: Union[str, int], font: str, padding: Union[list[int], None] = None) -> list[int]:
+    def text_size(
+            self,
+            text: Union[str, int],
+            font: str = '16 medium',
+            padding: Union[list[int], None] = None,
+    ) -> list[int]:
         """A method to get the size of a string as displayed by ImGUI
 
         :param text: The text to get the size of, or a number of characters to get the size of.
@@ -336,11 +341,39 @@ class UIFunctionality(hinter.ui.UI):
         )
 
         # Account for the font scale and padding
-        scale = 1 / hinter.data.constants.UI_FONT_SCALE
         return [
-            int(text_size[0] * scale) + padding[0],
-            int(text_size[1] * scale) + padding[1],
+            int(text_size[0]) + padding[0] * 2,
+            int(text_size[1]) + padding[1] * 2,
         ]
+
+    def find_text_for_size(
+            self,
+            width: int,
+            font: str = '16 medium',
+            padding: Union[list[int], None] = None,
+    ) -> int:
+        """A method to find the number of characters that will fit in the given width.
+
+        Particularly useful for use in f-strings.
+
+        :param width: The width to find the number of characters for.
+        :param font: The font to use to calculate the size.
+        :param padding: (Optional) The amount of padding to add to the size.
+        :return: An integer specifying the number of characters that will fit.
+        """
+
+        steps = [100, 50, 25, 10, 5, 1]
+
+        character_count = 0
+
+        for step in steps:
+            found_width = 0
+            while found_width < width:
+                character_count += step
+                found_width = self.text_size('a'*character_count, font, padding)[0]
+            character_count -= step
+
+        return character_count
 
     def error_screens(self, error):
         if hinter.imgui.does_item_exist('login'):
