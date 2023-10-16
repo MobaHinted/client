@@ -65,7 +65,7 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                         tag=f'champ-icon-holder-{game["match_id"]}',
                     )
                     # Draw a frame
-                    hinter.UI.render_frames(render)
+                    hinter.UI.render_frames(split=not render)
 
                     champ_icons.append(f'champ-icon-{game["match_id"]}')
                     # Place the champion icon over the filler image
