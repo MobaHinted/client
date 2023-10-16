@@ -24,7 +24,6 @@ class MatchBreakdown:
 
         hinter.imgui.add_text(f'Match Breakdown: {self.match_id}', parent='match_breakdown')
         hinter.imgui.add_separator(parent='match_breakdown')
-        hinter.imgui.add_text(f'Map: {self.match["map_id"]}', parent='match_breakdown')
 
         with hinter.imgui.theme(tag='blue_team_bans-theme'):
             with hinter.imgui.theme_component(hinter.imgui.mvImageButton, enabled_state=False):
@@ -70,3 +69,22 @@ class MatchBreakdown:
         with hinter.imgui.group(parent='match_breakdown', horizontal=True):
             for item in self.match['players_items'][self.red_team][4][4:8]:
                 hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+
+    def _draw_bans(self):
+        pass
+
+    def _draw_team(self, team):
+        for player_position, _ in enumerate(self.match['players_roles'][team]):
+            self._draw_player(team, player_position)
+
+    def _draw_player(self, team, player):
+        player = self.match['players'][team][player]
+        pass
+
+    @property
+    def _blue_team(self):
+        self._draw_team(self.blue_team)
+
+    @property
+    def _red_team(self):
+        self._draw_team(self.red_team)
