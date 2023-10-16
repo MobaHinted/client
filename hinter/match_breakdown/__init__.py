@@ -1,12 +1,13 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
-
+import cassiopeia.core.match
 import hinter
 
 
 class MatchBreakdown:
     def __init__(self, match_id: int, focus_user: str = ''):
         self.match_id = match_id
+        self.champ_icons = []
 
         if focus_user == '':
             focus_user = hinter.settings.active_user
@@ -16,6 +17,9 @@ class MatchBreakdown:
         self.match = data.match
         self.blue_team = data.blue_team
         self.red_team = data.red_team
+
+        self.forwards = self.blue_team
+        self.backwards = self.red_team
 
         del data
 
@@ -63,6 +67,7 @@ class MatchBreakdown:
 
                 with hinter.imgui.table_row():
                     with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_spacer()
                         for ban in self.match['teams_bans'][self.blue_team]:
                             image = hinter.imgui.add_image_button(
                                 ban,
@@ -78,7 +83,7 @@ class MatchBreakdown:
 
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_text(f'{self.match["teams_outcomes"][self.red_team]:<7}')
-                        hinter.imgui.add_text(f'{"Red Team":>{hinter.UI.find_text_for_size(480)}}')
+                        hinter.imgui.add_text(f'{"Red Team":>{hinter.UI.find_text_for_size(449)}}')
                         for ban in self.match['teams_bans'][self.red_team]:
                             image = hinter.imgui.add_image_button(
                                 ban,
@@ -89,12 +94,17 @@ class MatchBreakdown:
                             hinter.imgui.bind_item_theme(image, 'red_team_bans-theme')
 
                 with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer(height=20)
+
+                with hinter.imgui.table_row():
                     with hinter.imgui.table(
                         tag=f'match_breakdown-{self.match_id}-blue_team',
                         header_row=False,
                         no_clip=True
                     ):
                         hinter.imgui.add_table_column()
+
+                        self.draw_blue_team()
 
                     hinter.imgui.add_spacer()
 
@@ -104,6 +114,8 @@ class MatchBreakdown:
                         no_clip=True
                     ):
                         hinter.imgui.add_table_column()
+
+                        self.draw_red_team()
 
         with hinter.imgui.group(parent='match_breakdown', horizontal=True):
             for item in self.match['players_items'][self.red_team][4][0:4]:
@@ -117,14 +129,97 @@ class MatchBreakdown:
 
     def _draw_team(self, team):
         for player_position, _ in enumerate(self.match['players_roles'][team]):
-            self._draw_player(team, player_position)
+            with hinter.imgui.table_row():
+                self._draw_player(team, player_position, team)
+            with hinter.imgui.table_row():
+                hinter.imgui.add_spacer(height=20)
 
-    def _draw_player(self, team, player):
-        player = self.match['players'][team][player]
-        pass
+    def _draw_player(self, team, player, direction):
+        # noinspection PyTypeChecker
+        participant: cassiopeia.core.match.Participant = self.match['players'][team][player]
 
-    def blue_team(self):
+        def champ_icon():
+            # noinspection PyTypeChecker,PyUnresolvedReferences
+            champion = self.match['players'][team][player].champion
+
+            champion_played = hinter.UI.load_image(
+                f'champion-{champion.name}',
+                hinter.data.constants.IMAGE_TYPE_PIL,
+                champion.image,
+                size=hinter.data.constants.ICON_SIZE_CHAMPION,
+            )
+
+            # Place a filler image for the champion icon (hack to span 2 rows)
+            champ = hinter.imgui.add_image(
+                texture_tag=hinter.UI.filler_image,
+                width=hinter.data.constants.ICON_SIZE_CHAMPION[0],
+                height=hinter.data.constants.ICON_SIZE_RUNE[1],
+                tag=f'champ_icon_holder-{team}_{player}',
+            )
+            # Draw a frame
+            hinter.UI.render_frames(split=True)
+            hinter.UI.render_frames()
+
+            self.champ_icons.append(champ)
+            # Place the champion icon over the filler image
+            hinter.imgui.add_image(
+                texture_tag=champion_played,
+                tag=f'champ_icon-{team}_{player}',
+                parent='match_breakdown',
+                pos=hinter.imgui.get_item_pos(f'champ_icon_holder-{team}_{player}')
+            )
+
+        with hinter.imgui.table(header_row=False, no_clip=True):
+            # region Columns
+            hinter.imgui.add_table_column()
+            hinter.imgui.add_table_column()
+            hinter.imgui.add_table_column()
+            hinter.imgui.add_table_column()
+            hinter.imgui.add_table_column()
+            # endregion Columns
+
+            with hinter.imgui.table_row():
+                if direction == self.forwards:
+                    with hinter.imgui.group(horizontal=True):
+                        champ_icon()
+                        hinter.imgui.add_spacer()
+                        hinter.imgui.add_image(
+                            self.match['players_key_runes'][team][player]
+                        )
+                else:
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_image(
+                            self.match['players_key_runes'][team][player]
+                        )
+                        hinter.imgui.add_spacer()
+                        champ_icon()
+
+            with hinter.imgui.table_row():
+                if direction == self.forwards:
+                    with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
+                        hinter.imgui.add_spacer(width=3)
+                        hinter.imgui.add_image(
+                            self.match['players_secondary_rune_trees'][team][player]
+                        )
+                else:
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_spacer()
+                    with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_image(
+                            self.match['players_secondary_rune_trees'][team][player]
+                        )
+                        hinter.imgui.add_spacer(width=3)
+                        hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
+
+    def draw_blue_team(self):
         self._draw_team(self.blue_team)
 
-    def red_team(self):
+    def draw_red_team(self):
         self._draw_team(self.red_team)
