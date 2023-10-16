@@ -1,6 +1,6 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
-
+import math
 import os
 import webbrowser
 from typing import Union
@@ -96,7 +96,7 @@ class UIFunctionality(hinter.ui.UI):
     # noinspection PyMethodMayBeStatic
     def render_frames(self, frames: int = 1, split: bool = False):
         if split:
-            # TODO: I don't think this works
+            # TODO: I don't think this works here
             hinter.imgui.split_frame(delay=frames)
 
         for _ in range(frames):
@@ -261,14 +261,37 @@ class UIFunctionality(hinter.ui.UI):
 
         This accepts the same parameters as :func:`hinter.ui.UIFunctionality.load_image`, but will also round the image.
 
+        .. warning::
+            This method will not work if the imag is already cached, unless ``force_fresh`` is set to ``True``.
+
         .. seealso::
             :func:`hinter.ui.UIFunctionality.load_image`
         """
         image_path = f'{hinter.data.constants.PATH_IMAGES}{image_name}.png'
 
-        # Cache the image if not already done
+        # Short-circuit if the image is already cached, assuming it was done so with rounding
+        if self.check_image_cache(image_name) and not force_fresh:
+            return self.load_image(
+                image_name,
+                hinter.data.constants.IMAGE_TYPE_FILE,
+                image_path,
+                crop,
+                size,
+                force_fresh
+            )
+
+        # Cache the image, to work from the file directly
         if not self.check_image_cache(image_name) or force_fresh:
-            self.load_image(image_name, image_type, image, crop, size, force_fresh)
+            # Make sure the image is at least the size of the rounding mask, to avoid stretching
+            temp_size = size
+            if size[0] < 128 or size[1] < 128:
+                # If it's too small, get a bigger image for the rounding, while keeping the ratio
+                temp_size = (
+                    math.ceil(128/min(size)*size[0]),
+                    math.ceil(128/min(size)*size[1])
+                )
+
+            self.load_image(image_name, image_type, image, crop, temp_size, force_fresh)
 
         # Round the image
         image = Image.open(image_path)
@@ -286,7 +309,7 @@ class UIFunctionality(hinter.ui.UI):
             image_path,
             crop,
             size,
-            True
+            True  # Force fresh, to load the rounded image instead
         )
 
     # noinspection PyMethodMayBeStatic
