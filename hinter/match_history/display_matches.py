@@ -38,7 +38,7 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                 else:
                     hinter.imgui.add_text(game['role'])
 
-                hinter.imgui.add_text(f'{game["queue"]:^15}')
+                hinter.imgui.add_text(f'{game["queue"]:^12}')
 
                 hinter.imgui.add_spacer()
                 hinter.imgui.add_spacer()
@@ -92,16 +92,17 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                         )
 
                 kda = f'{game["kda"]} KDA'
-                hinter.imgui.add_text(f'{kda:^15}')
+                hinter.imgui.add_text(f'{kda:^12}')
 
                 vision = game['vision']
                 if game['map_id'] != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
                     vision = ''
                 hinter.imgui.add_text(f'{vision:^20}')
 
-                hinter.imgui.add_text(f'{game["cs_per_min"]:^15}')
+                hinter.imgui.add_text(f'{game["cs"]:^15}')
 
-                hinter.imgui.add_text(f'{game["damage_per_min"]:^20}')
+                damage = f'{game["damage"]} ({game["damage_of_team"]})'
+                hinter.imgui.add_text(f'{damage:^20}')
             # endregion Row 2: Champion, Spell, Key Rune, Items, KDA, Vision, CS, Damage
 
             # region Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
@@ -126,18 +127,16 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                             height=hinter.data.constants.ICON_SIZE_ITEM[1],
                         )
 
-                hinter.imgui.add_text(f'{game["k_d_a"]:^15}')
+                hinter.imgui.add_text(f'{game["k_d_a"]:^12} {game["kp"]} KP')
 
-                # Only show KP if it's not Summoner's Rift
+                vision = game['vision_per_min']
                 if game['map_id'] != hinter.data.constants.SUMMONERS_RIFT_MAP_ID:
-                    hinter.imgui.add_text(f'{game["vision"]:^20}')
-                else:
-                    vision_and_kp = f'{game["vision"]} - {game["kp"]} KP'
-                    hinter.imgui.add_text(f'{vision_and_kp:^20}')
+                    vision = ''
+                hinter.imgui.add_text(f'{vision:^20}')
 
-                hinter.imgui.add_text(f'{game["cs"]:^15}')
+                hinter.imgui.add_text(f'{game["cs_per_min"]:^15}')
 
-                hinter.imgui.add_text(f'{game["damage"]:^20}')
+                hinter.imgui.add_text(f'{game["damage_per_min"]:^20}')
             # endregion Row 3: Spell, Sub Rune, Items, KDA, Vision/KP, CS, Damage
 
             with hinter.imgui.table_row():
@@ -226,7 +225,7 @@ def show_friends_played_with(
                             f'summoner_icon-{PlayerPlayedWith.summoner.profile_icon.id}',
                             hinter.data.constants.IMAGE_TYPE_PIL,
                             PlayerPlayedWith.summoner.profile_icon,
-                            size=(30, 30),
+                            size=hinter.data.constants.ICON_SIZE_FRIEND,
                         )
                         hinter.imgui.add_image(texture_tag=summoner_icon_texture)
 

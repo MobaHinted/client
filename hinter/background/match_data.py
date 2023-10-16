@@ -1,7 +1,7 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import cached_property
 from typing import TypedDict, Required, Union
 
@@ -285,15 +285,14 @@ class MatchData:
         self._match_minutes = round(match_minutes, 2)
 
         # Calculate when the match happened
-        now = datetime.now()
-        now = pytz.utc.localize(now)
+        now = datetime.now(timezone.utc)
         match_time = datetime.fromisoformat(
             str(self._match.creation)
         )
 
         # Format match timing and how long ago it was
         # duration = str(self._match.duration) + ' long - '  # HH:MM:SS display
-        duration = f'{self._match_minutes:>2.0f}min - '
+        duration = f'{self._match_minutes:>3.0f}min - '
         duration += timeago.format(match_time, now)
         return duration.replace('utes', '')
 
@@ -517,7 +516,7 @@ class MatchData:
                 else:
                     kda = (player.stats.kills + player.stats.assists) / player.stats.deaths
                 players_kdas[team].append(
-                    f'{kda:.1f}'
+                    f'{kda:>3.1f}'
                 )
 
                 players_k_d_as[team].append(
@@ -528,7 +527,7 @@ class MatchData:
                     kp = 0
                 else:
                     kp = int(round((player.stats.kills + player.stats.assists) / teams_kills[team] * 100, 0))
-                players_kps[team].append(f'{kp}%')
+                players_kps[team].append(f'{kp:>3}%')
 
         self._players_k_d_as_values = players_k_d_as
         self._players_kps_values = players_kps
@@ -570,9 +569,9 @@ class MatchData:
                     damage_of_team = 0
                 else:
                     damage_of_team = int(round(
-                        player.stats.total_damage_dealt_to_champions / teams_damage[team],
+                        player.stats.total_damage_dealt_to_champions / teams_damage[team] * 100,
                         0))
-                players_damage_of_team[team].append(f'{damage_of_team:,}%')
+                players_damage_of_team[team].append(f'{damage_of_team}%')
 
                 if self._match_minutes == 0:
                     damage_per_min = player.stats.total_damage_dealt_to_champions
@@ -582,7 +581,7 @@ class MatchData:
                         0))
                 players_damage_per_min[team].append(f'{damage_per_min:,} Dmg/min')
 
-        self._players_damage_of_team_values = players_damage
+        self._players_damage_of_team_values = players_damage_of_team
         self._players_damage_per_min_values = players_damage_per_min
         return players_damage
 
@@ -610,13 +609,13 @@ class MatchData:
 
         for team, players in enumerate(self._players):
             for player in players:
-                players_vision[team].append(f'{player.stats.vision_score} Vis')
+                players_vision[team].append(f'{player.stats.vision_score} Vision')
 
                 if self._match_minutes == 0:
                     vision_per_min = player.stats.vision_score
                 else:
-                    vision_per_min = int(round(player.stats.vision_score / self._match_minutes, 0))
-                players_vision_per_min[team].append(f'{vision_per_min:,} Vis/min')
+                    vision_per_min = player.stats.vision_score / self._match_minutes
+                players_vision_per_min[team].append(f'{vision_per_min:2.1f} Vis/min')
 
         self._players_vision_per_min_values = players_vision_per_min
         return players_vision
