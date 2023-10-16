@@ -66,7 +66,7 @@ to set up the virtual environment and install the requirements.
 
 3. Then you can build the executable, or execute the program directly.
 
-    - `python build.py` to build a `main.exe`, then execute that.
+    - `python build.py` to build a `MobaHinted.exe`, then execute that.
     - `python main.py` to execute the program directly.
 
 ## What's the catch?
@@ -145,7 +145,7 @@ Copyright (c) 2014 The Fira Code Project Authors -
 Licensed under the OFL License
 
 [Requests](https://github.com/psf/requests), 
-Copyright 2019 Kenneth Reitz - 
+Copyright 2011 Kenneth Reitz - 
 Licensed under the Apache License (Version 2.0)
 
 [python-dotenv](https://github.com/theskumar/python-dotenv), 
