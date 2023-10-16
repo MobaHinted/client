@@ -7,7 +7,6 @@ from typing import TypedDict, Required, Union
 
 import cassiopeia
 import roleidentification.utilities as cassiopeia_role_identification
-import pytz
 import timeago
 import timeago.locales.en  # Required for building to executable
 
