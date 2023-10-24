@@ -418,7 +418,7 @@ class MatchData:
 
         for team, players in enumerate(self._players):
             for player in players:
-                if self._queue == 'Arena':
+                if self._queue == 'Arena' or player.summoner_spell_d.id == 0 or player.summoner_spell_f.id == 0:
                     players_summoner_spells[team].append([
                         hinter.UI.filler_image,
                         hinter.UI.filler_image,
