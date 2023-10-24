@@ -45,6 +45,22 @@ class HistoryData(MatchHistory):
         # Loop through the games
         # noinspection PyTypeChecker
         for _, match in enumerate(self.games[0:hinter.settings.match_history_count]):
+            # region Track players played with
+            # Find the user's team
+            team = 'blue'
+            for participant in match.participants:
+                if participant.summoner.name == self.username:
+                    team = participant.side.name
+            # Track each participant
+            for participant in match.participants:
+                if participant.summoner.name != self.username:
+                    self.players_played_with.add(
+                        participant,
+                        'Remake' if match.is_remake else 'Victory' if participant.stats.win else 'Defeat',
+                        participant.side.name == team
+                    )
+            # endregion Track players played with
+
             match = hinter.MatchData(match.id, hinter.settings.active_user).match
             MatchDisplay.display_match(self.history, render, match, row_count)
             row_count += 1

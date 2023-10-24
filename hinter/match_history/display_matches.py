@@ -194,25 +194,26 @@ def show_friends_played_with(
 ):
     font = hinter.UI.font['20 regular']
 
+    # Delete cached friends
+    for alias in hinter.imgui.get_aliases():
+        if alias.startswith('friend_row-'):
+            hinter.imgui.delete_item(item=alias)
+
     # Load cached friends
     if players_played_with == 'cached':
         players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith(load_from_cache=True)
 
     if len(players_played_with.friends) > 0:
-        # Delete cached friends
-        if hinter.imgui.does_item_exist('friends-spacer'):
-            hinter.imgui.delete_item(item='friends-spacer')
-            for PlayerPlayedWith in players_played_with.friends:
-                hinter.imgui.delete_item(item=f'friend_row-{PlayerPlayedWith.clean_username}')
-
-        with hinter.imgui.table_row(before='match_history-friends-ref', tag='friends-spacer'):
-            with hinter.imgui.group():
-                hinter.imgui.add_spacer(height=35)
-                hinter.imgui.add_text('Friends Played With', tag='match_history-friends-header')
-                hinter.imgui.add_spacer(height=5)
-                hinter.imgui.add_separator()
-                hinter.imgui.add_spacer(height=10)
-        hinter.imgui.bind_item_font('match_history-friends-header', hinter.UI.font['24 bold'])
+        # Draw the friends played with header once
+        if not hinter.imgui.does_item_exist('friends-spacer'):
+            with hinter.imgui.table_row(before='match_history-friends-ref', tag='friends-spacer'):
+                with hinter.imgui.group():
+                    hinter.imgui.add_spacer(height=35)
+                    hinter.imgui.add_text('Friends Played With', tag='match_history-friends-header')
+                    hinter.imgui.add_spacer(height=5)
+                    hinter.imgui.add_separator()
+                    hinter.imgui.add_spacer(height=10)
+            hinter.imgui.bind_item_font('match_history-friends-header', hinter.UI.font['24 bold'])
 
         for PlayerPlayedWith in players_played_with.friends:
             with hinter.imgui.table_row(
