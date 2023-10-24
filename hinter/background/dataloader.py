@@ -14,15 +14,14 @@ import hinter
 
 class DataLoader:
     current_patch: str = ''
-    url_ranked_emblems = 'http://static.developer.riotgames.com/docs/lol/ranked-emblems.zip'
-    url_ranked_positions = 'http://static.developer.riotgames.com/docs/lol/ranked-positions.zip'
+    url_ranked_emblems = 'https://static.developer.riotgames.com/docs/lol/ranked-emblems-latest.zip'
     refresh: bool = False
 
     def __init__(self):
         self.current_patch = cassiopeia.get_version(region=hinter.settings.region)
         print('CURRENT PATCH DATA: ' + self.current_patch)
 
-        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-platinum.png'):
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'Rank=Emerald.png'):
             self.load_all()
 
     # noinspection PyUnboundLocalVariable
@@ -76,7 +75,11 @@ class DataLoader:
 
     def load_rank_icons(self, refresh: bool = False):
         # Verify that emblems are not present, or a refresh is requested
-        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-platinum.png') or refresh:
+        if not os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS + 'Rank=Emerald.png') or refresh:
+            # Remove old ranked emblems if they're present
+            if os.path.exists(hinter.data.constants.PATH_RANKED_EMBLEMS):
+                shutil.rmtree(hinter.data.constants.PATH_RANKED_EMBLEMS)
+
             # Download ranked emblems
             emblems = requests.get(self.url_ranked_emblems)
             open(hinter.data.constants.PATH_DATA + 'emblems.zip', 'wb').write(emblems.content)
@@ -90,23 +93,6 @@ class DataLoader:
 
             # Rename the folder in the zip
             shutil.move(
-                hinter.data.constants.PATH_DATA + 'ranked-emblem',
+                hinter.data.constants.PATH_DATA + 'Ranked Emblems Latest',
                 hinter.data.constants.PATH_RANKED_EMBLEMS
             )
-
-        # Make the ranked lanes folder if needed
-        if not os.path.exists(hinter.data.constants.PATH_RANKED_LANES):
-            os.mkdir(hinter.data.constants.PATH_RANKED_LANES)
-
-        # Verify that position icons are not present, or a refresh is requested
-        if not os.path.exists(hinter.data.constants.PATH_RANKED_LANES + 'Position_Plat-Mid.png') or refresh:
-            # Download position icons
-            positions = requests.get(self.url_ranked_positions)
-            open(hinter.data.constants.PATH_DATA + 'positions.zip', 'wb').write(positions.content)
-
-            # Unzip position icons
-            with zipfile.ZipFile(hinter.data.constants.PATH_DATA + 'positions.zip', 'r') as positions_zip:
-                positions_zip.extractall(hinter.data.constants.PATH_RANKED_LANES)
-
-            # Remove zip of position icons
-            os.remove(hinter.data.constants.PATH_DATA + 'positions.zip')

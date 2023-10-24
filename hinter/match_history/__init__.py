@@ -151,10 +151,9 @@ class MatchHistory:
                                         rank_icon_texture = hinter.UI.load_image(
                                             'rank-' + self.rank.tier.name,
                                             hinter.data.constants.IMAGE_TYPE_FILE,
-                                            hinter.data.constants.PATH_RANKED_EMBLEMS + 'emblem-'
-                                            + self.rank.tier.name + '.png',
-                                            hinter.data.constants.ICON_CROP_RANK,
-                                            hinter.data.constants.ICON_SIZE_RANK,
+                                            hinter.data.constants.PATH_RANKED_EMBLEMS +
+                                            'Rank=' + self.rank.tier.name.title() + '.png',
+                                            size=hinter.data.constants.ICON_SIZE_RANK,
                                         )
                                         hinter.imgui.add_image(texture_tag=rank_icon_texture)
 
