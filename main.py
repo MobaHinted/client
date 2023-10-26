@@ -2,9 +2,12 @@
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
 # region Show access violations
-import faulthandler
-if __name__ == "__main__":
-    faulthandler.enable()
+try:
+    import faulthandler
+    if __name__ == "__main__":
+        faulthandler.enable()
+except RuntimeError:
+    pass
 # endregion Show access violations
 
 import hinter
