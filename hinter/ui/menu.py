@@ -626,7 +626,7 @@ Open Source at github.com/zbee/mobahinted'''
                     hinter.imgui.add_button(
                         label='Support the Project',
                         width=570,
-                        callback=lambda: webbrowser.open('https://mobahinted.lol/sponsor'),
+                        callback=lambda: webbrowser.open('https://mobahinted.app/sponsor'),
                         # TODO: Implement this sponsor popup
                     )
                 # endregion About Section
