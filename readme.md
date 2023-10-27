@@ -23,13 +23,15 @@ You can stay tuned by Watching the project in the top right, or checking the
 
 Current Status:
 [![Screenshot of current status](./assets/status.jpg)](https://raw.githubusercontent.com/zbee/mobahinted/master/assets/status.jpg)
+[![Screenshot of current status on the match breakdown page](./assets/status_match.jpg)](https://raw.githubusercontent.com/zbee/mobahinted/master/assets/status_match.jpg)
 
 ### Planned Features
 
 This is roughly in the order they will be developed.
 
 - [X] ~~Match History~~
-- [ ] Post-Game Breakdown
+- [X] ~~Post-Game Breakdown~~
+  - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
 - [X] ~~Teammate Performance (like op.gg has, telling you your win-rate with specific friends)~~
   - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)

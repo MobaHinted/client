@@ -23,11 +23,10 @@ class MatchBreakdown:
 
         del data
 
+        # TODO: Why does this work, but not clicking a user from the menu / clicking Match History?
         hinter.UI.clear_screen()
         hinter.UI.new_screen('match_breakdown')
         hinter.UI.new_screen('match_breakdown', set_primary=True)
-
-        # TODO: Why does this work, but not clicking a user from the menu?
 
         with hinter.imgui.theme(tag='blue_team_bans-theme'):
             with hinter.imgui.theme_component(hinter.imgui.mvImageButton, enabled_state=False):
@@ -47,6 +46,29 @@ class MatchBreakdown:
                 hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonActive, (0, 0, 0, 0))
                 hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonHovered, (0, 0, 0, 0))
                 hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_BorderShadow, (0, 0, 0, 0))
+        with hinter.imgui.theme(tag='blue_team_damage-theme'):
+            with hinter.imgui.theme_component(hinter.imgui.mvProgressBar):
+                hinter.imgui.add_theme_color(
+                    hinter.imgui.mvThemeCol_PlotHistogram,
+                    hinter.data.constants.TEAM_BLUE_COLOR
+                )
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FrameRounding, 15)
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 7, 5)
+        with hinter.imgui.theme(tag='red_team_damage-theme'):
+            with hinter.imgui.theme_component(hinter.imgui.mvProgressBar):
+                hinter.imgui.add_theme_color(
+                    hinter.imgui.mvThemeCol_PlotHistogram,
+                    hinter.data.constants.TEAM_RED_COLOR
+                )
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FrameRounding, 15)
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 7, 5)
+        with hinter.imgui.theme(tag='no_padding_theme'):
+            with hinter.imgui.theme_component(hinter.imgui.mvAll):
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_ItemSpacing, 0, 0)
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 0, 0)
+        with hinter.imgui.theme(tag='vertical_padding_theme'):
+            with hinter.imgui.theme_component(hinter.imgui.mvAll):
+                hinter.imgui.add_theme_style(hinter.imgui.mvStyleVar_FramePadding, 0, 5)
 
         with hinter.imgui.table(
                 tag=f'match_breakdown-layout-{self.match_id}',
@@ -54,47 +76,97 @@ class MatchBreakdown:
                 header_row=False,
                 no_clip=True
         ):
-            hinter.imgui.add_table_column(init_width_or_weight=0.2)
+            hinter.imgui.add_table_column(init_width_or_weight=0.15)
             hinter.imgui.add_table_column()
+
+        hinter.imgui.bind_item_theme(f'match_breakdown-layout-{self.match_id}', 'no_padding_theme')
 
         with hinter.imgui.table_row(parent=f'match_breakdown-layout-{self.match_id}'):
             hinter.imgui.add_text('Accolades')
 
-            with hinter.imgui.table(tag=f'match_breakdown-{self.match_id}', header_row=False, no_clip=True):
+            with hinter.imgui.table(tag=f'match_breakdown-{self.match_id}', header_row=False):
                 hinter.imgui.add_table_column()
                 hinter.imgui.add_table_column(init_width_or_weight=0.1)
                 hinter.imgui.add_table_column()
 
                 with hinter.imgui.table_row():
-                    with hinter.imgui.group(horizontal=True):
-                        hinter.imgui.add_spacer()
-                        for ban in self.match['teams_bans'][self.blue_team]:
-                            image = hinter.imgui.add_image_button(
-                                ban,
-                                width=hinter.data.constants.ICON_SIZE_BAN[0],
-                                height=hinter.data.constants.ICON_SIZE_BAN[1],
-                                enabled=False,
-                            )
-                            hinter.imgui.bind_item_theme(image, 'blue_team_bans-theme')
-                        hinter.imgui.add_text(f'{"Blue Team":<{hinter.UI.find_text_for_size(480)}}')
-                        hinter.imgui.add_text(f'{self.match["teams_outcomes"][self.blue_team]:>7}')
+                    with hinter.imgui.table(header_row=False):
+                        # region Spacing header text
+                        hinter.imgui.add_table_column(init_width_or_weight=0.05)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.67)
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column(init_width_or_weight=0.36)
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column(init_width_or_weight=0.42)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.05)
+                        # endregion Spacing header text
+
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
+
+                            with hinter.imgui.group(horizontal=True):
+                                for ban in self.match['teams_bans'][self.blue_team]:
+                                    image = hinter.imgui.add_image_button(
+                                        ban,
+                                        width=hinter.data.constants.ICON_SIZE_BAN[0],
+                                        height=hinter.data.constants.ICON_SIZE_BAN[1],
+                                        enabled=False,
+                                    )
+                                    hinter.imgui.bind_item_theme(image, 'blue_team_bans-theme')
+                                    hinter.imgui.add_spacer(width=4)
+
+                            hinter.imgui.add_spacer()
+
+                            hinter.imgui.add_text('Blue Team')
+                            hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                            hinter.imgui.add_spacer()
+
+                            outcome = hinter.imgui.add_text(self.match["teams_outcomes"][self.blue_team])
+                            hinter.imgui.bind_item_font(outcome, hinter.UI.font['24 regular'])
+                            hinter.imgui.bind_item_theme(outcome, 'vertical_padding_theme')
+
+                            hinter.imgui.add_spacer()
 
                     hinter.imgui.add_spacer()
 
-                    with hinter.imgui.group(horizontal=True):
-                        hinter.imgui.add_text(f'{self.match["teams_outcomes"][self.red_team]:<7}')
-                        hinter.imgui.add_text(f'{"Red Team":>{hinter.UI.find_text_for_size(449)}}')
-                        for ban in self.match['teams_bans'][self.red_team]:
-                            image = hinter.imgui.add_image_button(
-                                ban,
-                                width=hinter.data.constants.ICON_SIZE_BAN[0],
-                                height=hinter.data.constants.ICON_SIZE_BAN[1],
-                                enabled=False,
-                            )
-                            hinter.imgui.bind_item_theme(image, 'red_team_bans-theme')
+                    with hinter.imgui.table(header_row=False):
+                        # region Spacing header text
+                        hinter.imgui.add_table_column(init_width_or_weight=0.05)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.42)
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column(init_width_or_weight=0.36)
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column(init_width_or_weight=0.67)
+                        hinter.imgui.add_table_column(init_width_or_weight=0.05)
+                        # endregion Spacing header text
 
-                with hinter.imgui.table_row():
-                    hinter.imgui.add_spacer(height=20)
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
+
+                            outcome = hinter.imgui.add_text(self.match["teams_outcomes"][self.red_team])
+                            hinter.imgui.bind_item_font(outcome, hinter.UI.font['24 regular'])
+                            hinter.imgui.bind_item_theme(outcome, 'vertical_padding_theme')
+
+                            hinter.imgui.add_spacer()
+
+                            hinter.imgui.add_text('Red Team')
+                            hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                            hinter.imgui.add_spacer()
+
+                            with hinter.imgui.group(horizontal=True):
+                                for ban in self.match['teams_bans'][self.red_team]:
+                                    hinter.imgui.add_spacer(width=4)
+                                    image = hinter.imgui.add_image_button(
+                                        ban,
+                                        width=hinter.data.constants.ICON_SIZE_BAN[0],
+                                        height=hinter.data.constants.ICON_SIZE_BAN[1],
+                                        enabled=False,
+                                    )
+                                    hinter.imgui.bind_item_theme(image, 'red_team_bans-theme')
+
+                            hinter.imgui.add_spacer()
 
                 with hinter.imgui.table_row():
                     with hinter.imgui.table(
@@ -117,12 +189,12 @@ class MatchBreakdown:
 
                         self.draw_red_team()
 
-        with hinter.imgui.group(parent='match_breakdown', horizontal=True):
-            for item in self.match['players_items'][self.red_team][4][0:4]:
-                hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
-        with hinter.imgui.group(parent='match_breakdown', horizontal=True):
-            for item in self.match['players_items'][self.red_team][4][4:8]:
-                hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer(width=20,height=20)
+
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_text('Stats...')
 
     def _draw_bans(self):
         pass
@@ -131,13 +203,12 @@ class MatchBreakdown:
         for player_position, _ in enumerate(self.match['players_roles'][team]):
             with hinter.imgui.table_row():
                 self._draw_player(team, player_position, team)
-            with hinter.imgui.table_row():
-                hinter.imgui.add_spacer(height=20)
 
     def _draw_player(self, team, player, direction):
         # noinspection PyTypeChecker
         participant: cassiopeia.core.match.Participant = self.match['players'][team][player]
 
+        # TODO: This hangs on a split frame or throws an access violation 1/3 of the time
         def champ_icon():
             # noinspection PyTypeChecker,PyUnresolvedReferences
             champion = self.match['players'][team][player].champion
@@ -169,7 +240,7 @@ class MatchBreakdown:
                 pos=hinter.imgui.get_item_pos(f'champ_icon_holder-{team}_{player}')
             )
 
-        with hinter.imgui.table(header_row=False, no_clip=True):
+        with hinter.imgui.table(header_row=False):
             # region Columns
             hinter.imgui.add_table_column()
             hinter.imgui.add_table_column()
@@ -179,44 +250,138 @@ class MatchBreakdown:
             # endregion Columns
 
             with hinter.imgui.table_row():
+                # TODO: MVP / ACE / etc could go here
+                hinter.imgui.add_spacer(height=20)
+
+            cs = self.match["players_cs"][team][player] + ' (' + \
+                self.match["players_cs_per_min"][team][player].replace(' CS', '') + ')'
+            kp = self.match["players_kps"][team][player] + ' KP'
+
+            with hinter.imgui.table_row():
                 if direction == self.forwards:
                     with hinter.imgui.group(horizontal=True):
                         champ_icon()
-                        hinter.imgui.add_spacer()
+                        hinter.imgui.add_spacer(width=5)
                         hinter.imgui.add_image(
                             self.match['players_key_runes'][team][player]
                         )
+                        hinter.imgui.add_spacer(width=3)
+                        hinter.imgui.add_image(
+                            self.match['players_summoner_spells'][team][player][0],
+                        )
+
+                    hinter.imgui.add_text(f'{participant.summoner.name:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    with hinter.imgui.group(horizontal=True):
+                        for item in self.match['players_items'][team][player][0:4]:
+                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_spacer(width=4)
+
+                    hinter.imgui.add_text(f'{cs:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    hinter.imgui.add_text(f'{kp:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
                 else:
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_text(f'{kp:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    hinter.imgui.add_text(f'{cs:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    with hinter.imgui.group(horizontal=True):
+                        items = self.match['players_items'][team][player][0:4]
+                        items.reverse()
+                        for item in items:
+                            hinter.imgui.add_spacer(width=4)
+                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+
+                    hinter.imgui.add_text(f'{participant.summoner.name:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_image(
+                            self.match['players_summoner_spells'][team][player][0],
+                        )
+                        hinter.imgui.add_spacer(width=6)
+                        hinter.imgui.add_image(
                             self.match['players_key_runes'][team][player]
                         )
-                        hinter.imgui.add_spacer()
+                        hinter.imgui.add_spacer(width=5)
                         champ_icon()
+
+            damage_percent = float(
+                self.match["players_damage_of_team"][team][player][0:-1]
+            ) / 100
+            damage_text = self.match["players_damage"][team][player] + ' ' + \
+                self.match["players_damage_of_team"][team][player]
+
+            vision = self.match['players_vision_per_min'][team][player].replace('Vis', 'Vision')
 
             with hinter.imgui.table_row():
                 if direction == self.forwards:
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
-                        hinter.imgui.add_spacer(width=3)
+
+                        hinter.imgui.add_spacer(width=8)
+
                         hinter.imgui.add_image(
                             self.match['players_secondary_rune_trees'][team][player]
                         )
+
+                        hinter.imgui.add_spacer(width=8)
+
+                        hinter.imgui.add_image(
+                            self.match['players_summoner_spells'][team][player][1],
+                        )
+
+                    hinter.imgui.add_text(f'{self.match['players_k_d_as'][team][player]:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    with hinter.imgui.group(horizontal=True):
+                        for item in self.match['players_items'][team][player][4:8]:
+                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_spacer(width=4)
+
+                    hinter.imgui.add_text(f'{vision:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    progress = hinter.imgui.add_progress_bar(
+                        width=-1,
+                        default_value=damage_percent,
+                        overlay=f'{damage_text:^16}'
+                    )
+                    hinter.imgui.bind_item_theme(progress, 'blue_team_damage-theme')
                 else:
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
-                    hinter.imgui.add_spacer()
+                    progress = hinter.imgui.add_progress_bar(
+                        width=-1,
+                        default_value=damage_percent,
+                        overlay=f'{damage_text:^16}'
+                    )
+                    hinter.imgui.bind_item_theme(progress, 'red_team_damage-theme')
+
+                    hinter.imgui.add_text(f'{vision:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
+                    with hinter.imgui.group(horizontal=True):
+                        items = self.match['players_items'][team][player][4:8]
+                        items.reverse()
+                        for item in items:
+                            hinter.imgui.add_spacer(width=4)
+                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+
+                    hinter.imgui.add_text(f'{self.match['players_k_d_as'][team][player]:^16}')
+                    hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
+
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_image(
+                            self.match['players_summoner_spells'][team][player][1],
+                        )
+                        hinter.imgui.add_spacer(width=11)
+                        hinter.imgui.add_image(
                             self.match['players_secondary_rune_trees'][team][player]
                         )
-                        hinter.imgui.add_spacer(width=3)
-                        hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
 
     def draw_blue_team(self):
         self._draw_team(self.blue_team)
