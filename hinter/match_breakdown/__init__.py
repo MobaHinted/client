@@ -336,7 +336,7 @@ class MatchBreakdown:
                             self.match['players_summoner_spells'][team][player][1],
                         )
 
-                    hinter.imgui.add_text(f'{self.match['players_k_d_as'][team][player]:^16}')
+                    hinter.imgui.add_text(f'{self.match["players_k_d_as"][team][player]:^16}')
                     hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
 
                     with hinter.imgui.group(horizontal=True):
@@ -371,7 +371,7 @@ class MatchBreakdown:
                             hinter.imgui.add_spacer(width=4)
                             hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
 
-                    hinter.imgui.add_text(f'{self.match['players_k_d_as'][team][player]:^16}')
+                    hinter.imgui.add_text(f'{self.match["players_k_d_as"][team][player]:^16}')
                     hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
 
                     with hinter.imgui.group(horizontal=True):
