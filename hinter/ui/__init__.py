@@ -161,6 +161,8 @@ class UI:
                 with hinter.imgui.table_row():
                     hinter.imgui.add_spacer(height=10)
 
+                # TODO: Update to searching by Riot IDs
+
                 with hinter.imgui.table_row():
                     hinter.imgui.add_spacer()
                     hinter.imgui.add_input_text(

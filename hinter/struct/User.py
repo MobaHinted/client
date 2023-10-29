@@ -16,10 +16,13 @@ class User:
     def __init__(self, username: str):
         # Check user exists on Riot's side
         try:
+            # TODO: Update cassiopeia to support Riot IDs
+            # https://github.com/meraki-analytics/cassiopeia/issues/441
             user: cassiopeia.Summoner = cassiopeia.Summoner(name=username, region=hinter.settings.region)
 
             # Load in data
             self.user_exists = user.exists
+            # TODO: Update username to be Riot ID
             self.username = user.name
             self.account_id = user.account_id
             self.level = int(user.level)

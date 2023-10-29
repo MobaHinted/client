@@ -70,6 +70,7 @@ class Users:
                     no_collapse=True,
                     on_close=close_popup
             ):
+                # TODO: Update to searching by Riot IDs
                 hinter.UI.imgui.add_input_text(
                     tag='add-user-input',
                     parent='add-user',
@@ -78,6 +79,7 @@ class Users:
                     width=width,
                     hint='League Name',
                 )
+                # TODO: Update to include region/continent
                 hinter.hinter.UI.imgui.add_spacer(tag='add-user-spacer', height=10)
                 hinter.UI.imgui.add_button(
                     tag='add-user-button',
