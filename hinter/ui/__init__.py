@@ -2,6 +2,7 @@
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
 import os
+import threading
 import cassiopeia
 import hinter
 
@@ -107,9 +108,10 @@ class UI:
         else:
             hinter.imgui.save_init_file(init_file)
 
-    def loading(self):
+    def loading(self, render: bool = True):
         self.user_available = True
         self.screen = 'loading'
+        self.render = render
 
         with hinter.imgui.window(tag=self.screen):
             with hinter.imgui.table(header_row=False):
@@ -133,10 +135,11 @@ class UI:
                     hinter.imgui.add_spacer()
 
         self.data_loader = hinter.DataLoader.DataLoader()
+
         hinter.imgui.set_primary_window(window=self.screen, value=True)
         hinter.imgui.show_viewport()
         hinter.imgui.render_dearpygui_frame()
-        self.render = True
+
         # TODO: put this in a thread
         self.move_on_callback(render=self.render)
 
@@ -205,24 +208,53 @@ class UI:
                         color=hinter.data.constants.TEAM_RED_COLOR,
                     )
 
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer()
+                    # Center the loading indicator
+                    with hinter.imgui.table(header_row=False):
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column()
+
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
+                            hinter.imgui.add_loading_indicator(tag='add-loading', show=False)
+
         hinter.imgui.set_primary_window(window=self.screen, value=True)
         hinter.imgui.show_viewport()
         hinter.imgui.set_viewport_resizable(False)
 
     def _login(self):
+        # Load the values from the UI
         username = hinter.imgui.get_value('add-username')
         region = hinter.imgui.get_value('add-region')
 
+        # Save the region specified
         hinter.settings.write_setting('region', region)
-        added = hinter.users.add_user(username=username, show_popups=False)
 
-        if added == 0:
-            hinter.settings.write_setting('active_user', username)
-            self.loading()
+        # Show the spinner and reset the error to nothing
+        hinter.imgui.show_item('add-loading')
+        hinter.imgui.set_value('add-error', '')
 
-        elif added == 1:
-            hinter.imgui.set_value('add-error', 'This username is not valid')
-        elif added == 2:
-            hinter.imgui.set_value('add-error', 'Account already in list')
-        elif added == 3:
-            hinter.imgui.set_value('add-error', 'Account not found in region')
+        # Function to try to add the user
+        def try_adding_user(username:str):
+            added = hinter.users.add_user(username=username, show_popups=False)
+
+            # Successfully added the user
+            if added == 0:
+                hinter.settings.write_setting('active_user', username)
+                self.loading(render=False)
+
+            # Showing errors from adding the user
+            elif added == 1:
+                hinter.imgui.set_value('add-error', 'This username is not valid')
+            elif added == 2:
+                hinter.imgui.set_value('add-error', 'Account already in list')
+            elif added == 3:
+                hinter.imgui.set_value('add-error', 'Account not found in region')
+
+            hinter.imgui.hide_item('add-loading')
+
+        # Run the function in a thread
+        thread = threading.Thread(target=try_adding_user, args=(username,))
+        thread.start()
