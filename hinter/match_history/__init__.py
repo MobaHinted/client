@@ -4,7 +4,6 @@
 from typing import Union
 
 import cassiopeia
-from PIL import Image, ImageOps
 
 import hinter
 import hinter.match_history.display_matches as MatchDisplay
@@ -224,7 +223,7 @@ class MatchHistory:
         hinter.imgui.set_viewport_height(hinter.settings.height)
         hinter.UI.new_screen(tag='match_history', set_primary=True)
 
-        hinter.UI.render_frames(60, split=not render)
+        hinter.UI.render_frames(1, split=not render)
 
     def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
         if hinter.imgui.does_item_exist('login'):

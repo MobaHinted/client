@@ -44,14 +44,14 @@ want_new_champion_role_data = True
 if champion_role_data_exists:
     want_new_champion_role_data = hinter.settings.is_file_older_than_x_days(
         hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE,
-        0.5
+        2
     )
 
 # If we do need to get fresh data
 if not champion_role_data_exists or want_new_champion_role_data:
     # Get the data
     ChampionRoleData = casiopeia_role_identification.pull_data()
-    # Cache the data for 12 hours
+    # Cache the data for 2 days
     with open(hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE, 'wb') as role_data_file:
         pickle.dump(ChampionRoleData, role_data_file, pickle.HIGHEST_PROTOCOL)
 else:
