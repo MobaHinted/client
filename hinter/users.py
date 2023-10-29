@@ -11,7 +11,7 @@ class Users:
     users_list = hinter.data.constants.PATH_USERS_FILE
     current_list_cache: List[hinter.User.User] = []  # TODO: only list users on the region
 
-    def list_users(self, ui=None) -> List[hinter.User.User]:
+    def list_users(self) -> List[hinter.User.User]:
         if not os.path.exists(self.users_list):
             open(self.users_list, 'w+')
             return []
@@ -29,37 +29,37 @@ class Users:
                 user_list.append(
                     hinter.User.User(username)
                 )
-            elif ui is not None:
-                self.remove_user(ui, username)
+            else:
+                self.remove_user(username)
 
         # Save user list
         self.current_list_cache = user_list
 
         return user_list
 
-    def add_user(self, ui, username: str = '') -> Union[bool, None]:
+    def add_user(self, username: Union[str, None] = None, show_popups: bool = True) -> int:
         # Make sure the username popup can close itself
         def close_popup():
-            ui.imgui.delete_item(item='add-user')
-            ui.imgui.delete_item(item='add-user-input')
-            ui.imgui.delete_item(item='add-user-spacer')
-            ui.imgui.delete_item(item='add-user-button')
+            hinter.UI.imgui.delete_item(item='add-user')
+            hinter.UI.imgui.delete_item(item='add-user-input')
+            hinter.UI.imgui.delete_item(item='add-user-spacer')
+            hinter.UI.imgui.delete_item(item='add-user-button')
 
         # Retry the function, with the provided username
         def submit(sender, data):
             # Correct the data-source if the button was used
             if sender == 'add-user-button':
-                data = ui.imgui.get_value('add-user-input')
+                data = hinter.UI.imgui.get_value('add-user-input')
 
             # Re-run the method, with a username
             close_popup()
-            self.add_user(ui, data)
+            self.add_user(data)
 
-        if username == '':
+        if username is None:
             # Grab username in a popup
             width = 165
             height = 100
-            with ui.imgui.window(
+            with hinter.UI.imgui.window(
                     label='Add a User',
                     modal=True,
                     tag='add-user',
@@ -70,7 +70,7 @@ class Users:
                     no_collapse=True,
                     on_close=close_popup
             ):
-                ui.imgui.add_input_text(
+                hinter.UI.imgui.add_input_text(
                     tag='add-user-input',
                     parent='add-user',
                     on_enter=True,
@@ -78,34 +78,47 @@ class Users:
                     width=width,
                     hint='League Name',
                 )
-                ui.imgui.add_spacer(tag='add-user-spacer', height=10)
-                ui.imgui.add_button(
+                hinter.hinter.UI.imgui.add_spacer(tag='add-user-spacer', height=10)
+                hinter.UI.imgui.add_button(
                     tag='add-user-button',
                     parent='add-user',
                     label='Add',
                     callback=submit,
                     width=width,
                 )
-            ui.center_window('add-user', [width, height])
-            return
+            hinter.hinter.UI.center_window('add-user', [width, height])
+            return -1
+
+        # Check if the username is valid
+        if not 3 <= len(username) <= 16:
+            if show_popups:
+                hinter.Popups.show_info_popup(
+                    'Invalid username',
+                    'This username is invalid!'
+                )
+            return 1
 
         # Check for duplicate in current user list
+        if len(self.current_list_cache) == 0:
+            self.list_users()
         for user in self.current_list_cache:
             if user.username == username:
-                hinter.Popups.show_info_popup(
-                    'Duplicate username',
-                    'This account is already in your list!'
-                )
-                return False
+                if show_popups:
+                    hinter.Popups.show_info_popup(
+                        'Duplicate username',
+                        'This account is already in your list!'
+                    )
+                return 2
 
         # Check user exists on Riot's side
         user = hinter.User.User(username)
         if not user.user_exists:
-            hinter.Popups.show_info_popup(
-                'Nonexistent user',
-                'This account does not exist in this region!'
-            )
-            return False
+            if show_popups:
+                hinter.Popups.show_info_popup(
+                    'Nonexistent user',
+                    'This account does not exist in this region!'
+                )
+            return 3
 
         # Add to user list file and current list
         user_file = open(self.users_list, 'a+')
@@ -116,32 +129,32 @@ class Users:
         self.current_list_cache.append(user)
 
         # Redraw the menu
-        ui.add_menu()
-        return True
+        hinter.Menu.add_menu()
+        return 0
 
-    def remove_user(self, ui, username: str = ''):
+    def remove_user(self, username: str = ''):
         # Make sure the username popup can close itself
         def close_popup():
-            ui.imgui.delete_item(item='remove-user')
-            ui.imgui.delete_item(item='remove-user-input')
-            ui.imgui.delete_item(item='remove-user-spacer')
-            ui.imgui.delete_item(item='remove-user-button')
+            hinter.hinter.UI.imgui.delete_item(item='remove-user')
+            hinter.hinter.UI.imgui.delete_item(item='remove-user-input')
+            hinter.hinter.UI.imgui.delete_item(item='remove-user-spacer')
+            hinter.hinter.UI.imgui.delete_item(item='remove-user-button')
 
         # Retry the function, with the provided username
         def submit(sender, data):
             # Correct the data-source if the button was used
             if sender == 'remove-user-button':
-                data = ui.imgui.get_value('remove-user-input')
+                data = hinter.hinter.UI.imgui.get_value('remove-user-input')
 
             # Re-run the method, with a username
             close_popup()
-            self.remove_user(ui, data)
+            self.remove_user(data)
 
         # Grab username
         if username == '':
             width = 165
             height = 100
-            with ui.imgui.window(
+            with hinter.hinter.UI.imgui.window(
                     label='Remove a User',
                     modal=True,
                     tag='remove-user',
@@ -152,7 +165,7 @@ class Users:
                     no_collapse=True,
                     on_close=close_popup
             ):
-                ui.imgui.add_input_text(
+                hinter.hinter.UI.imgui.add_input_text(
                     tag='remove-user-input',
                     parent='remove-user',
                     on_enter=True,
@@ -160,15 +173,15 @@ class Users:
                     width=width,
                     hint='League Name',
                 )
-                ui.imgui.add_spacer(tag='remove-user-spacer', height=10)
-                ui.imgui.add_button(
+                hinter.hinter.UI.imgui.add_spacer(tag='remove-user-spacer', height=10)
+                hinter.hinter.UI.imgui.add_button(
                     tag='remove-user-button',
                     parent='remove-user',
                     label='Remove',
                     callback=submit,
                     width=width,
                 )
-            ui.center_window('remove-user', [width, height])
+            hinter.hinter.UI.center_window('remove-user', [width, height])
             return
 
         removed = False
@@ -223,7 +236,7 @@ class Users:
         )
 
         # Redraw the menu
-        ui.add_menu()
+        hinter.Menu.add_menu()
 
     # noinspection PyMethodMayBeStatic
     def select_user(self, username: str):

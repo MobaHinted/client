@@ -6,7 +6,7 @@ import hinter
 __all__ = ['show_info_popup']
 
 
-def show_info_popup(self, title: str, text: str, width: int = 225, height: int = 125):
+def show_info_popup(title: str, text: str, width: int = 225, height: int = 125):
     # Wait one frame to ensure that other modals are closed
     hinter.imgui.split_frame()
 
@@ -42,4 +42,4 @@ def show_info_popup(self, title: str, text: str, width: int = 225, height: int =
         )
 
     # Center the popup
-    self.center_window('info-popup', [width, height])
+    hinter.UI.center_window('info-popup', [width, height])

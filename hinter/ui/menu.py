@@ -39,12 +39,12 @@ class UIMenus:
                 # Option to add a user
                 hinter.imgui.add_menu_item(
                     label='Add User',
-                    callback=lambda: (hinter.users.add_user(self)),
+                    callback=lambda: (hinter.users.add_user()),
                 )
                 self.add_menu_separator()
 
                 # List each user, with the option to remove that user
-                users = hinter.users.list_users(hinter.UI.screen)
+                users = hinter.users.list_users()
                 for user in users:
                     username = user.username
 

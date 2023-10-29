@@ -27,9 +27,12 @@ class User:
 
         except Exception as err:
             # Actually fail out if it's a bad key issue
-            response_code = int(str(err))
-            if response_code == 401 or 403:
-                raise Exception(err)
+            try:
+                response_code = int(str(err))
+                if response_code == 401 or 403:
+                    raise Exception(err)
+            except ValueError:
+                pass
 
             # Otherwise just assume the user doesn't exist, as that'll be the
             #  most common response
