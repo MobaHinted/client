@@ -7,14 +7,15 @@ import hinter
 
 champ_icons = []
 selectables = []
+rows_colors = []
 
 
 # noinspection DuplicatedCode
-def display_match(table: str, render: bool, game: hinter.GameData, row_count: int):
+def display_match(table: str, game: hinter.GameData):
     global champ_icons
     global selectables
 
-    hinter.imgui.add_table_row(parent=table, tag=f'match-{game["match_id"]}')
+    hinter.imgui.add_table_row(parent=table, tag=f'match-{game["match_id"]}', show=False)
 
     with hinter.imgui.group(horizontal=True, parent=f'match-{game["match_id"]}'):
         with hinter.imgui.table(header_row=False, no_clip=True):
@@ -64,16 +65,14 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                         height=hinter.data.constants.ICON_SIZE_RUNE[1],
                         tag=f'champ-icon-holder-{game["match_id"]}',
                     )
-                    # Draw a frame
-                    hinter.UI.render_frames(split=not render)
 
+                    # Place the champion icon
                     champ_icons.append(f'champ-icon-{game["match_id"]}')
-                    # Place the champion icon over the filler image
                     hinter.imgui.add_image(
                         texture_tag=champion_played,
                         tag=f'champ-icon-{game["match_id"]}',
                         parent='match_history',
-                        pos=hinter.imgui.get_item_pos(f'champ-icon-holder-{game["match_id"]}')
+                        pos=(-1000, -1000),
                     )
                     # endregion Champion Icon
 
@@ -150,25 +149,21 @@ def display_match(table: str, render: bool, game: hinter.GameData, row_count: in
                 callback=lambda: hinter.MatchBreakdown(game["match_id"]),
                 tag=f'selectable-{game["match_id"]}',
                 enabled=False,
+                show=False,
             )
             selectables.append(f'selectable-{game["match_id"]}')
 
-    hinter.imgui.set_table_row_color(
-        table=table,
-        row=row_count,
-        color=game['background_color'],
-    )
-
-    hinter.UI.render_frames(render)
+    rows_colors.append(game['background_color'])
 
 
 # Handler and Callback for moving champ icons when the window is resized
-def add_row_handlers(screen):
+def add_row_handlers(screen, table):
     global champ_icons
     global selectables
 
+    # Enable row selection
     for selectable in selectables:
-        hinter.imgui.configure_item(selectable, enabled=True)
+        hinter.imgui.configure_item(selectable, enabled=True, show=True)
 
     # noinspection DuplicatedCode
     def resize_call(sender):
@@ -181,11 +176,16 @@ def add_row_handlers(screen):
             pos=hinter.imgui.get_item_pos(f'champ-icon-holder-{match_id}'),
         )
 
-    # Add a handler for when match data is visible, so we can get the position at that time
+    # Handling resizing
     with hinter.imgui.item_handler_registry(tag='match_history_handlers'):
         for icon in champ_icons:
             hinter.imgui.add_item_resize_handler(callback=resize_call, tag=f'resize_handler-{icon}')
     hinter.imgui.bind_item_handler_registry(screen, hinter.imgui.last_container())
+
+    # Handling initial positioning of champ icons
+    hinter.UI.render_frames(split=True)
+    for icon in champ_icons:
+        resize_call(icon)
 
 
 # noinspection DuplicatedCode
@@ -253,3 +253,16 @@ def show_friends_played_with(
             hinter.imgui.bind_item_font(f'friend-{PlayerPlayedWith.clean_username}', font)
 
         players_played_with.cache()
+
+
+def color_rows(table: str):
+    global rows_colors
+
+    hinter.UI.render_frames(split=True)
+
+    for row, color in enumerate(rows_colors):
+        hinter.imgui.set_table_row_color(
+            table=table,
+            row=row,
+            color=color,
+        )

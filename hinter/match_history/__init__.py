@@ -56,10 +56,9 @@ class MatchHistory:
         self.icon = user.profile_icon
 
         # Show the match screen and start processing the data
-        self.show_match_screen(render)
+        self.show_match_screen()
 
-    def show_match_screen(self, render: bool = True):
-        self.delete_previous_screens(True, True)
+    def show_match_screen(self):
         hinter.UI.new_screen(tag='match_history')
 
         # Set up the table
@@ -179,19 +178,32 @@ class MatchHistory:
         with hinter.imgui.table_cell(parent=self.table_row):
             with hinter.imgui.table(tag='match_history_table-history-container',
                                     header_row=False, pad_outerX=True) as self.history:
-                hinter.imgui.add_table_column(tag='match-history-delete-5')
+                hinter.imgui.add_table_column(tag='match-history-delete-2')
                 hinter.imgui.add_table_column()  # Actual destination for matches
-                hinter.imgui.add_table_column(tag='match-history-delete-6')
+                hinter.imgui.add_table_column(tag='match-history-delete-3')
 
                 with hinter.imgui.table_row(tag='match-history-delete-1'):
-                    hinter.imgui.add_spacer(tag='match-history-delete-2')
+                    hinter.imgui.add_spacer()
                     # TODO: Add back the loading indicator, once load_matches is threaded
                     hinter.imgui.add_text(
                         'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
                         '\nIt can take a couple minutes',
-                        tag='match-history-delete-3',
                     )
-                    hinter.imgui.add_spacer(tag='match-history-delete-4')
+                    hinter.imgui.add_spacer()
+
+                with hinter.imgui.table_row(tag='match-history-delete-4'):
+                    hinter.imgui.add_spacer(height=20)
+
+                with hinter.imgui.table_row(tag='match-history-delete-5'):
+                    hinter.imgui.add_spacer()
+                    with hinter.imgui.table(header_row=False):
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column()
+                        hinter.imgui.add_table_column()
+
+                        with hinter.imgui.table_row():
+                            hinter.imgui.add_spacer()
+                            hinter.imgui.add_loading_indicator()
 
         with hinter.imgui.theme() as item_theme:
             with hinter.imgui.theme_component(hinter.imgui.mvTable):
@@ -216,26 +228,13 @@ class MatchHistory:
                     hinter.imgui.add_text('role distribution, champ wr here')
         # endregion Right Bar
 
+        hinter.UI.render_frames(split=True)
+
         # Display screen
         hinter.imgui.set_viewport_min_width(hinter.settings.default_width)
         hinter.imgui.set_viewport_width(hinter.settings.width)
         hinter.imgui.set_viewport_min_height(hinter.settings.default_height)
         hinter.imgui.set_viewport_height(hinter.settings.height)
+        hinter.imgui.delete_item('loading')
         hinter.UI.new_screen(tag='match_history', set_primary=True)
 
-        hinter.UI.render_frames(1, split=not render)
-
-    def delete_previous_screens(self, delete_history: bool = False, delete_current: bool = False):
-        if hinter.imgui.does_item_exist('login'):
-            hinter.imgui.delete_item('login')
-
-        if hinter.imgui.does_item_exist('loading'):
-            hinter.imgui.delete_item('loading')
-
-        if delete_history:
-            if hinter.imgui.does_item_exist('match_history'):
-                hinter.imgui.delete_item('match_history')
-
-        if delete_current:
-            if hinter.imgui.does_item_exist(hinter.UI.screen):
-                hinter.imgui.delete_item(hinter.UI.screen)
