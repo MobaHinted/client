@@ -8,7 +8,7 @@ import hinter
 
 
 class UI:
-    screen: str
+    screen: str = ''
     font: dict
     move_on_callback: callable
     user_available: bool
@@ -109,10 +109,21 @@ class UI:
             hinter.imgui.save_init_file(init_file)
 
     def loading(self, render: bool = True):
+        from_login = False
+        if self.screen == 'login':
+            from_login = True
+
         self.user_available = True
         self.screen = 'loading'
         self.render = render
 
+        # Make sure we can draw this screen
+        if hinter.imgui.does_item_exist('login'):
+            hinter.imgui.delete_item('login')
+        if hinter.imgui.does_item_exist('loading'):
+            hinter.imgui.delete_item('loading')
+
+        # Set up the loading window, with centered loading spinner
         with hinter.imgui.window(tag=self.screen):
             with hinter.imgui.table(header_row=False):
                 hinter.imgui.add_table_column()
@@ -126,7 +137,10 @@ class UI:
 
                 with hinter.imgui.table_row():
                     hinter.imgui.add_spacer()
-                    hinter.imgui.add_text('Loading')
+                    if not from_login:
+                        hinter.imgui.add_text('Loading')
+                    else:
+                        hinter.imgui.add_text('Downloading')
                     hinter.imgui.add_spacer()
 
                 with hinter.imgui.table_row():
@@ -134,14 +148,19 @@ class UI:
                     hinter.imgui.add_loading_indicator()
                     hinter.imgui.add_spacer()
 
-        self.data_loader = hinter.DataLoader.DataLoader()
-
         hinter.imgui.set_primary_window(window=self.screen, value=True)
-        hinter.imgui.show_viewport()
-        hinter.imgui.render_dearpygui_frame()
+        if not from_login:
+            hinter.imgui.show_viewport()
+            hinter.imgui.set_viewport_resizable(False)
 
-        # TODO: put this in a thread
-        self.move_on_callback(render=self.render)
+        # Load data
+        def load_data():
+            self.data_loader = hinter.DataLoader.DataLoader()
+
+            thread = threading.Thread(target=self.move_on_callback, args=(not self.render,))
+            thread.start()
+        thread = threading.Thread(target=load_data)
+        thread.start()
 
     def login_flow(self):
         self.screen = 'login'
@@ -237,23 +256,26 @@ class UI:
         hinter.imgui.set_value('add-error', '')
 
         # Function to try to add the user
-        def try_adding_user(username:str):
+        def try_adding_user(username: str):
             added = hinter.users.add_user(username=username, show_popups=False)
 
             # Successfully added the user
             if added == 0:
                 hinter.settings.write_setting('active_user', username)
+                hinter.imgui.hide_item('add-loading')
                 self.loading(render=False)
+            else:
+                # Showing errors from adding the user
+                if added == 1:
+                    hinter.imgui.set_value('add-error', 'This username is not valid')
+                elif added == 2:
+                    hinter.imgui.set_value('add-error', 'Account already in list')
+                elif added == 3:
+                    hinter.imgui.set_value('add-error', 'Account not found in region')
+                else:
+                    hinter.imgui.set_value('add-error', 'Unknown error')
 
-            # Showing errors from adding the user
-            elif added == 1:
-                hinter.imgui.set_value('add-error', 'This username is not valid')
-            elif added == 2:
-                hinter.imgui.set_value('add-error', 'Account already in list')
-            elif added == 3:
-                hinter.imgui.set_value('add-error', 'Account not found in region')
-
-            hinter.imgui.hide_item('add-loading')
+                hinter.imgui.hide_item('add-loading')
 
         # Run the function in a thread
         thread = threading.Thread(target=try_adding_user, args=(username,))
