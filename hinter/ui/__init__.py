@@ -195,6 +195,14 @@ class UI:
                         callback=self._login,
                     )
 
+                with hinter.imgui.table_row():
+                    hinter.imgui.add_spacer()
+                    hinter.imgui.add_text(
+                        tag='add-error',
+                        default_value='',
+                        color=hinter.data.constants.TEAM_RED_COLOR,
+                    )
+
         hinter.imgui.set_primary_window(window=self.screen, value=True)
         hinter.imgui.show_viewport()
         hinter.imgui.set_viewport_resizable(False)
@@ -204,12 +212,15 @@ class UI:
         region = hinter.imgui.get_value('add-region')
 
         hinter.settings.write_setting('region', region)
-        added = hinter.users.add_user(ui=self, username=username)
+        added = hinter.users.add_user(username=username, show_popups=False)
 
-        if added:
-            self.user_available = True
+        if added == 0:
             hinter.settings.write_setting('active_user', username)
-            self.data_loader = hinter.DataLoader.DataLoader()
-            self.render = False
-            self.move_on_callback(render=self.render)
-            hinter.imgui.render_dearpygui_frame()
+            self.loading()
+
+        elif added == 1:
+            hinter.imgui.set_value('add-error', 'This username is not valid')
+        elif added == 2:
+            hinter.imgui.set_value('add-error', 'Account already in list')
+        elif added == 3:
+            hinter.imgui.set_value('add-error', 'Account not found in region')
