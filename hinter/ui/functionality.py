@@ -28,9 +28,10 @@ class UIFunctionality(hinter.ui.UI):
     def __init__(self, move_on_callback):
         super().__init__(move_on_callback)
 
-    def new_screen(self, tag: str, set_primary: bool = False):
+    def new_screen(self, tag: str, set_primary: bool = False, split: bool = True):
         # Set the new window as the primary window when ready
         if set_primary:
+            hinter.imgui.configure_item(tag, show=True)
             hinter.imgui.set_primary_window(window=tag, value=True)
             return
 
@@ -39,13 +40,13 @@ class UIFunctionality(hinter.ui.UI):
             self.clear_screen()
 
         # Add a new window
-        hinter.imgui.add_window(tag=tag)
+        hinter.imgui.add_window(tag=tag, show=False)
 
         # Save the new window tag
         self.screen = tag
 
         # Add the menu bar back
-        self.render_frames()
+        self.render_frames(split=split)
         hinter.Menu.add_menu()
 
     def clear_screen(self):
