@@ -45,29 +45,29 @@ class DataLoader:
         cassiopeia.get_champions(region=hinter.settings.region)
 
         if popup:
-            progress_popup.update(70, 'Downloading and processing: Items')
+            progress_popup.update(20, 'Downloading and processing: Items')
         cassiopeia.get_items(region=hinter.settings.region)
 
         if popup:
-            progress_popup.update(80, 'Downloading and processing: Maps')
+            progress_popup.update(25, 'Downloading and processing: Maps')
         cassiopeia.get_maps(region=hinter.settings.region)
 
         if popup:
-            progress_popup.update(81, 'Downloading and processing: Spells')
+            progress_popup.update(30, 'Downloading and processing: Spells')
         cassiopeia.get_summoner_spells(region=hinter.settings.region)
 
         if popup:
-            progress_popup.update(82, 'Downloading and processing: Runes')
+            progress_popup.update(32, 'Downloading and processing: Runes')
         cassiopeia.get_runes(region=hinter.settings.region)
 
         if popup:
-            progress_popup.update(85, 'Downloading and processing: Rank icons')
+            progress_popup.update(35, 'Downloading and processing: Rank icons')
         self.load_rank_icons(refresh)
 
         # Inform user data refresh completed, wait, then close the popup
         if popup:
             progress_popup.update(100, 'Data loading complete!\nWindow will close')
-            time.sleep(4)
+            time.sleep(2)
             progress_popup.close()
 
         # Do not update again until this is called, refresh data loaded checks
