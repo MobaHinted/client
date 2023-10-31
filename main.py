@@ -15,8 +15,8 @@ import hinter
 import hinter.match_history.history_data as History
 
 
-def continue_drawing(render):
-    History.HistoryData(render)
+def continue_drawing():
+    History.HistoryData()
 
 
 hinter.UI = hinter.UIFunctionality(continue_drawing)

@@ -16,8 +16,8 @@ class HistoryData(MatchHistory):
     player: cassiopeia.core.match.Participant
     players_played_with: hinter.PlayersPlayedWith.PlayersPlayedWith
 
-    def __init__(self, render: bool):
-        super().__init__(render)
+    def __init__(self):
+        super().__init__()
         self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
 
         thread = threading.Thread(target=self.load_matches)

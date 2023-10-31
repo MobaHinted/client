@@ -27,7 +27,7 @@ class MatchHistory:
     right_bar: str
     players_played_with: hinter.PlayersPlayedWith
 
-    def __init__(self, render: bool = True):
+    def __init__(self):
         # Load summoner information
         user = cassiopeia.get_summoner(name=hinter.settings.active_user, region=hinter.settings.region)
 

@@ -157,7 +157,7 @@ class UI:
         def load_data():
             self.data_loader = hinter.DataLoader.DataLoader()
 
-            thread = threading.Thread(target=self.move_on_callback, args=(not self.render,))
+            thread = threading.Thread(target=self.move_on_callback)
             thread.start()
         thread = threading.Thread(target=load_data)
         thread.start()
