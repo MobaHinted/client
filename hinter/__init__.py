@@ -15,6 +15,9 @@ import dearpygui.dearpygui as imgui  # For all the modules to use
 import roleidentification as casiopeia_role_identification
 
 # noinspection PyUnresolvedReferences
+import hinter.data
+
+# noinspection PyUnresolvedReferences
 import hinter.settings
 # noinspection PyUnresolvedReferences
 import hinter.struct.User as User
@@ -22,8 +25,6 @@ import hinter.struct.User as User
 import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
 # noinspection PyUnresolvedReferences
 import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
-# noinspection PyUnresolvedReferences
-import hinter.data
 # noinspection PyUnresolvedReferences
 import hinter.background.dataloader as DataLoader
 # noinspection PyUnresolvedReferences
@@ -53,16 +54,13 @@ settings.load_settings()
 
 # region Champion Role Data
 # Check if we need to update the champion role data
-champion_role_data_exists = os.path.exists(hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE)
-want_new_champion_role_data = True
-if champion_role_data_exists:
-    want_new_champion_role_data = hinter.settings.is_file_older_than_x_days(
-        hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE,
-        2
-    )
+want_new_champion_role_data = hinter.data.management.Clean.is_file_older_than_x_days(
+    hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE,
+    2
+)
 
 # If we do need to get fresh data
-if not champion_role_data_exists or want_new_champion_role_data:
+if want_new_champion_role_data:
     # Get the data
     ChampionRoleData = casiopeia_role_identification.pull_data()
     # Cache the data for 2 days
@@ -73,13 +71,11 @@ else:
     with open(hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE, 'rb') as role_data_file:
         ChampionRoleData = pickle.load(role_data_file)
 
-del champion_role_data_exists, want_new_champion_role_data
+del want_new_champion_role_data
 # endregion Champion Role Data
 
 # region Casiopeia-Diskstore path
 # Get ready for Cassiopeia
-if not os.path.exists(hinter.data.constants.PATH_CASSIOPEIA):
-    os.mkdir(hinter.data.constants.PATH_CASSIOPEIA)
 windows_path = hinter.data.constants.PATH_CASSIOPEIA.split('/')
 cassiopeia_path = os.getcwd() + '\\' + '\\'.join(windows_path[1:3])
 # endregion Casiopeia-Diskstore path

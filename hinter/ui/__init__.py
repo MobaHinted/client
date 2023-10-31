@@ -93,14 +93,8 @@ class UI:
         saving = save
         init_file = hinter.data.constants.PATH_IMGUI_FILE
 
-        # Make the directory and file as needed
-        if not os.path.exists(init_file):
-            open(init_file, 'w+')
-            # Don't load a brand new, empty file
-            return
-
         # Don't try to load an empty file
-        elif os.stat(init_file).st_size == 0 and not saving:
+        if hinter.data.management.file_empty(init_file) and not saving:
             return
 
         if not saving:

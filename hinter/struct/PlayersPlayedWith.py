@@ -66,20 +66,12 @@ class PlayersPlayedWith:
         )
 
     def cache(self):
-        if not os.path.exists(hinter.data.constants.PATH_FRIENDS_FILE):
-            open(hinter.data.constants.PATH_FRIENDS_FILE, 'w+')
-
         with open(hinter.data.constants.PATH_FRIENDS_FILE, 'wb') as friends_file:
             pickle.dump(self._players_played_with, friends_file, pickle.HIGHEST_PROTOCOL)
 
     def _load_from_cache(self):
-        # Don't try to load if the file doesn't exist
-        if not os.path.exists(hinter.data.constants.PATH_FRIENDS_FILE):
-            print('hinter.struct.PlayersPlayedWith: No friends file found')
-            return
-
         # Don't try to load an empty file
-        if os.stat(hinter.data.constants.PATH_FRIENDS_FILE).st_size == 0:
+        if hinter.data.management.file_empty(hinter.data.constants.PATH_FRIENDS_FILE):
             print('hinter.struct.PlayersPlayedWith: No data in friends file')
             return
 

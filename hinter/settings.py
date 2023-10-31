@@ -1,14 +1,12 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
-import os.path
-import time
-from hinter.data.constants import PATH_SETTINGS_FILE, PATH_DATA
+import hinter
 
 
 # noinspection PySimplifyBooleanCheck
 class Settings:
-    settings_file = PATH_SETTINGS_FILE
+    settings_file = hinter.data.constants.PATH_SETTINGS_FILE
     settings_loaded = False
     version = '0.0.0'
     x: int = 10  # Window Position
@@ -39,7 +37,7 @@ class Settings:
     save_window_position: bool = True
     detect_new_accounts: bool = True
 
-    match_history_count: int = 20
+    match_history_count: int = 50
     friend_threshold: int = 5
 
     show_my_rank: bool = True
@@ -61,7 +59,7 @@ class Settings:
     # TODO: Add actual cassiopeia settings
     pipelines = {
         'Most Private': {
-            'description': 'Riot Data > Riot (recommended to use your own key)',
+            'description': 'Riot Data > Riot (must use your own key)',
             'cassiopeia_setting': {}
         },
         'Private, Fast': {
@@ -81,11 +79,8 @@ class Settings:
             print('hinter.Settings: settings already loaded')
             return
 
-        # Verify folder and file exist
-        if not os.path.exists(PATH_DATA):
-            os.mkdir(PATH_DATA)
-        if not os.path.exists(self.settings_file):
-            open(self.settings_file, 'w+')
+        # If there are no settings written, return default settings
+        if hinter.data.management.file_empty(hinter.data.constants.PATH_SETTINGS_FILE):
             return
 
         # Open settings file
@@ -132,9 +127,7 @@ class Settings:
                 setting_name = line.split('=')[0]
                 # If the setting name matches the one wanting updated
                 # then don't record it
-                if setting_name == setting:
-                    removed = True
-                else:
+                if setting_name != setting:
                     lines.append(line)
 
             # Reopen file with write permissions
@@ -153,9 +146,3 @@ class Settings:
 
         # Reload settings file
         self.load_settings(refresh=True)
-
-    # noinspection PyMethodMayBeStatic
-    def is_file_older_than_x_days(self, file, days=1):
-        file_time = os.path.getmtime(file)
-        # Check against 24 hours
-        return (time.time() - file_time) / 3600 > 24*days

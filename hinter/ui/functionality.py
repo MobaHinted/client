@@ -171,10 +171,6 @@ class UIFunctionality(hinter.ui.UI):
         elif hinter.imgui.does_alias_exist(tag) and force_fresh:
             hinter.imgui.delete_item(tag)
 
-        # Verify folder exists
-        if not os.path.exists(hinter.data.constants.PATH_IMAGES):
-            os.mkdir(hinter.data.constants.PATH_IMAGES)
-
         # Load the image if it is already cached
         if self.check_image_cache(image_name) and not force_fresh:
             image_type = hinter.data.constants.IMAGE_TYPE_FILE
