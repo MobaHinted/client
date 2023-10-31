@@ -91,8 +91,11 @@ class DataLoader:
             # Remove zip of ranked emblems
             os.remove(hinter.data.constants.PATH_DATA + 'emblems.zip')
 
-            # Rename the folder in the zip
+            # Rename the folder from the zip
             shutil.move(
                 hinter.data.constants.PATH_DATA + 'Ranked Emblems Latest',
                 hinter.data.constants.PATH_RANKED_EMBLEMS
             )
+
+            # Remove zip of ranked emblems
+            shutil.rmtree(hinter.data.constants.PATH_RANKED_EMBLEMS + 'Wings')
