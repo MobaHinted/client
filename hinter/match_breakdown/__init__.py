@@ -1,5 +1,7 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+import threading
+
 import cassiopeia.core.match
 import hinter
 
@@ -81,7 +83,7 @@ class MatchBreakdown:
 
         hinter.imgui.bind_item_theme(f'match_breakdown-layout-{self.match_id}', 'no_padding_theme')
 
-        with hinter.imgui.table_row(parent=f'match_breakdown-layout-{self.match_id}'):
+        with (hinter.imgui.table_row(parent=f'match_breakdown-layout-{self.match_id}')):
             hinter.imgui.add_text('Accolades')
 
             with hinter.imgui.table(tag=f'match_breakdown-{self.match_id}', header_row=False):
@@ -176,7 +178,20 @@ class MatchBreakdown:
                     ):
                         hinter.imgui.add_table_column()
 
-                        self.draw_blue_team()
+                        with hinter.imgui.table_row(tag='blue_team_loading'):
+                            with hinter.imgui.table(header_row=False):
+                                hinter.imgui.add_table_column()
+                                hinter.imgui.add_table_column()
+                                hinter.imgui.add_table_column()
+
+                                with hinter.imgui.table_row():
+                                    hinter.imgui.add_spacer()
+                                    with hinter.imgui.group(horizontal=True):
+                                        hinter.imgui.add_spacer(width=120,height=1)
+                                        hinter.imgui.add_loading_indicator()
+
+                        with hinter.imgui.table_row(tag='blue_team-ref'):
+                            hinter.imgui.add_spacer()
 
                     hinter.imgui.add_spacer()
 
@@ -187,7 +202,20 @@ class MatchBreakdown:
                     ):
                         hinter.imgui.add_table_column()
 
-                        self.draw_red_team()
+                        with hinter.imgui.table_row(tag='red_team_loading'):
+                            with hinter.imgui.table(header_row=False):
+                                hinter.imgui.add_table_column()
+                                hinter.imgui.add_table_column()
+                                hinter.imgui.add_table_column()
+
+                                with hinter.imgui.table_row():
+                                    hinter.imgui.add_spacer()
+                                    with hinter.imgui.group(horizontal=True):
+                                        hinter.imgui.add_spacer(width=60,height=1)
+                                        hinter.imgui.add_loading_indicator()
+
+                        with hinter.imgui.table_row(tag='red_team-ref'):
+                            hinter.imgui.add_spacer()
 
                 with hinter.imgui.table_row():
                     hinter.imgui.add_spacer(width=20,height=20)
@@ -196,19 +224,28 @@ class MatchBreakdown:
                     hinter.imgui.add_spacer()
                     hinter.imgui.add_text('Stats...')
 
+        thread = threading.Thread(target=self.draw_teams)
+        thread.start()
+
     def _draw_bans(self):
         pass
 
-    def _draw_team(self, team):
+    def _draw_team(self, team: int):
         for player_position, _ in enumerate(self.match['players_roles'][team]):
-            with hinter.imgui.table_row():
+            if team == self.blue_team:
+                before = 'blue_team-ref'
+                tag = f'blue_team-player_{player_position}'
+            else:
+                before = 'red_team-ref'
+                tag = f'red_team-player_{player_position}'
+
+            with hinter.imgui.table_row(before=before, show=False, tag=tag):
                 self._draw_player(team, player_position, team)
 
-    def _draw_player(self, team, player, direction):
+    def _draw_player(self, team: int, player: int, direction: int):
         # noinspection PyTypeChecker
         participant: cassiopeia.core.match.Participant = self.match['players'][team][player]
 
-        # TODO: This hangs on a split frame or throws an access violation 1/3 of the time
         def champ_icon():
             # noinspection PyTypeChecker,PyUnresolvedReferences
             champion = self.match['players'][team][player].champion
@@ -221,23 +258,20 @@ class MatchBreakdown:
             )
 
             # Place a filler image for the champion icon (hack to span 2 rows)
-            champ = hinter.imgui.add_image(
+            hinter.imgui.add_image(
                 texture_tag=hinter.UI.filler_image,
                 width=hinter.data.constants.ICON_SIZE_CHAMPION[0],
                 height=hinter.data.constants.ICON_SIZE_RUNE[1],
                 tag=f'champ_icon_holder-{team}_{player}',
             )
-            # Draw a frame
-            hinter.UI.render_frames(split=True)
-            hinter.UI.render_frames()
 
-            self.champ_icons.append(champ)
+            self.champ_icons.append(f'{team}_{player}')
             # Place the champion icon over the filler image
             hinter.imgui.add_image(
                 texture_tag=champion_played,
                 tag=f'champ_icon-{team}_{player}',
                 parent='match_breakdown',
-                pos=hinter.imgui.get_item_pos(f'champ_icon_holder-{team}_{player}')
+                pos=(-1000, -1000)
             )
 
         with hinter.imgui.table(header_row=False):
@@ -383,8 +417,55 @@ class MatchBreakdown:
                             self.match['players_secondary_rune_trees'][team][player]
                         )
 
+    def _add_row_handlers(self):
+        # noinspection DuplicatedCode
+        def resize_call(sender):
+            # Get the match id
+            team_player = sender.split('-')[-1]
+
+            # Move the image
+            hinter.imgui.set_item_pos(
+                item=f'champ_icon-{team_player}',
+                pos=hinter.imgui.get_item_pos(f'champ_icon_holder-{team_player}'),
+            )
+
+        # Handling resizing
+        with hinter.imgui.item_handler_registry(tag='match_breakdown_handlers'):
+            for icon in self.champ_icons:
+                hinter.imgui.add_item_resize_handler(callback=resize_call, tag=f'resize_handler-{icon}')
+        hinter.imgui.bind_item_handler_registry('match_breakdown', hinter.imgui.last_container())
+
+        # Handling initial positioning of champ icons
+        hinter.UI.render_frames(split=True)
+        for icon in self.champ_icons:
+            resize_call(f'-{icon}')
+
     def draw_blue_team(self):
         self._draw_team(self.blue_team)
 
     def draw_red_team(self):
         self._draw_team(self.red_team)
+
+    def draw_teams(self):
+        self.draw_blue_team()
+        self.draw_red_team()
+
+        # region Show players
+        hinter.imgui.delete_item('blue_team_loading')
+        hinter.imgui.delete_item('blue_team-ref')
+        hinter.imgui.delete_item('red_team_loading')
+        hinter.imgui.delete_item('red_team-ref')
+
+        hinter.imgui.show_item('blue_team-player_0')
+        hinter.imgui.show_item('blue_team-player_1')
+        hinter.imgui.show_item('blue_team-player_2')
+        hinter.imgui.show_item('blue_team-player_3')
+        hinter.imgui.show_item('blue_team-player_4')
+        hinter.imgui.show_item('red_team-player_0')
+        hinter.imgui.show_item('red_team-player_1')
+        hinter.imgui.show_item('red_team-player_2')
+        hinter.imgui.show_item('red_team-player_3')
+        hinter.imgui.show_item('red_team-player_4')
+        # endregion Show players
+
+        self._add_row_handlers()
