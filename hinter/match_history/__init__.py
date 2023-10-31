@@ -15,7 +15,7 @@ __all__ = [
 
 # noinspection DuplicatedCode
 class MatchHistory:
-    games: cassiopeia.MatchHistory
+    games: list[cassiopeia.Match]
     rank: Union[cassiopeia.Rank, None]
     level = 0
     icon = 0
@@ -37,9 +37,8 @@ class MatchHistory:
 
         # Try to load rank
         try:
-            self.games = user.match_history
-            # TODO: fix this in cassiopeia to get fewer calls on initial load
-            # self.games = user.match_history(continent=user.region.continent, puuid=user.puuid, count=100)
+            # noinspection PyTypeChecker
+            self.games = user.match_history[0:hinter.settings.match_history_count]
 
             if cassiopeia.Queue.ranked_solo_fives in user.ranks:
                 self.rank = user.ranks[cassiopeia.Queue.ranked_solo_fives]

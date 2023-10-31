@@ -36,7 +36,7 @@ class HistoryData(MatchHistory):
 
         # Loop through the games
         # noinspection PyTypeChecker
-        for _, match in enumerate(self.games[0:hinter.settings.match_history_count]):
+        for _, match in enumerate(self.games):
             # region Track players played with
             # Find the user's team
             team = 'blue'
@@ -57,7 +57,7 @@ class HistoryData(MatchHistory):
             MatchDisplay.display_match(self.history, match)
 
         # noinspection PyTypeChecker
-        for _, match in enumerate(self.games[0:hinter.settings.match_history_count]):
+        for _, match in enumerate(self.games):
             hinter.imgui.configure_item(f'match-{match.id}', show=True)
 
         MatchDisplay.show_friends_played_with(self.players_played_with)
