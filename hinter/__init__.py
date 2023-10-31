@@ -5,27 +5,41 @@ import os
 import pickle
 
 import cassiopeia
+# noinspection PyUnresolvedReferences
 import cassiopeia_diskstore  # Required for building to executable
 from dotenv import load_dotenv
 
+# noinspection PyUnresolvedReferences
 import dearpygui.dearpygui as imgui  # For all the modules to use
 
 import roleidentification as casiopeia_role_identification
 
+# noinspection PyUnresolvedReferences
 import hinter.settings
+# noinspection PyUnresolvedReferences
 import hinter.struct.User as User
+# noinspection PyUnresolvedReferences
 import hinter.struct.PlayerPlayedWith as PlayerPlayedWith
+# noinspection PyUnresolvedReferences
 import hinter.struct.PlayersPlayedWith as PlayersPlayedWith
+# noinspection PyUnresolvedReferences
 import hinter.data
+# noinspection PyUnresolvedReferences
 import hinter.background.dataloader as DataLoader
+# noinspection PyUnresolvedReferences
 import hinter.ui
+# noinspection PyUnresolvedReferences
 import hinter.ui.progress as Progress
 from hinter.ui.functionality import UIFunctionality
+# noinspection PyUnresolvedReferences
 import hinter.ui.popups as Popups
 import hinter.users
 from hinter.ui.menu import UIMenus
+# noinspection PyUnresolvedReferences
 from hinter.background.match_data import MatchData as MatchData
+# noinspection PyUnresolvedReferences
 from hinter.background.match_data import GameReturn as GameData
+# noinspection PyUnresolvedReferences
 from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 
 # TODO: Move MatchHistory here
