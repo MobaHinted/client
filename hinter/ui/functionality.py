@@ -97,11 +97,10 @@ class UIFunctionality(hinter.ui.UI):
     # noinspection PyMethodMayBeStatic
     def render_frames(self, frames: int = 1, split: bool = False):
         if split:
-            # TODO: I don't think this works here
             hinter.imgui.split_frame(delay=frames)
-
-        for _ in range(frames):
-            hinter.imgui.render_dearpygui_frame()
+        else:
+            for _ in range(frames):
+                hinter.imgui.render_dearpygui_frame()
 
     @property
     def filler_image(self):
