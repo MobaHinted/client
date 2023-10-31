@@ -235,6 +235,7 @@ class MatchHistory:
         hinter.imgui.set_viewport_width(hinter.settings.width)
         hinter.imgui.set_viewport_min_height(hinter.settings.default_height)
         hinter.imgui.set_viewport_height(hinter.settings.height)
-        hinter.imgui.delete_item('loading')
+        hinter.imgui.set_viewport_resizable(True)
+        hinter.imgui.hide_item('loading')
         hinter.UI.new_screen(tag='match_history', set_primary=True)
 
