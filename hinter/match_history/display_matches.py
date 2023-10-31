@@ -76,16 +76,16 @@ def display_match(table: str, game: hinter.GameData):
                     )
                     # endregion Champion Icon
 
-                    hinter.imgui.add_image(texture_tag=game['summoner_spells'][0])
+                    hinter.imgui.add_image(texture_tag=game['summoner_spells'][0].lazy)
 
                     hinter.imgui.add_spacer()
-                    hinter.imgui.add_image(texture_tag=game['key_rune'])
+                    hinter.imgui.add_image(texture_tag=game['key_rune'].lazy)
 
                 # Show the first 4 items (well, the first 3 and a spacer)
                 with hinter.imgui.group(horizontal=True):
                     for item_image in game['items'][0:4]:
                         hinter.imgui.add_image(
-                            texture_tag=item_image,
+                            texture_tag=item_image.lazy,
                             width=hinter.data.constants.ICON_SIZE_ITEM[0],
                             height=hinter.data.constants.ICON_SIZE_ITEM[1],
                         )
@@ -109,11 +109,11 @@ def display_match(table: str, game: hinter.GameData):
                 with hinter.imgui.group(horizontal=True):
                     hinter.imgui.add_spacer(width=hinter.data.constants.ICON_SIZE_CHAMPION[0])
 
-                    hinter.imgui.add_image(texture_tag=game['summoner_spells'][1])
+                    hinter.imgui.add_image(texture_tag=game['summoner_spells'][1].lazy)
 
                     hinter.imgui.add_spacer(width=3)
                     if game['queue'] != 'Arena':
-                        hinter.imgui.add_image(texture_tag=game['secondary_rune'])
+                        hinter.imgui.add_image(texture_tag=game['secondary_rune'].lazy)
                     else:
                         hinter.imgui.add_image(texture_tag=hinter.UI.filler_image)
 
@@ -121,7 +121,7 @@ def display_match(table: str, game: hinter.GameData):
                 with hinter.imgui.group(horizontal=True):
                     for item_image in game['items'][4:8]:
                         hinter.imgui.add_image(
-                            texture_tag=item_image,
+                            texture_tag=item_image.lazy,
                             width=hinter.data.constants.ICON_SIZE_ITEM[0],
                             height=hinter.data.constants.ICON_SIZE_ITEM[1],
                         )

@@ -109,7 +109,7 @@ class MatchBreakdown:
                             with hinter.imgui.group(horizontal=True):
                                 for ban in self.match['teams_bans'][self.blue_team]:
                                     image = hinter.imgui.add_image_button(
-                                        ban,
+                                        ban.lazy,
                                         width=hinter.data.constants.ICON_SIZE_BAN[0],
                                         height=hinter.data.constants.ICON_SIZE_BAN[1],
                                         enabled=False,
@@ -161,7 +161,7 @@ class MatchBreakdown:
                                 for ban in self.match['teams_bans'][self.red_team]:
                                     hinter.imgui.add_spacer(width=4)
                                     image = hinter.imgui.add_image_button(
-                                        ban,
+                                        ban.lazy,
                                         width=hinter.data.constants.ICON_SIZE_BAN[0],
                                         height=hinter.data.constants.ICON_SIZE_BAN[1],
                                         enabled=False,
@@ -297,11 +297,11 @@ class MatchBreakdown:
                         champ_icon()
                         hinter.imgui.add_spacer(width=5)
                         hinter.imgui.add_image(
-                            self.match['players_key_runes'][team][player]
+                            self.match['players_key_runes'][team][player].lazy
                         )
                         hinter.imgui.add_spacer(width=3)
                         hinter.imgui.add_image(
-                            self.match['players_summoner_spells'][team][player][0],
+                            self.match['players_summoner_spells'][team][player][0].lazy,
                         )
 
                     hinter.imgui.add_text(f'{participant.summoner.name:^16}')
@@ -309,7 +309,7 @@ class MatchBreakdown:
 
                     with hinter.imgui.group(horizontal=True):
                         for item in self.match['players_items'][team][player][0:4]:
-                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_image(item.lazy, width=hinter.data.constants.ICON_SIZE_ITEM[0])
                             hinter.imgui.add_spacer(width=4)
 
                     hinter.imgui.add_text(f'{cs:^16}')
@@ -329,18 +329,18 @@ class MatchBreakdown:
                         items.reverse()
                         for item in items:
                             hinter.imgui.add_spacer(width=4)
-                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_image(item.lazy, width=hinter.data.constants.ICON_SIZE_ITEM[0])
 
                     hinter.imgui.add_text(f'{participant.summoner.name:^16}')
                     hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
 
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_image(
-                            self.match['players_summoner_spells'][team][player][0],
+                            self.match['players_summoner_spells'][team][player][0].lazy,
                         )
                         hinter.imgui.add_spacer(width=6)
                         hinter.imgui.add_image(
-                            self.match['players_key_runes'][team][player]
+                            self.match['players_key_runes'][team][player].lazy
                         )
                         hinter.imgui.add_spacer(width=5)
                         champ_icon()
@@ -361,13 +361,13 @@ class MatchBreakdown:
                         hinter.imgui.add_spacer(width=8)
 
                         hinter.imgui.add_image(
-                            self.match['players_secondary_rune_trees'][team][player]
+                            self.match['players_secondary_rune_trees'][team][player].lazy
                         )
 
                         hinter.imgui.add_spacer(width=8)
 
                         hinter.imgui.add_image(
-                            self.match['players_summoner_spells'][team][player][1],
+                            self.match['players_summoner_spells'][team][player][1].lazy,
                         )
 
                     hinter.imgui.add_text(f'{self.match["players_k_d_as"][team][player]:^16}')
@@ -375,7 +375,7 @@ class MatchBreakdown:
 
                     with hinter.imgui.group(horizontal=True):
                         for item in self.match['players_items'][team][player][4:8]:
-                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_image(item.lazy, width=hinter.data.constants.ICON_SIZE_ITEM[0])
                             hinter.imgui.add_spacer(width=4)
 
                     hinter.imgui.add_text(f'{vision:^16}')
@@ -403,18 +403,18 @@ class MatchBreakdown:
                         items.reverse()
                         for item in items:
                             hinter.imgui.add_spacer(width=4)
-                            hinter.imgui.add_image(item, width=hinter.data.constants.ICON_SIZE_ITEM[0])
+                            hinter.imgui.add_image(item.lazy, width=hinter.data.constants.ICON_SIZE_ITEM[0])
 
                     hinter.imgui.add_text(f'{self.match["players_k_d_as"][team][player]:^16}')
                     hinter.imgui.bind_item_theme(hinter.imgui.last_item(), 'vertical_padding_theme')
 
                     with hinter.imgui.group(horizontal=True):
                         hinter.imgui.add_image(
-                            self.match['players_summoner_spells'][team][player][1],
+                            self.match['players_summoner_spells'][team][player][1].lazy,
                         )
                         hinter.imgui.add_spacer(width=11)
                         hinter.imgui.add_image(
-                            self.match['players_secondary_rune_trees'][team][player]
+                            self.match['players_secondary_rune_trees'][team][player].lazy
                         )
 
     def _add_row_handlers(self):

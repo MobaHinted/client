@@ -9,6 +9,7 @@ import cassiopeia
 import roleidentification.utilities as cassiopeia_role_identification
 import timeago
 import timeago.locales.en  # Required for building to executable
+import hinter.struct.LazyImages as LazyImages
 
 import hinter
 
@@ -23,9 +24,9 @@ class GameReturn(TypedDict, total=False):
     teams_kills: Required[list[int]]
     teams_damage: Required[list[int]]
     teams_outcomes: Required[list[str]]
-    teams_bans: Required[list[list[str]]]  # List of lists as it's split by team from here on
+    teams_bans: Required[list[list[LazyImages.Ban]]]  # List of lists as it's split by team from here on
     teams_background_colors: Required[list[list[int]]]
-    players_summoner_spells: Required[list[list[list[str]]]]
+    players_summoner_spells: Required[list[list[list[LazyImages.SummonerSpell]]]]
     players_roles: Required[list[list[str]]]
     players_kdas: Required[list[list[str]]]
     players_k_d_as: Required[list[list[str]]]
@@ -37,10 +38,10 @@ class GameReturn(TypedDict, total=False):
     players_vision_per_min: Required[list[list[str]]]
     players_cs: Required[list[list[str]]]
     players_cs_per_min: Required[list[list[str]]]
-    players_items: Required[list[list[list[str]]]]
-    players_key_runes: Required[list[list[str]]]
-    players_secondary_rune_trees: Required[list[list[str]]]
-    players_runes: Required[list[list[list[str]]]]
+    players_items: Required[list[list[list[LazyImages.Item]]]]
+    players_key_runes: Required[list[list[LazyImages.Rune]]]
+    players_secondary_rune_trees: Required[list[list[LazyImages.Rune]]]
+    players_runes: Required[list[list[list[LazyImages.Rune]]]]
     # endregion For individual match views
     # region For Match History
     player: cassiopeia.core.match.Participant
@@ -49,7 +50,7 @@ class GameReturn(TypedDict, total=False):
     team_damage: int
     outcome: str
     background_color: list[int]
-    summoner_spells: list[str]
+    summoner_spells: list[LazyImages.SummonerSpell]
     role: str
     kda: str
     k_d_a: str
@@ -61,10 +62,10 @@ class GameReturn(TypedDict, total=False):
     kp: str
     cs: str
     cs_per_min: str
-    items: list[str]
-    key_rune: str
-    secondary_rune: str
-    runes: list[str]
+    items: list[LazyImages.Item]
+    key_rune: LazyImages.Rune
+    secondary_rune: LazyImages.Rune
+    runes: list[LazyImages.Rune]
     # endregion For Match History
 
 
@@ -118,8 +119,6 @@ class MatchData:
         self.blue_team = teams.index(cassiopeia.data.Side.blue)
         self.red_team = teams.index(cassiopeia.data.Side.red)
 
-        self._format_game()
-
         if user is not None:
             self._format_game_for(user)
         else:
@@ -155,7 +154,7 @@ class MatchData:
             players_runes=self._players_runes,
         )
 
-    # noinspection DuplicatedCode
+    # noinspection DuplicatedCode,PyStatementEffect
     def _format_game_for(self, user: str) -> None:
         team = None
         position = None
@@ -170,6 +169,7 @@ class MatchData:
 
         # Short-circuit if the user is not found
         if team is None or position is None:
+            print('hinter.background.MatchData: User not found in match')
             return
 
         self.match = GameReturn(
@@ -356,50 +356,30 @@ class MatchData:
 
     # noinspection DuplicatedCode
     @cached_property
-    def _teams_bans(self) -> list[list[str]]:
+    def _teams_bans(self) -> list[list[LazyImages.Ban]]:
         teams_bans = [[], []]
 
         if self._queue == 'Arena' or self._queue == 'ARAM':
-            return [[''], ['']]
+            return [[LazyImages.Ban(None)], [LazyImages.Ban(None)]]
 
         for ban in self._match.blue_team.bans:
             if ban is None:
                 teams_bans[self.blue_team].append(
-                    hinter.UI.load_image(
-                        'champion_ban-filler',
-                        hinter.data.constants.IMAGE_TYPE_PIL,
-                        cassiopeia.ProfileIcon(id=29, region=hinter.settings.region),
-                        size=hinter.data.constants.ICON_SIZE_BAN,
-                    )
+                    LazyImages.Ban(None)
                 )
                 continue
             teams_bans[self.blue_team].append(
-                hinter.UI.load_image(
-                    f'champion_ban-{ban.name}',
-                    hinter.data.constants.IMAGE_TYPE_PIL,
-                    ban.image,
-                    size=hinter.data.constants.ICON_SIZE_BAN,
-                )
+                LazyImages.Ban(ban)
             )
 
         for ban in self._match.red_team.bans:
             if ban is None:
                 teams_bans[self.red_team].append(
-                    hinter.UI.load_image(
-                        'champion_ban-filler',
-                        hinter.data.constants.IMAGE_TYPE_PIL,
-                        cassiopeia.ProfileIcon(id=29, region=hinter.settings.region),
-                        size=hinter.data.constants.ICON_SIZE_BAN,
-                    )
+                    LazyImages.Ban(None)
                 )
                 continue
             teams_bans[self.red_team].append(
-                hinter.UI.load_image(
-                    f'champion_ban-{ban.name}',
-                    hinter.data.constants.IMAGE_TYPE_PIL,
-                    ban.image,
-                    size=hinter.data.constants.ICON_SIZE_BAN,
-                )
+                LazyImages.Ban(ban)
             )
 
         return teams_bans
@@ -413,31 +393,21 @@ class MatchData:
         return self._teams_background_colors_values
 
     @cached_property
-    def _players_summoner_spells(self) -> list[list[list[str]]]:
+    def _players_summoner_spells(self) -> list[list[list[LazyImages.SummonerSpell]]]:
         players_summoner_spells = [[], []]
 
         for team, players in enumerate(self._players):
             for player in players:
                 if self._queue == 'Arena' or player.summoner_spell_d.id == 0 or player.summoner_spell_f.id == 0:
                     players_summoner_spells[team].append([
-                        hinter.UI.filler_image,
-                        hinter.UI.filler_image,
+                        LazyImages.SummonerSpell(None),
+                        LazyImages.SummonerSpell(None),
                     ])
                     continue
 
                 players_summoner_spells[team].append([
-                    hinter.UI.load_image(
-                        f'spell-{player.summoner_spell_d.name}',
-                        hinter.data.constants.IMAGE_TYPE_PIL,
-                        player.summoner_spell_d.image,
-                        size=hinter.data.constants.ICON_SIZE_SPELL,
-                    ),
-                    hinter.UI.load_image(
-                        f'spell-{player.summoner_spell_f.name}',
-                        hinter.data.constants.IMAGE_TYPE_PIL,
-                        player.summoner_spell_f.image,
-                        size=hinter.data.constants.ICON_SIZE_SPELL,
-                    ),
+                    LazyImages.SummonerSpell(player.summoner_spell_d),
+                    LazyImages.SummonerSpell(player.summoner_spell_f),
                 ])
 
         return players_summoner_spells
@@ -655,9 +625,9 @@ class MatchData:
         return self._players_cs_per_min_values
 
     @cached_property
-    def _players_items(self) -> list[list[list[str]]]:
+    def _players_items(self) -> list[list[list[LazyImages.Item]]]:
         # region Static Data
-        filler_item = hinter.UI.filler_image
+        filler_item = LazyImages.Item(None)
         trinkets = [
             3340,  # Warding Totem
             3363,  # Farsight Alteration
@@ -692,20 +662,10 @@ class MatchData:
                         continue
 
                     if item.id in trinkets:
-                        player_items[7] = hinter.UI.load_image(
-                            f'item-{item.id}',
-                            hinter.data.constants.IMAGE_TYPE_PIL,
-                            item.image,
-                            size=hinter.data.constants.ICON_SIZE_ITEM,
-                        )
+                        player_items[7] = LazyImages.Item(item)
                         continue
 
-                    player_items[key] = hinter.UI.load_image(
-                        f'item-{item.id}',
-                        hinter.data.constants.IMAGE_TYPE_PIL,
-                        item.image,
-                        size=hinter.data.constants.ICON_SIZE_ITEM,
-                    )
+                    player_items[key] = LazyImages.Item(item)
 
                 players_items[team].append(player_items)
 
@@ -713,7 +673,7 @@ class MatchData:
 
     # noinspection PyTypeChecker
     @cached_property
-    def _players_key_runes(self) -> Union[list[list[str]], None]:
+    def _players_key_runes(self) -> Union[list[list[LazyImages.Rune]], None]:
         players_key_runes = [[], []]
         players_secondary_rune_trees = [[], []]
         players_runes = [
@@ -737,41 +697,27 @@ class MatchData:
                     rune: cassiopeia.Rune
 
                     players_runes[team][player_spot].append(
-                        hinter.UI.load_image(
-                            f'rune-{rune.name}',
-                            hinter.data.constants.IMAGE_TYPE_PIL,
-                            rune.image,
-                            size=hinter.data.constants.ICON_SIZE_RUNE,
-                        )
+                        LazyImages.Rune(rune)
                     )
 
                     if rune.is_keystone and key_tree is None:
                         key_tree = rune.path.name
                         players_key_runes[team].append(
-                            hinter.UI.load_image(
-                                f'rune-{rune.name}',
-                                hinter.data.constants.IMAGE_TYPE_PIL,
-                                rune.image,
-                                size=hinter.data.constants.ICON_SIZE_RUNE,
-                            )
+                            LazyImages.Rune(rune)
                         )
 
                     if rune.path.name != key_tree and not secondary_found:
                         secondary_found = True
                         players_secondary_rune_trees[team].append(
-                            hinter.UI.load_image(
-                                f'rune-{rune.path.name}',
-                                hinter.data.constants.IMAGE_TYPE_PIL,
-                                rune.path,
-                                size=hinter.data.constants.ICON_SIZE_SECONDARY_RUNE,
-                            ))
+                            LazyImages.Rune(rune, secondary=True)
+                        )
 
         self._players_secondary_rune_trees_values = players_secondary_rune_trees
         self._players_runes_values = players_runes
         return players_key_runes
 
     @cached_property
-    def _players_secondary_rune_trees(self) -> Union[list[list[str]], None]:
+    def _players_secondary_rune_trees(self) -> Union[list[list[LazyImages.Rune]], None]:
         if self._queue == 'Arena':
             return None
 
@@ -782,7 +728,7 @@ class MatchData:
         return self._players_secondary_rune_trees_values
 
     @cached_property
-    def _players_runes(self) -> Union[list[list[list[str]]], None]:
+    def _players_runes(self) -> Union[list[list[list[LazyImages.Rune]]], None]:
         if self._queue == 'ARENA':
             return None
 
