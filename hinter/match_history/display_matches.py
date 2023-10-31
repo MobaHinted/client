@@ -157,7 +157,7 @@ def display_match(table: str, game: hinter.GameData):
 
 
 # Handler and Callback for moving champ icons when the window is resized
-def add_row_handlers(screen, table):
+def add_row_handlers(screen):
     global champ_icons
     global selectables
 

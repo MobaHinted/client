@@ -71,5 +71,5 @@ class HistoryData(MatchHistory):
         # endregion Remove loading info
 
         MatchDisplay.color_rows(self.history)
-        MatchDisplay.add_row_handlers('match_history', self.history)
+        MatchDisplay.add_row_handlers('match_history')
         hinter.UI.render_frames(split=True)
