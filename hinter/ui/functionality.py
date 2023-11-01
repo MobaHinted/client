@@ -451,7 +451,11 @@ class UIFunctionality(hinter.ui.UI):
             with hinter.imgui.window(tag='error'):
                 hinter.imgui.add_spacer(height=padding)
 
-                text = 'MobaHinted Proxy server is down.'
+                if "getaddrinfo failed" in str(error):
+                    text = 'No internet connection.'
+                else:
+                    text = 'MobaHinted Proxy server is down.'
+
                 hinter.imgui.add_text(f'{text:^40}')
                 text = 'Please try again later.'
                 hinter.imgui.add_text(f'{text:^40}')
