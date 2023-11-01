@@ -34,6 +34,7 @@ This is roughly in the order they will be developed.
   - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
 - [X] ~~Teammate Performance (like op.gg has, telling you your win-rate with specific friends)~~
   - [ ] Drill down into this: show your best champion with them, etc
+- [ ] Match History with friend
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
 - [ ] Overlays
   - [ ] Milestone Notifications
