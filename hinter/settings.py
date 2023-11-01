@@ -223,8 +223,8 @@ class Settings:
 
                 pipeline_settings = default_pipeline_settings | {
                     'Kernel': {
-                        'server_url': 'https://mhk-api.zbee.dev',
-                        'port': '443',
+                        'server_url': hinter.data.constants.URL_KERNEL_PROXY,
+                        'port': hinter.data.constants.URL_KERNEL_PROXY_PORT,
                     },
                     'DDragon': {}
                 }

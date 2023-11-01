@@ -14,7 +14,7 @@ import hinter
 
 class DataLoader:
     current_patch: str = ''
-    url_ranked_emblems = 'https://static.developer.riotgames.com/docs/lol/ranked-emblems-latest.zip'
+    url_ranked_emblems = hinter.data.constants.URL_RANKED_EMBLEMS
     refresh: bool = False
 
     def __init__(self):

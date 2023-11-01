@@ -2,6 +2,10 @@
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
 __all__ = [
+    'URL_ASSETS_ZIP',
+    'URL_RANKED_EMBLEMS',
+    'URL_KERNEL_PROXY',
+    'URL_KERNEL_PROXY_PORT',
     'UI_FONT_SCALE',
     'SUMMONERS_RIFT_MAP_ID',
     'TEAM_BLUE_COLOR',
@@ -31,6 +35,11 @@ __all__ = [
     'PATH_USERS_FILE',
     'PATH_FRIENDS_FILE',
 ]
+
+URL_ASSETS_ZIP = 'https://codeload.github.com/zbee/mobahinted/zip/refs/heads/master'
+URL_RANKED_EMBLEMS = 'https://static.developer.riotgames.com/docs/lol/ranked-emblems-latest.zip'
+URL_KERNEL_PROXY = 'https://mhk.zbee.dev'
+URL_KERNEL_PROXY_PORT = 443
 
 UI_FONT_SCALE = 2
 

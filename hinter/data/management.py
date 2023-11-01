@@ -29,7 +29,6 @@ class Setup:
         constants.PATH_IMGUI_FILE,
         constants.PATH_FRIENDS_FILE,
     ]
-    _assets_url = 'https://codeload.github.com/zbee/mobahinted/zip/refs/heads/master'
 
     def __init__(self):
         self.setup_directories()
@@ -63,7 +62,7 @@ class Setup:
         os.mkdir(constants.PATH_ASSETS)
 
         # Download assets
-        fresh_assets = requests.get(self._assets_url)
+        fresh_assets = requests.get(constants.URL_ASSETS_ZIP)
         # Save assets
         open(constants.PATH_ASSETS + zip_file, 'wb').write(fresh_assets.content)
 
