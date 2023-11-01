@@ -629,6 +629,7 @@ class MatchData:
         # region Static Data
         filler_item = LazyImages.Item(None)
         trinkets = [
+            2052,  # Poro-Snax
             3340,  # Warding Totem
             3363,  # Farsight Alteration
             3364,  # Oracle Lens
