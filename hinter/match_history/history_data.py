@@ -18,7 +18,6 @@ class HistoryData(MatchHistory):
 
     def __init__(self):
         super().__init__()
-        self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
 
         thread = threading.Thread(target=self.load_matches)
         thread.start()
