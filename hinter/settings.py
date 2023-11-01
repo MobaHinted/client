@@ -230,6 +230,7 @@ class Settings:
                 }
 
         # Fill in the few other cassiopeia settings
+        # noinspection PyUnboundLocalVariable
         settings = {
             "global": {
                 "version_from_match": "version",
