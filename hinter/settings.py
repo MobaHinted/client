@@ -10,17 +10,20 @@ import hinter
 
 # noinspection PySimplifyBooleanCheck
 class Settings:
-    settings_file = hinter.data.constants.PATH_SETTINGS_FILE
     settings_loaded = False
-    version = '0.0.0'
+
+    settings_file = hinter.data.constants.PATH_SETTINGS_FILE
+    version = hinter.data.constants.VERSION
+
     x: int = 10  # Window Position
     y: int = 10
+
     default_width: int = 1780  # Default Window Size
     default_height: int = 670
     width: int = 1780  # Window Size
     height: int = 670
 
-    # Settings Popup settings
+    # Overlays
     overlay_milestones: bool = False
     overlay_cs_tracker: bool = True
     overlay_objectives: bool = False
@@ -34,6 +37,7 @@ class Settings:
     overlay_trinket: bool = True
     overlay_counter_items: bool = False
 
+    # Behavior
     launch_on_startup: bool = False
     automatic_updates: bool = True
     close_to_tray: bool = False
@@ -56,16 +60,14 @@ class Settings:
     auto_close_builds: bool = True
     show_postgame_separate: bool = False
 
+    # Accounts
     active_user: str = ''  # TODO: What if this was scrapped and only detected the active user?
     region: str = 'NA'
 
+    # Privacy
     _pipeline_private = 'Private'
     _pipeline_fast = 'Fast'
 
-    pipeline: str = _pipeline_fast
-
-    pipeline_defaulted: bool = False
-    # TODO: Add actual cassiopeia settings
     pipelines = {
         'Private': {
             'description': 'Riot Data > Riot (must use your own key)',
@@ -74,6 +76,10 @@ class Settings:
             'description': 'Riot Data > MobaHinted Proxy > Riot',
         },
     }
+
+    pipeline_defaulted: bool = False
+
+    pipeline: str = _pipeline_fast
     telemetry: bool = False
 
     def load_settings(self, refresh: bool = False):

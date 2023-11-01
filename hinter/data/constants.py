@@ -2,6 +2,7 @@
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
 __all__ = [
+    'VERSION',
     'URL_ASSETS_ZIP',
     'URL_RANKED_EMBLEMS',
     'URL_KERNEL_PROXY_ROUGH',
@@ -36,6 +37,8 @@ __all__ = [
     'PATH_USERS_FILE',
     'PATH_FRIENDS_FILE',
 ]
+
+VERSION = '0.0.0'
 
 URL_ASSETS_ZIP = 'https://codeload.github.com/zbee/mobahinted/zip/refs/heads/master'
 URL_RANKED_EMBLEMS = 'https://static.developer.riotgames.com/docs/lol/ranked-emblems-latest.zip'
