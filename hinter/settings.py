@@ -1,5 +1,9 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+import datetime
+import os
+
+from dotenv import load_dotenv
 
 import hinter
 
@@ -55,20 +59,18 @@ class Settings:
     active_user: str = ''  # TODO: What if this was scrapped and only detected the active user?
     region: str = 'NA'
 
-    pipeline: str = 'Fast, Accurate'
+    pipeline: str = 'Fast'
+
+    _pipeline_private = 'Private'
+    _pipeline_fast = 'Fast'
+
     # TODO: Add actual cassiopeia settings
     pipelines = {
-        'Most Private': {
+        'Private': {
             'description': 'Riot Data > Riot (must use your own key)',
-            'cassiopeia_setting': {}
         },
-        'Private, Fast': {
+        'Fast': {
             'description': 'Riot Data > MobaHinted Proxy > Riot',
-            'cassiopeia_setting': {}
-        },
-        'Fast, Accurate': {
-            'description': 'Community Data > MobaHinted Proxy > Riot',
-            'cassiopeia_setting': {}
         },
     }
     telemetry: bool = False
@@ -146,3 +148,77 @@ class Settings:
 
         # Reload settings file
         self.load_settings(refresh=True)
+
+    @property
+    def cassiopeia_settings_for_pipeline(self):
+        windows_path = hinter.data.constants.PATH_CASSIOPEIA.split('/')
+        cassiopeia_path = os.getcwd() + '\\' + '\\'.join(windows_path[1:3])
+
+        default_pipeline_settings = {
+            'Cache': {},
+            'SimpleKVDiskStore': {
+                'package': 'cassiopeia_diskstore',
+                'path': cassiopeia_path,
+                'expirations': {
+                    'RealmDto': datetime.timedelta(days=3),
+                    'VersionListDto': datetime.timedelta(hours=1),
+                    'ChampionDto': datetime.timedelta(days=10),
+                    'ChampionListDto': datetime.timedelta(hours=1),
+                    'RuneDto': datetime.timedelta(days=10),
+                    'RuneListDto': datetime.timedelta(hours=1),
+                    'ItemDto': datetime.timedelta(days=3),
+                    'ItemListDto': datetime.timedelta(hours=1),
+                    'SummonerSpellDto': datetime.timedelta(days=10),
+                    'SummonerSpellListDto': datetime.timedelta(days=3),
+                    'MapDto': datetime.timedelta(days=3),
+                    'MapListDto': datetime.timedelta(days=3),
+                    'ProfileIconDetailsDto': datetime.timedelta(days=10),
+                    'ProfileIconDataDto': datetime.timedelta(days=3),
+                    'LanguagesDto': datetime.timedelta(days=10),
+                    'LanguageStringsDto': datetime.timedelta(days=10),
+                    'ChampionRotationDto': datetime.timedelta(days=1),
+                    'ChampionMasteryDto': datetime.timedelta(hours=3),
+                    'ChampionMasteryListDto': datetime.timedelta(days=3),
+                    'ShardStatusDto': datetime.timedelta(hours=1),
+                }
+            },
+        }
+
+        match self.pipeline:
+            # TODO: Add Champion.gg
+            case self._pipeline_private:
+                print('USING: Development Key (RIOT\'s servers)')
+
+                # TODO: If no .env file, then default to the fast pipeline
+                if not os.path.exists('.env'):
+                    raise Exception('No .env file found')
+
+                load_dotenv('.env')
+
+                setting = default_pipeline_settings | {
+                    'RiotAPI': {
+                        'api_key': os.getenv('RIOT_API_KEY'),
+                    },
+                }
+            case self._pipeline_fast:
+                print('USING: Kernel (zbee\'s servers)')
+
+                setting = default_pipeline_settings | {
+                    'Kernel': {
+                        'server_url': 'https://mhk-api.zbee.dev',
+                        'port': '443',
+                    },
+                }
+
+        # noinspection PyUnboundLocalVariable
+        pipeline_settings = setting | {'DDragon': {}, }
+
+        settings = {
+            "global": {
+                "version_from_match": "version",
+                "default_region": hinter.settings.region
+            },
+            'pipeline': pipeline_settings,
+        }
+
+        return settings

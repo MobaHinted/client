@@ -74,50 +74,7 @@ else:
 del want_new_champion_role_data
 # endregion Champion Role Data
 
-# region Casiopeia-Diskstore path
-# Get ready for Cassiopeia
-windows_path = hinter.data.constants.PATH_CASSIOPEIA.split('/')
-cassiopeia_path = os.getcwd() + '\\' + '\\'.join(windows_path[1:3])
-# endregion Casiopeia-Diskstore path
-
-# TODO: load pipeline from settings
-cassiopeia_settings = {
-    "global": {
-        "version_from_match": "version",
-        "default_region": hinter.settings.region
-    },
-    'pipeline': {
-        'Cache': {},
-        "SimpleKVDiskStore": {
-            "package": "cassiopeia_diskstore",
-            "path": cassiopeia_path
-        },
-        'DDragon': {},
-    },
-}
-
-# region Cassiopeia pipeline settings
-# Set up Cassiopeia, either with local key or proxy kernel
-try:
-    if not os.path.exists('.env'):
-        raise Exception('No .env file found')
-
-    load_dotenv('.env')
-    cassiopeia.set_riot_api_key(os.getenv('RIOT_API_KEY'))
-    cassiopeia_settings['pipeline']['RiotAPI'] = {
-        'api_key': os.getenv('RIOT_API_KEY'),
-    }
-    print('USING: Development Key (RIOT\'s servers)')
-except Exception:
-    cassiopeia_settings['pipeline']['Kernel'] = {
-            'server_url': 'https://mhk-api.zbee.dev',
-            'port': '443',
-        }
-    print('USING: Kernel with key (zbee\'s servers)')
-
-# Load basic settings for Cassiopeia
-cassiopeia.apply_settings(cassiopeia_settings)
-# endregion Cassiopeia pipeline settings
+cassiopeia.apply_settings(settings.cassiopeia_settings_for_pipeline)
 
 # Set up user control
 users = hinter.users.Users()
