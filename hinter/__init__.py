@@ -1,13 +1,11 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
 
-import os
 import pickle
 
 import cassiopeia
 # noinspection PyUnresolvedReferences
 import cassiopeia_diskstore  # Required for building to executable
-from dotenv import load_dotenv
 
 # noinspection PyUnresolvedReferences
 import dearpygui.dearpygui as imgui  # For all the modules to use
@@ -32,6 +30,7 @@ import hinter.ui
 # noinspection PyUnresolvedReferences
 import hinter.ui.progress as Progress
 from hinter.ui.functionality import UIFunctionality
+from hinter.ui.errors import Errors
 # noinspection PyUnresolvedReferences
 import hinter.ui.popups as Popups
 import hinter.users
@@ -47,6 +46,7 @@ from hinter.match_breakdown import MatchBreakdown as MatchBreakdown
 
 UI: UIFunctionality
 Menu: UIMenus = hinter.UIMenus()
+Errors: Errors = hinter.Errors()
 
 # Set up settings
 settings = hinter.settings.Settings()

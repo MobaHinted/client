@@ -49,7 +49,7 @@ class MatchHistory:
 
         # Error out if that code doesn't work, which indicates an API issue
         except Exception as e:
-            hinter.UI.error_screens(e)
+            hinter.Errors.handle_error(e)
 
         self.level = user.level
         self.icon = user.profile_icon
