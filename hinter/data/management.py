@@ -85,12 +85,12 @@ class Setup:
         os.remove(constants.PATH_ASSETS + zip_file)
 
 
-# noinspection PyMethodMayBeStatic
 class Clean:
 
     # TODO: Is a method needed to clean up cass/image data?
 
-    def is_file_older_than_x_days(self, file, days: int = 1, by_access_time: bool = False):
+    @staticmethod
+    def is_file_older_than_x_days(file, days: int = 1, by_access_time: bool = False):
         # Get the file's last modified time
         file_time = os.path.getmtime(file)
         # Or last access time
