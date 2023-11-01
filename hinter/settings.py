@@ -59,11 +59,12 @@ class Settings:
     active_user: str = ''  # TODO: What if this was scrapped and only detected the active user?
     region: str = 'NA'
 
-    pipeline: str = 'Fast'
-
     _pipeline_private = 'Private'
     _pipeline_fast = 'Fast'
 
+    pipeline: str = _pipeline_fast
+
+    pipeline_defaulted: bool = False
     # TODO: Add actual cassiopeia settings
     pipelines = {
         'Private': {
@@ -151,9 +152,11 @@ class Settings:
 
     @property
     def cassiopeia_settings_for_pipeline(self):
+        # Setting up the path for cassiopeia
         windows_path = hinter.data.constants.PATH_CASSIOPEIA.split('/')
         cassiopeia_path = os.getcwd() + '\\' + '\\'.join(windows_path[1:3])
 
+        # region Initial pipeline settings that will be added to
         default_pipeline_settings = {
             'Cache': {},
             'SimpleKVDiskStore': {
@@ -179,23 +182,38 @@ class Settings:
                     'ChampionRotationDto': datetime.timedelta(days=1),
                     'ChampionMasteryDto': datetime.timedelta(hours=3),
                     'ChampionMasteryListDto': datetime.timedelta(days=3),
+                    'ChallengerLeagueListDto': datetime.timedelta(hours=6),
+                    'GrandmasterLeagueListDto': datetime.timedelta(hours=6),
+                    'MasterLeagueListDto': datetime.timedelta(hours=6),
+                    'MatchDto': -1,
+                    'TimelineDto': -1,
+                    'SummonerDto': datetime.timedelta(days=1),
                     'ShardStatusDto': datetime.timedelta(hours=1),
+                    'CurrentGameInfoDto': datetime.timedelta(minutes=10),
+                    'FeaturedGamesDto': datetime.timedelta(hours=2),
+                    'PatchListDto': datetime.timedelta(hours=3)
                 }
             },
         }
+        # endregion Initial pipeline settings that will be added to
 
+        # Verify that the Private pipeline will work if selected
+        no_env_file = not os.path.exists('.env') or hinter.data.management.file_empty('.env')
+        if no_env_file and self.pipeline == self._pipeline_private:
+            self.pipeline_defaulted = True
+            self.write_setting('pipeline', self._pipeline_fast)
+            self.pipeline = self._pipeline_fast
+
+        # Give settings specific to each pipeline
         match self.pipeline:
-            # TODO: Add Champion.gg
             case self._pipeline_private:
+                # TODO: Add Champion.gg
                 print('USING: Development Key (RIOT\'s servers)')
-
-                # TODO: If no .env file, then default to the fast pipeline
-                if not os.path.exists('.env'):
-                    raise Exception('No .env file found')
 
                 load_dotenv('.env')
 
-                setting = default_pipeline_settings | {
+                pipeline_settings = default_pipeline_settings | {
+                    'DDragon': {},
                     'RiotAPI': {
                         'api_key': os.getenv('RIOT_API_KEY'),
                     },
@@ -203,16 +221,15 @@ class Settings:
             case self._pipeline_fast:
                 print('USING: Kernel (zbee\'s servers)')
 
-                setting = default_pipeline_settings | {
+                pipeline_settings = default_pipeline_settings | {
                     'Kernel': {
                         'server_url': 'https://mhk-api.zbee.dev',
                         'port': '443',
                     },
+                    'DDragon': {}
                 }
 
-        # noinspection PyUnboundLocalVariable
-        pipeline_settings = setting | {'DDragon': {}, }
-
+        # Fill in the few other cassiopeia settings
         settings = {
             "global": {
                 "version_from_match": "version",
