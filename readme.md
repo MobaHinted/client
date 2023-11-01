@@ -60,14 +60,13 @@ This is roughly in the order they will be developed.
 When this is at a usable point (e.g. Rito accepts my app, and there are enough features to make it even vaguely
 competitive), I'll release a binary for Windows, and all you will have to do is download and run that.
 
-To spin it up in the mean-time you should just need Python 3 (built on 3.12) and to run the following command
-to set up the virtual environment and install the requirements.
+To spin it up in the mean-time you should just need Python 3 (built on 3.12) and the following steps:
 
 1. `virtualenv venv
     && pip install -r requirements.txt`
 
-2. You'll also need an `.env` file setup with the following variables.
-   - `RIOT_API_KEY` your [Riot API key](https://developer.riotgames.com/)
+2. You'll also need an `.env` file next to `main.py`/`mobahinted.exe` set up with the following variables.
+    - `RIOT_API_KEY="<key goes here>"` with your [Riot API key](https://developer.riotgames.com/).
 
 3. Then you can build the executable, or execute the program directly.
 
