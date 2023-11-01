@@ -185,7 +185,8 @@ class MatchHistory:
                     hinter.imgui.add_spacer()
                     # TODO: Add back the loading indicator, once load_matches is threaded
                     hinter.imgui.add_text(
-                        'Loading Match History. Waiting for Rito...\n\nIf this is your first time seeing this:' +
+                        'Loading Match History.' +
+                        '\n\nIf this is your first time seeing this:' +
                         '\nIt can take a couple minutes',
                     )
                     hinter.imgui.add_spacer()
@@ -195,14 +196,17 @@ class MatchHistory:
 
                 with hinter.imgui.table_row(tag='match-history-delete-5'):
                     hinter.imgui.add_spacer()
-                    with hinter.imgui.table(header_row=False):
-                        hinter.imgui.add_table_column()
-                        hinter.imgui.add_table_column()
-                        hinter.imgui.add_table_column()
+                    with hinter.imgui.group(horizontal=True):
+                        hinter.imgui.add_loading_indicator()
 
-                        with hinter.imgui.table_row():
-                            hinter.imgui.add_spacer()
-                            hinter.imgui.add_loading_indicator()
+                        with hinter.imgui.group():
+                            hinter.imgui.add_spacer(height=10)
+                            hinter.imgui.add_progress_bar(
+                                tag='match-history-progress-bar',
+                                default_value=0.0,
+                                width=-1,
+                                overlay='Waiting for Rito...',
+                            )
 
         with hinter.imgui.theme() as item_theme:
             with hinter.imgui.theme_component(hinter.imgui.mvTable):

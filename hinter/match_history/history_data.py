@@ -35,7 +35,7 @@ class HistoryData(MatchHistory):
 
         # Loop through the games
         # noinspection PyTypeChecker
-        for _, match in enumerate(self.games):
+        for count, match in enumerate(self.games):
             # region Track players played with
             # Find the user's team
             team = 'blue'
@@ -54,6 +54,12 @@ class HistoryData(MatchHistory):
 
             match = hinter.MatchData(match.id, hinter.settings.active_user).match
             MatchDisplay.display_match(self.history, match)
+
+            hinter.imgui.configure_item(
+                'match-history-progress-bar',
+                default_value=count / len(self.games),
+                overlay=f'Loading {count}/{len(self.games)}...',
+            )
 
         # noinspection PyTypeChecker
         for _, match in enumerate(self.games):
