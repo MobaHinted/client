@@ -4,6 +4,7 @@
 __all__ = [
     'URL_ASSETS_ZIP',
     'URL_RANKED_EMBLEMS',
+    'URL_KERNEL_PROXY_ROUGH',
     'URL_KERNEL_PROXY',
     'URL_KERNEL_PROXY_PORT',
     'UI_FONT_SCALE',
@@ -38,6 +39,7 @@ __all__ = [
 
 URL_ASSETS_ZIP = 'https://codeload.github.com/zbee/mobahinted/zip/refs/heads/master'
 URL_RANKED_EMBLEMS = 'https://static.developer.riotgames.com/docs/lol/ranked-emblems-latest.zip'
+URL_KERNEL_PROXY_ROUGH = 'mhk.zbee.dev'
 URL_KERNEL_PROXY = 'https://mhk.zbee.dev'
 URL_KERNEL_PROXY_PORT = 443
 

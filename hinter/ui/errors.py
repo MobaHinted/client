@@ -41,18 +41,22 @@ class Errors:
 
     def _sort_error(self):
         error_string = str(self._error)
+        error_type = self._error.__class__.__name__
 
-        if '503' in error_string:
+        if '503' in error_string and error_type == 'APIRequestError':
             self._handle_riot_unavailable()
-        elif '403' in error_string:
+        elif '403' in error_string and error_type == 'APIRequestError':
             self._handle_invalid_api_key()
-        elif 'Max retries exceeded' in error_string:
-            if 'getaddrinfo failed' in error_string:
+        elif error_type == 'ConnectionError':
+            if hinter.data.constants.URL_KERNEL_PROXY_ROUGH in error_string:
+                self._handle_proxy_down()
+            elif 'getaddrinfo failed' in error_string:
                 self._handle_no_internet()
             else:
-                self._handle_proxy_down()
-                if hinter.settings.pipeline_defaulted:
-                    self._add_defaulted_pipeline_warning()
+                self._handle_unspecified()
+
+            if hinter.settings.pipeline_defaulted:
+                self._add_defaulted_pipeline_warning()
         else:
             self._handle_unspecified()
 
@@ -131,7 +135,7 @@ class Errors:
     def _handle_proxy_down(self):
         self._padding_height = 250
         self._error_display = [
-            'MobaHinted Proxy server is down.',
+            'MobaHinted Proxy site is not accessible.',
             'Please try again later.',
         ]
 
