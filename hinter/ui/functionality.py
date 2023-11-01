@@ -377,6 +377,7 @@ class UIFunctionality(hinter.ui.UI):
 
         return character_count
 
+    # TODO: Move this to it's own class
     def error_screens(self, error):
         if hinter.imgui.does_item_exist('login'):
             hinter.imgui.delete_item('login')
