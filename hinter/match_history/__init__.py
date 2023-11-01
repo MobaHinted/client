@@ -28,15 +28,15 @@ class MatchHistory:
     players_played_with: hinter.PlayersPlayedWith
 
     def __init__(self):
-        # Load summoner information
-        user = cassiopeia.get_summoner(name=hinter.settings.active_user, region=hinter.settings.region)
 
         self.players_played_with = hinter.PlayersPlayedWith.PlayersPlayedWith()
 
-        self.username = user.name
-
         # Try to load rank
         try:
+            # Load summoner information
+            user = cassiopeia.get_summoner(name=hinter.settings.active_user, region=hinter.settings.region)
+            self.username = user.name
+
             # noinspection PyTypeChecker
             self.games = user.match_history[0:hinter.settings.match_history_count]
 

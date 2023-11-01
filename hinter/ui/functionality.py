@@ -1,7 +1,11 @@
 #     MobaHinted Copyright (C) 2020 Ethan Henderson <ethan@zbee.codes>    #
 #  Licensed under GPLv3 - Refer to the LICENSE file for the complete text #
+
 import math
 import os
+import sys
+import traceback
+import urllib.parse
 import webbrowser
 from typing import Union
 
@@ -17,6 +21,8 @@ from cassiopeia.core.staticdata.rune import RunePath as CassiopeiaRunePathImage
 from cassiopeia.core.staticdata.profileicon import ProfileIcon as CassiopeiaProfileIcon
 
 import hinter
+
+times_clicked = 0
 
 
 class UIFunctionality(hinter.ui.UI):
@@ -366,7 +372,7 @@ class UIFunctionality(hinter.ui.UI):
             found_width = 0
             while found_width < width:
                 character_count += step
-                found_width = self.text_size('a'*character_count, font, padding)[0]
+                found_width = self.text_size('a' * character_count, font, padding)[0]
             character_count -= step
 
         return character_count
@@ -408,7 +414,9 @@ class UIFunctionality(hinter.ui.UI):
                 hinter.imgui.add_text(f'{text:^40}')
 
             hinter.imgui.set_primary_window('error', True)
-            hinter.imgui.start_dearpygui()
+            hinter.imgui.split_frame()
+            if not hinter.imgui.is_dearpygui_running():
+                hinter.imgui.start_dearpygui()
             self.exit_callback()
             exit(503)
         elif '403' in str(error):
@@ -430,9 +438,105 @@ class UIFunctionality(hinter.ui.UI):
                 )
 
             hinter.imgui.set_primary_window('error', True)
-            hinter.imgui.start_dearpygui()
+            hinter.imgui.split_frame()
+            if not hinter.imgui.is_dearpygui_running():
+                hinter.imgui.start_dearpygui()
+            self.exit_callback()
+            exit(403)
+        elif 'Max retries exceeded' in str(error):
+            padding = 250
+            if hinter.settings.pipeline_defaulted:
+                padding = 150
+            with hinter.imgui.window(tag='error'):
+                hinter.imgui.add_spacer(height=padding)
+
+                text = 'MobaHinted Proxy server is down.'
+                hinter.imgui.add_text(f'{text:^40}')
+                text = 'Please try again later.'
+                hinter.imgui.add_text(f'{text:^40}')
+
+                hinter.imgui.add_spacer(height=20)
+
+                if hinter.settings.pipeline_defaulted:
+                    text = 'You are seeing this because'
+                    hinter.imgui.add_text(f'{text:^40}')
+                    text = 'your .env file was not found and'
+                    hinter.imgui.add_text(f'{text:^40}')
+                    text = 'your pipeline was reset to default.'
+                    hinter.imgui.add_text(f'{text:^40}')
+
+                    hinter.imgui.add_spacer(height=20)
+
+                    hinter.imgui.add_button(
+                        label='See Setup Documentation',
+                        callback=lambda: webbrowser.open('https://github.com/zbee/mobahinted#setup'),
+                        width=-1,
+                    )
+
+            hinter.imgui.set_primary_window('error', True)
+            hinter.imgui.split_frame()
+            if not hinter.imgui.is_dearpygui_running():
+                hinter.imgui.start_dearpygui()
             self.exit_callback()
             exit(403)
         else:
-            print(error)
-            exit('unknown error')
+            version = f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
+            trace = traceback.format_exc()
+
+            with hinter.imgui.window(tag='error'):
+                # region Show traceback when hovering over the space above the text >3 seconds or triple click it
+                with hinter.imgui.theme() as button_theme:
+                    with hinter.imgui.theme_component(hinter.imgui.mvImageButton):
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_Button, (0, 0, 0, 0))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonActive, (0, 0, 0, 0))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_ButtonHovered, (0, 0, 0, 0))
+                        hinter.imgui.add_theme_color(hinter.imgui.mvThemeCol_BorderShadow, (0, 0, 0, 0))
+
+                # Only copy if the traceback is being shown, or if they triple-click
+                def copy_traceback():
+                    global times_clicked
+                    times_clicked += 1
+                    if hinter.imgui.is_item_visible('sneaky_tooltip') or times_clicked == 3:
+                        hinter.imgui.set_clipboard_text(trace)
+                        times_clicked = 0
+
+                sneaky_button = hinter.imgui.add_image_button(
+                    self.filler_image, width=350, height=200, background_color=(0, 0, 0, 0),
+                    callback=copy_traceback
+                )
+
+                hinter.imgui.bind_item_theme(sneaky_button, button_theme)
+
+                with hinter.imgui.tooltip(parent=sneaky_button, delay=3, tag='sneaky_tooltip'):
+                    hinter.imgui.add_text(f'Click to copy the traceback.\n\n{trace}')
+                # endregion Show traceback when hovering over the space above the text >3 seconds or triple click it
+
+                text = 'An Unknown Error has occurred.'
+                hinter.imgui.add_text(f'{text:^40}')
+                text = 'Please report this and try again later.'
+                hinter.imgui.add_text(f'{text:^40}')
+
+                hinter.imgui.add_spacer(height=20)
+
+                hinter.imgui.add_button(
+                    label='Report this Error on GitHub',
+                    callback=lambda: webbrowser.open(
+                        f'https://github.com/zbee/mobahinted/issues/new?title=Unknown%20Error&body=' +
+                        urllib.parse.quote(
+                            '\n\n\n\nPLEASE:\n' +
+                            '- Describe what you were doing when the error occurred here.\n' +
+                            '- Be as detailed as possible.\n' +
+                            '- Add a descriptive title based on the last thing you were trying to do.' +
+                            f'\n\n\n\n\n\n\n\n---\n\n\n\n\n\n\n\nThis was the error encountered (On Python `{version}`):\n```\n{error}\n```' +
+                            f'\n\n\n\nTraceback:\n```\n{trace}\n```'
+                        )
+                    ),
+                    width=-1,
+                )
+
+            hinter.imgui.set_primary_window('error', True)
+            hinter.imgui.split_frame()
+            if not hinter.imgui.is_dearpygui_running():
+                hinter.imgui.start_dearpygui()
+            self.exit_callback()
+            exit(403)
