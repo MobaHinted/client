@@ -18,9 +18,6 @@ import hinter
 # noinspection PyPep8Naming
 import hinter.match_history.history_data as History
 
-# Make sure all files and folders exist
-hinter.data.management.Setup()
-
 
 def continue_drawing():
     History.HistoryData()

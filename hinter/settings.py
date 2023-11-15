@@ -79,7 +79,7 @@ class Settings:
 
     pipeline_defaulted: bool = False
 
-    pipeline: str = _pipeline_fast
+    pipeline: str = _pipeline_private  # TODO: set to _fast once kernel is online
     telemetry: bool = False
 
     def load_settings(self, refresh: bool = False):

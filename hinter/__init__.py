@@ -48,6 +48,9 @@ UI: UIFunctionality
 Menu: UIMenus = hinter.UIMenus()
 Errors: Errors = hinter.Errors()
 
+# Make sure all files and folders exist
+hinter.data.management.Setup()
+
 # Set up settings
 settings = hinter.settings.Settings()
 settings.load_settings()
@@ -58,6 +61,9 @@ want_new_champion_role_data = hinter.data.management.Clean.is_file_older_than_x_
     hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE,
     2
 )
+# Check if the file is empty
+if hinter.data.management.file_empty(hinter.data.constants.PATH_CHAMPION_ROLE_DATA_FILE):
+    want_new_champion_role_data = True
 
 # If we do need to get fresh data
 if want_new_champion_role_data:
