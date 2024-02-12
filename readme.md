@@ -12,6 +12,10 @@ It doesn't have crazy in-depth stats like Mobalytics, super nice visuals of Blit
 particularly in-depth player tags or data-syncing of Porofessor, but it does have easy to
 understand information of every type you could want in a clean and concise format, as well
 as all the overlays those other clients have AND more that they don't.
+Additionally, big focuses of this project are the addition of features we haven't seen in league
+clients before: champion pool data being used in pre-game, and performance with friends - both
+in depth data about this and using that data alongside your champion pool to give better matchup
+data.
 
 ## Status
 
