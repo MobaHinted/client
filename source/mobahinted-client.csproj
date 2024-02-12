@@ -3,12 +3,14 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>mobahinted_client</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
+        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
+        <PackageReference Include="ImGui.NET" Version="1.90.1.1" />
     </ItemGroup>
 
 </Project>

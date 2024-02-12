@@ -1,11 +1,12 @@
 /venv/
 /data/
 /.idea/
+/.run/
 /dist/
 /build/
 /__pycache__/
-/src/bin/
-/src/obj/
+/source/bin/
+/source/obj/
 .env
 *.spec
 *.exe
