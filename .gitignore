@@ -1,6 +1,7 @@
 /venv/
 /data/
 /.idea/
+/source/.idea/
 /.run/
 /dist/
 /build/
