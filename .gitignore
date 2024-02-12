@@ -4,6 +4,8 @@
 /dist/
 /build/
 /__pycache__/
+/src/bin/
+/src/obj/
 .env
 *.spec
 *.exe
