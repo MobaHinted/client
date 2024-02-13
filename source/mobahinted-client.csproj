@@ -6,11 +6,26 @@
         <RootNamespace>mobahinted_client</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <Title>MobaHinted Client</Title>
+        <Authors>Ethan Henderson</Authors>
+        <Description>A fast, ad-free League of Legends client. Beyond that, it is more reliable, lighter, open-source, packed with your favorite overlays plus brand new, fresh overlays coaches have been telling us to use the equivalent of for years.</Description>
+        <PackageProjectUrl>https://mobahinted.app/</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/MobaHinted/client/</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
         <PackageReference Include="ImGui.NET" Version="1.90.1.1" />
+        <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <ProjectReference Include="../../Camille/src/Camille.Enums/Camille.Enums.csproj" />
+        <ProjectReference Include="../../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Configuration)'!='Debug'">
+        <PackageReference Include="Camille.Enums" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
+        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
     </ItemGroup>
 
 </Project>
