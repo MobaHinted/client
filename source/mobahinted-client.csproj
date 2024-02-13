@@ -16,6 +16,9 @@
 
     <ItemGroup>
         <PackageReference Include="ImGui.NET" Version="1.90.1.1" />
+        <PackageReference Include="Veldrid" Version="4.8.0" />
+        <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
+        <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
         <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0" />
     </ItemGroup>
 
