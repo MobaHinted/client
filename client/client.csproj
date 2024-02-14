@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>mobahinted_client</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
@@ -12,23 +10,39 @@
         <Description>A fast, ad-free League of Legends client. Beyond that, it is more reliable, lighter, open-source, packed with your favorite overlays plus brand new, fresh overlays coaches have been telling us to use the equivalent of for years.</Description>
         <PackageProjectUrl>https://mobahinted.app/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/MobaHinted/client/</RepositoryUrl>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ImGui.NET" Version="1.90.1.1" />
-        <PackageReference Include="Veldrid" Version="4.8.0" />
-        <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
-        <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
+        <Folder Include="Models\"/>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+
+    <!-- Most NuGets -->
+    <ItemGroup>
         <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0" />
     </ItemGroup>
 
+    <!-- Local Camille fork -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <ProjectReference Include="../../Camille/src/Camille.Enums/Camille.Enums.csproj" />
         <ProjectReference Include="../../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj" />
     </ItemGroup>
+    <!-- Standard Camille -->
     <ItemGroup Condition="'$(Configuration)'!='Debug'">
         <PackageReference Include="Camille.Enums" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
         <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
     </ItemGroup>
 
+    <!-- Avalonia -->
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.0.6"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.6"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.6"/>
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6"/>
+    </ItemGroup>
 </Project>
