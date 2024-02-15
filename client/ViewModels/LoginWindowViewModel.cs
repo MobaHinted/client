@@ -4,10 +4,15 @@ using Camille.Enums;
 using Camille.RiotGames;
 using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
+using client.Models.UIHelpers;
+using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
+using System.Text.RegularExpressions;
 
 namespace client.ViewModels;
 
-public class LoginWindowViewModel : ViewModelBase
+public partial class LoginWindowViewModel : ViewModelBase
 {
   /// <summary>
   /// The list of platforms available.
@@ -18,6 +23,72 @@ public class LoginWindowViewModel : ViewModelBase
   ///  The index of the default platform, North America.
   /// </summary>
   public int DefaultPlatformIndex { get; set; }
+
+  /// <summary>
+  /// Game Name-part of Riot ID validation
+  /// </summary>
+  private string _gameName = string.Empty;
+
+  public string GameName
+  {
+    get => this._gameName;
+    set
+    {
+      if (invalidIDCharacters()
+          .IsMatch(value))
+      {
+        throw new DataValidationError("Invalid characters");
+      }
+      else
+        switch (value.Length)
+        {
+          case < 3:
+            throw new DataValidationError("Too short");
+          case > 5:
+            throw new DataValidationError("Too long");
+          default:
+            this.RaiseAndSetIfChanged(
+              ref this._gameName,
+              value
+            );
+
+            break;
+        }
+    }
+  }
+
+  /// <summary>
+  /// Tag Line-part of Riot ID validation
+  /// </summary>
+  private string _tagLine = string.Empty;
+
+  public string TagLine
+  {
+    get => this._tagLine;
+    set
+    {
+      if (invalidIDCharacters()
+          .IsMatch(value))
+      {
+        throw new DataValidationError("Invalid characters");
+      }
+      else
+        switch (value.Length)
+        {
+          case < 3:
+            throw new DataValidationError("Too short");
+          case > 5:
+            throw new DataValidationError("Too long");
+          default:
+            this.RaiseAndSetIfChanged(
+              ref this._tagLine,
+              value
+            );
+
+            break;
+        }
+    }
+  }
 
   /// <summary>
   /// Construct initial data needed for the login window.
@@ -157,4 +228,7 @@ public class LoginWindowViewModel : ViewModelBase
 
     return resultString;
   }
+
+  [GeneratedRegex(@"[#*\/\\?!%]| {2,}")]
+  private static partial Regex invalidIDCharacters();
 }

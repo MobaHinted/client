@@ -31,21 +31,23 @@
 
         <Separator Margin="0 5 0 0" />
 
-        <Grid ColumnDefinitions="7*,*,3*" Margin="0 40 0 10">
+        <Grid ColumnDefinitions="7*,*,3*" Margin="0 40 0 0" MinHeight="55">
             <!-- TODO: "mask" this field to be any unicode alphanumeric, and 3-16 -->
-            <TextBox Grid.Column="0" Watermark="Game Name" />
+            <TextBox Grid.Column="0" TabIndex="0" VerticalAlignment="Top"
+                     Watermark="Game Name" Text="{Binding GameName}" />
             <!--<TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">#</TextBlock>-->
-            <i:Icon Grid.Column="1" VerticalAlignment="Center" Value="fa-solid fa-hashtag" />
+            <i:Icon Grid.Column="1" VerticalAlignment="Top" Value="fa-solid fa-hashtag" Margin="0 9" />
             <!-- TODO: "mask" this field to be any unicode alphanumeric or space, and 3-5 -->
-            <TextBox Grid.Column="2" Watermark="Tag" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Column="2" TabIndex="1" VerticalAlignment="Top"
+                     Watermark="Tag" Text="{Binding TagLine}" />
         </Grid>
 
-        <StackPanel Orientation="Horizontal" Margin="0 10 0 40">
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
             <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Text="Region" />
 
             <ComboBox HorizontalAlignment="Stretch"
                       AutoScrollToSelectedItem="True"
-                      MaxDropDownHeight="250"
+                      MaxDropDownHeight="250" TabIndex="2"
                       MinWidth="160" Width="160" MaxWidth="160"
                       ItemsSource="{Binding Platforms}"
                       SelectedIndex="{Binding DefaultPlatformIndex}">
@@ -61,7 +63,7 @@
         <!-- TODO: Prevent this button from working while game name / tag line do not fit their 'masks' -->
 
         <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                Classes="Tertiary">
+                Classes="Tertiary" TabIndex="3">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Add" Margin="0 0 20 0" />
                 <i:Icon Value="fa-solid fa-plus" />
