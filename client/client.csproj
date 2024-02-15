@@ -23,6 +23,7 @@
     <ItemGroup>
         <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0" />
         <PackageReference Include="Semi.Avalonia" Version="11.0.7" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.0.1" />
     </ItemGroup>
 
     <!-- Local Camille fork -->
