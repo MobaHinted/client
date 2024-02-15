@@ -131,8 +131,6 @@ registered trademarks of Riot Games, Inc.
 
 ---
 
-.NET Core 8.0 and C# 12.0
-
 [Camille](https://github.com/MingweiSamuel/Camille),
 Copyright 2020 Mingwei Samuel and contributors - 
 Licensed under the MIT and Apache Licenses
