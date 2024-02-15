@@ -10,6 +10,13 @@
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
+        <!-- <FluentTheme /> -->
+        <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
+        <StyleInclude Source="avares://Semi.Avalonia/Themes/DarkTheme.axaml" />
     </Application.Styles>
+    <Application.Resources>
+        <FontFamily x:Key="FiraRegular">Assets/fcr.ttf</FontFamily>
+        <FontFamily x:Key="FiraMedium">Assets/fcm.ttf</FontFamily>
+        <FontFamily x:Key="FiraBold">Assets/fcb.ttf</FontFamily>
+    </Application.Resources>
 </Application>
