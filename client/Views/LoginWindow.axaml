@@ -1,0 +1,59 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Icon="/Assets/logo.ico" Title="MobaHinted"
+
+        d:DesignWidth="350" d:DesignHeight="600"
+        Width="350" Height="600"
+        MinWidth="350" MinHeight="600"
+        MaxWidth="350" MaxHeight="600"
+
+        x:Class="client.Views.LoginWindow"
+        x:DataType="vm:LoginWindowViewModel">
+
+    <!-- Design time context -->
+    <Design.DataContext>
+        <vm:LoginWindowViewModel />
+    </Design.DataContext>
+
+    <!-- Content -->
+
+    <Grid ColumnDefinitions="*,4*,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="4"
+          VerticalAlignment="Center">
+        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+                   Text="Add your League Account" />
+
+        <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="7*,*,3*" Margin="0 30 0 5">
+            <!-- TODO: "mask" this field to be any unicode alphanumeric, and 3-16 -->
+            <TextBox Grid.Column="0" Watermark="Game Name" />
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">#</TextBlock>
+            <!-- TODO: "mask" this field to be any unicode alphanumeric or space, and 3-5 -->
+            <TextBox Grid.Column="2" Watermark="Tag" HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="2*,4*" Margin="0 5 0 30">
+            <TextBlock Grid.Column="0" Text="Region" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch"
+                      AutoScrollToSelectedItem="True" MaxDropDownHeight="250"
+                      ItemsSource="{Binding Platforms}"
+                      SelectedIndex="{Binding DefaultPlatformIndex}">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+        </Grid>
+
+        <!-- TODO: Prevent this button from working while game name / tag line do not fit their 'masks' -->
+        <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                Content="Add >" HorizontalContentAlignment="Center" />
+
+        <!-- TODO: Add a red-text error field that can be filled into. When it has content it ...
+        prevents the button from working, but it is cleared if any of the 3 fields change  -->
+    </Grid>
+
+    <!-- /Content -->
+
+</Window>
