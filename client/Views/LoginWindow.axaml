@@ -3,11 +3,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Icon="/Assets/logo.ico" Title="MobaHinted"
+        FontFamily="{StaticResource FiraMedium}" FontSize="16"
+        RenderOptions.BitmapInterpolationMode="HighQuality"
+        RenderOptions.EdgeMode="Antialias"
 
-        d:DesignWidth="350" d:DesignHeight="600"
-        Width="350" Height="600"
-        MinWidth="350" MinHeight="600"
-        MaxWidth="350" MaxHeight="600"
+        d:DesignWidth="350" d:DesignHeight="550"
+        Width="350" Height="550"
+        MinWidth="350" MinHeight="550"
+        MaxWidth="350" MaxHeight="550"
 
         x:Class="client.Views.LoginWindow"
         x:DataType="vm:LoginWindowViewModel">
