@@ -1,10 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Icon="/Assets/logo.ico" Title="MobaHinted"
 
-        mc:Ignorable="d" d:DesignWidth="1780" d:DesignHeight="670"
+        d:DesignWidth="1780" d:DesignHeight="670"
+        Width="1780" Height="670"
+        MinWidth="1780" MinHeight="670"
+
         x:Class="client.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel">
 
