@@ -1,0 +1,28 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Icon="/Assets/logo.ico" Title="MobaHinted"
+
+        d:DesignWidth="350" d:DesignHeight="600"
+        Width="350" Height="600"
+
+        x:Class="client.Views.LoadingWindow"
+        x:DataType="vm:LoadingWindowViewModel">
+
+    <!-- Design time context -->
+    <Design.DataContext>
+        
+        <vm:LoadingWindowViewModel />
+        
+    </Design.DataContext>
+
+    <!-- Content -->
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        
+        <TextBlock Grid.Column="1" Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Top" />
+            
+    </StackPanel>
+
+    <!-- /Content -->
+</Window>
