@@ -22,12 +22,14 @@
 
     <!-- Content -->
 
-    <Grid ColumnDefinitions="*,4*,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="4"
-          VerticalAlignment="Center">
-        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
+
+        <TextBlock HorizontalAlignment="Center"
                    Text="Add your League Account" />
 
-        <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="7*,*,3*" Margin="0 30 0 5">
+        <Separator Margin="0 5 0 0" />
+
+        <Grid ColumnDefinitions="7*,*,3*" Margin="0 30 0 10">
             <!-- TODO: "mask" this field to be any unicode alphanumeric, and 3-16 -->
             <TextBox Grid.Column="0" Watermark="Game Name" />
             <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">#</TextBlock>
@@ -35,27 +37,30 @@
             <TextBox Grid.Column="2" Watermark="Tag" HorizontalAlignment="Stretch" />
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="2*,4*" Margin="0 5 0 30">
-            <TextBlock Grid.Column="0" Text="Region" VerticalAlignment="Center" />
-            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch"
-                      AutoScrollToSelectedItem="True" MaxDropDownHeight="250"
+        <StackPanel Orientation="Horizontal" Margin="0 10 0 30">
+            <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Text="Region" />
+
+            <ComboBox HorizontalAlignment="Stretch"
+                      AutoScrollToSelectedItem="True"
+                      MaxDropDownHeight="250"
                       ItemsSource="{Binding Platforms}"
                       SelectedIndex="{Binding DefaultPlatformIndex}">
+                <!-- The below is just to make the width static while scrolling -->
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ComboBox>
-        </Grid>
+        </StackPanel>
 
         <!-- TODO: Prevent this button from working while game name / tag line do not fit their 'masks' -->
-        <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch"
-                Content="Add >" HorizontalContentAlignment="Center" />
 
-        <!-- TODO: Add a red-text error field that can be filled into. When it has content it ...
-        prevents the button from working, but it is cleared if any of the 3 fields change  -->
-    </Grid>
+        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Classes="Tertiary" Content="Add >" />
+
+        <!-- TODO: Add https://docs.avaloniaui.net/docs/guides/development-guides/data-validation -->
+    </StackPanel>
 
     <!-- /Content -->
 
