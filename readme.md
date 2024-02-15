@@ -33,10 +33,10 @@ Current Status:
 
 This is roughly in the order they will be developed.
 
-- [X] ~~Match History~~
-- [X] ~~Post-Game Breakdown~~
+- [ ] Match History
+- [ ] Post-Game Breakdown
   - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
-- [X] ~~Teammate Performance (like op.gg has, telling you your win-rate with specific friends)~~
+- [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
   - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Match History with friend
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
@@ -65,18 +65,12 @@ This is roughly in the order they will be developed.
 When this is at a usable point (e.g. Rito accepts my app, and there are enough features to make it even vaguely
 competitive), I'll release a binary for Windows, and all you will have to do is download and run that.
 
-To spin it up in the mean-time you should just need Python 3 (built on 3.12) and the following steps:
+To spin it up in the mean-time or for development purposes you should just need .NET Core 8.0 
+and C# 12.0, and the following steps should get you there.
 
-1. `virtualenv venv
-    && pip install -r requirements.txt`
+1. Open up the solution in Rider, and run the `client` project.
 
-2. You'll also need an `.env` file next to `main.py`/`mobahinted.exe` set up with the following variables.
-    - `RIOT_API_KEY="<key goes here>"` with your [Riot API key](https://developer.riotgames.com/).
-
-3. Then you can build the executable, or execute the program directly.
-
-    - `python build.py` to build a `MobaHinted.exe`, then execute that.
-    - `python main.py` to execute the program directly.
+<!-- TODO: Add commandline dotnet instructions to build in debug mode -->
 
 ## What's the catch?
 
@@ -112,7 +106,7 @@ repository; there are also Sponsor options on the GitHub page, go crazy.
 ## License
 This software is licensed under GPLv3, and as such can be shared and modified freely.
 
-`MobaHinted  Copyright (C) 2020  Ethan Henderson <ethan@zbee.codes>`
+`MobaHinted  Copyright (C) 2024  Ethan Henderson <ethan@zbee.codes>`
 
 ```
 This program is free software: you can redistribute it and/or modify
@@ -137,34 +131,28 @@ registered trademarks of Riot Games, Inc.
 
 ---
 
-[Cassiopeia](https://github.com/meraki-analytics/cassiopeia), 
-Copyright (c) 2017 Rob Rua, Jason Maldonis - 
+.NET Core 8.0 and C# 12.0
+
+[Camille](https://github.com/MingweiSamuel/Camille),
+Copyright 2020 Mingwei Samuel and contributors - 
+Licensed under the MIT and Apache Licenses
+
+[GlassLCU](https://github.com/pipe01/GlassLCU),
+Copyright (c) 2021 Felipe Martínez - 
 Licensed under the MIT License
 
-[Kernel](https://github.com/meraki-analytics/kernel), 
-Copyright (c) 2017 Meraki Analytics, LLC - 
+[Avalonia UI](https://github.com/AvaloniaUI/Avalonia),
+Copyright 2013 (c) The AvaloniaUI Project -
 Licensed under the MIT License
 
-[lcu-driver](https://github.com/sousa-andre/lcu-driver), 
-Copyright (c) 2019 André Sousa - 
+[Semi.Avalonia](https://github.com/irihitech/Semi.Avalonia),
+Copyright (c) 2022 iriHi Technologya - 
+Licensed under the MIT License
+
+[Avalonia.ReactiveUI](https://github.com/AvaloniaUI/Avalonia),
+Copyright 2013 (c) The AvaloniaUI Project -
 Licensed under the MIT License
 
 [Fira Code](https://github.com/tonsky/FiraCode), 
 Copyright (c) 2014 The Fira Code Project Authors - 
 Licensed under the OFL License
-
-[Requests](https://github.com/psf/requests), 
-Copyright 2011 Kenneth Reitz - 
-Licensed under the Apache License (Version 2.0)
-
-[python-dotenv](https://github.com/theskumar/python-dotenv), 
-Copyright (c) 2014, Saurabh Kumar - 
-Licensed under the 3-Clause BSD License
-
-[timeago](https://github.com/hustcc/timeago), 
-Copyright (c) 2016 hustcc - 
-Licensed under the MIT License
-
-[NumPy](https://github.com/numpy/numpy), 
-Copyright (c) 2005 NumPy Developers - 
-Licensed under the 3-Clause BSD License
