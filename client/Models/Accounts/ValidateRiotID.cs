@@ -1,4 +1,6 @@
-﻿using client.Models.UIHelpers;
+﻿using Camille.Enums;
+using Camille.RiotGames;
+using client.Models.UIHelpers;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -183,5 +185,21 @@ public static class ValidateRiotID
   {
     return ValidateRiotID.gameName(gameName) == ValidRiotIDStatus.valid
            && ValidateRiotID.tagLine(tagLine) == ValidRiotIDStatus.valid;
+  }
+
+  public static bool exists(string potentialPUUID)
+  {
+    return potentialPUUID != "";
+  }
+
+  public static void search(string gameName, string tagLine, RegionalRoute
+      continent, out string potentialPUUID)
+  {
+    potentialPUUID = Program.riotAPI.AccountV1()
+      .GetByRiotId(
+        continent,
+        gameName,
+        tagLine
+      )?.Puuid ?? "";
   }
 }

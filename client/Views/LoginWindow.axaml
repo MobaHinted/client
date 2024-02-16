@@ -46,12 +46,11 @@
     <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
       <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Text="Region" />
 
-      <ComboBox HorizontalAlignment="Stretch"
-                AutoScrollToSelectedItem="True"
+      <ComboBox HorizontalAlignment="Stretch" AutoScrollToSelectedItem="True"
                 MaxDropDownHeight="250" TabIndex="2"
                 MinWidth="160" Width="160" MaxWidth="160"
                 ItemsSource="{Binding Platforms}"
-                SelectedIndex="{Binding DefaultPlatformIndex}">
+                SelectedIndex="{Binding Region}">
         <!-- The below is just to make the width static while scrolling -->
         <ComboBox.ItemsPanel>
           <ItemsPanelTemplate>
@@ -62,14 +61,26 @@
     </StackPanel>
 
     <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-             TabIndex="3" IsEnabled="{Binding CanAdd}">
+            TabIndex="3" IsEnabled="{Binding CanAdd}"
+            Command="{Binding SearchAndAddAccount}">
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="Add" Margin="0 0 20 0" />
         <i:Icon Value="fa-solid fa-plus" />
       </StackPanel>
     </Button>
 
-    <!-- TODO: Add https://docs.avaloniaui.net/docs/guides/development-guides/data-validation -->
+    <Label Classes="Warning" HorizontalContentAlignment="Center"
+           Content="{Binding ErrorResult}" />
+
+    <ProgressBar
+      Width="75"
+      Height="75"
+      Margin="20"
+      IsIndeterminate="True"
+      Background="Transparent"
+      Theme="{DynamicResource ProgressRing}"
+      ShowProgressText="False"
+      IsVisible="{Binding IsLoading}" />
   </StackPanel>
 
   <!-- /Content -->
