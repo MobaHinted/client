@@ -4,11 +4,8 @@ using Camille.Enums;
 using Camille.RiotGames;
 using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
-using client.Models.UIHelpers;
+using client.Models.Accounts;
 using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
-using System.Text.RegularExpressions;
 
 namespace client.ViewModels;
 
@@ -25,6 +22,23 @@ public partial class LoginWindowViewModel : ViewModelBase
   public int DefaultPlatformIndex { get; set; }
 
   /// <summary>
+  /// Whether the button should be disabled due to an error
+  /// </summary>
+  private bool _canAdd = false;
+
+  /// <summary>
+  /// Public version of _canAdd that is translated to "true" or "false"
+  /// </summary>
+  public string CanAdd
+  {
+    get => this._canAdd ? "true" : "false";
+    set => this.RaiseAndSetIfChanged(
+      ref this._canAdd,
+      value == "true"
+    );
+  }
+
+  /// <summary>
   /// Game Name-part of Riot ID validation
   /// </summary>
   private string _gameName = string.Empty;
@@ -34,26 +48,25 @@ public partial class LoginWindowViewModel : ViewModelBase
     get => this._gameName;
     set
     {
-      if (invalidIDCharacters()
-          .IsMatch(value))
+      // Check if game name is valid
+      ValidRiotIDStatus validity = ValidateRiotID.gameName(value);
+      if (validity != ValidRiotIDStatus.valid)
       {
-        throw new DataValidationError("Invalid characters");
+        this.CanAdd = "false";
+        throw new RiotIDValidationError(validity);
       }
-      else
-        switch (value.Length)
-        {
-          case < 3:
-            throw new DataValidationError("Too short");
-          case > 5:
-            throw new DataValidationError("Too long");
-          default:
-            this.RaiseAndSetIfChanged(
-              ref this._gameName,
-              value
-            );
 
-            break;
-        }
+      // Only actually update the backer if it is
+      this.RaiseAndSetIfChanged(
+        ref this._gameName,
+        value
+      );
+
+      // Check if the other half of the Riot ID is valid as well, to enable the button
+      if (ValidateRiotID.wholeID(this._gameName, this._tagLine))
+      {
+        this.CanAdd = "true";
+      }
     }
   }
 
@@ -67,26 +80,26 @@ public partial class LoginWindowViewModel : ViewModelBase
     get => this._tagLine;
     set
     {
-      if (invalidIDCharacters()
-          .IsMatch(value))
+      // Check if game name is valid
+      ValidRiotIDStatus validity = ValidateRiotID.tagLine(value);
+      if (validity != ValidRiotIDStatus.valid)
       {
-        throw new DataValidationError("Invalid characters");
+        this.CanAdd = "false";
+        throw new RiotIDValidationError(validity);
       }
-      else
-        switch (value.Length)
-        {
-          case < 3:
-            throw new DataValidationError("Too short");
-          case > 5:
-            throw new DataValidationError("Too long");
-          default:
-            this.RaiseAndSetIfChanged(
-              ref this._tagLine,
-              value
-            );
 
-            break;
-        }
+      // Only actually update the backer if it is
+      this.CanAdd = "true";
+      this.RaiseAndSetIfChanged(
+        ref this._tagLine,
+        value
+      );
+
+      // Check if the other half of the Riot ID is valid as well, to enable the button
+      if (ValidateRiotID.wholeID(this._gameName, this._tagLine))
+      {
+        this.CanAdd = "true";
+      }
     }
   }
 
@@ -228,7 +241,4 @@ public partial class LoginWindowViewModel : ViewModelBase
 
     return resultString;
   }
-
-  [GeneratedRegex(@"[#*\/\\?!%]| {2,}")]
-  private static partial Regex invalidIDCharacters();
 }

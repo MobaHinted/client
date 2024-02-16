@@ -61,11 +61,8 @@
       </ComboBox>
     </StackPanel>
 
-    <!-- TODO: Prevent this button from working while game name / tag line do not fit
-          their 'masks' -->
-
     <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-            Classes="Tertiary" TabIndex="3">
+             TabIndex="3" IsEnabled="{Binding CanAdd}">
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="Add" Margin="0 0 20 0" />
         <i:Icon Value="fa-solid fa-plus" />
