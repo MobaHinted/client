@@ -154,3 +154,7 @@ Licensed under the MIT License
 [Fira Code](https://github.com/tonsky/FiraCode), 
 Copyright (c) 2014 The Fira Code Project Authors - 
 Licensed under the OFL License
+
+[Velopack](https://github.com/velopack/velopack)
+Copyright (c) 2021 Caelan Sayler -
+Licensed under the MIT License
