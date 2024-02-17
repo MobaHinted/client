@@ -32,5 +32,7 @@ public class Setting: Attribute
 
   public SettingType Type { get; set; }
 
+  public string? DependsOn { get; set; }
+
   public int DefaultValue { get; set; }
 }

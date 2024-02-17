@@ -8,6 +8,8 @@ namespace client.Models.Settings;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public struct Struct
 {
+    #region Non-User-Editable Settings
+
     /// <summary>
     /// The position of the window (on the X axis).
     /// </summary>
@@ -31,6 +33,10 @@ public struct Struct
     /// </summary>
     [Setting(NotForManualEditing = true)]
     int windowHeight = 630;
+
+    #endregion
+
+    #region Overlay Settings
 
     /// <summary>
     /// Whether the Milestones Reminder overlay is enabled.
@@ -240,16 +246,20 @@ public struct Struct
     )]
     bool overlayCounterBuild = true;
 
+    #endregion
+
+    #region App Behavior Settings
+
     /// <summary>
     /// Whether the program should launch on startup.
     /// </summary>
     /// <default>false</default>
     [Setting(
-        Prompt = "Launch on Startup",
-        Description = "Start the program when you log in to your computer.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Checkbox,
-        DefaultValue = 0
+      Prompt = "Launch on Startup",
+      Description = "Start the program when you log in to your computer.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0
     )]
     bool launchOnStartup = false;
 
@@ -259,13 +269,13 @@ public struct Struct
     /// </summary>
     /// <default>false</default>
     [Setting(
-        Prompt = "Close to System Tray",
-        Description = "Close the program to the system tray instead of actually "
-            + "closing - leaving the program running in the background in an even "
-            + "lighter state.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Checkbox,
-        DefaultValue = 0
+      Prompt = "Close to System Tray",
+      Description = "Close the program to the system tray instead of actually "
+                    + "closing - leaving the program running in the background in an even "
+                    + "lighter state.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0
     )]
     bool closeToTray = false;
 
@@ -274,12 +284,12 @@ public struct Struct
     /// </summary>
     /// <default>false</default>
     [Setting(
-        Prompt = "Always on Top",
-        Description = "When the program opens new windows, they will always be on top "
-            + "of other windows.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Checkbox,
-        DefaultValue = 0
+      Prompt = "Always on Top",
+      Description = "When the program opens new windows, they will always be on top "
+                    + "of other windows.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0
     )]
     bool bringToFront = false;
 
@@ -288,12 +298,12 @@ public struct Struct
     /// </summary>
     /// <default>true</default>
     [Setting(
-        Prompt = "Save Window Position",
-        Description = "When the program closes, it will remember the position of the "
-            + "window and open in the same position next time.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Checkbox,
-        DefaultValue = 1
+      Prompt = "Save Window Position",
+      Description = "When the program closes, it will remember the position of the "
+                    + "window and open in the same position next time.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
     )]
     bool saveWindowPosition = true;
 
@@ -302,12 +312,12 @@ public struct Struct
     /// </summary>
     /// <default>30</default>
     [Setting(
-        Prompt = "Match History Count",
-        Description = "How many matches should be loaded and shown on the match "
-            + "history screen.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Slider,
-        DefaultValue = 30
+      Prompt = "Match History Count",
+      Description = "How many matches should be loaded and shown on the match "
+                    + "history screen.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Slider,
+      DefaultValue = 30
     )]
     int matchHistoryCount = 30;
 
@@ -324,12 +334,12 @@ public struct Struct
     /// </remarks>
     /// <default>150</default>
     [Setting(
-        Prompt = "Background Match Count",
-        Description = "How many matches should be maintained in the background as "
-            + "fully cached matches.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Slider,
-        DefaultValue = 150
+      Prompt = "Background Match Count",
+      Description = "How many matches should be maintained in the background as "
+                    + "fully cached matches.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Slider,
+      DefaultValue = 150
     )]
     int backgroundMatchesToLoad = 150;
 
@@ -339,12 +349,13 @@ public struct Struct
     /// </summary>
     /// <default>250</default>
     [Setting(
-        Prompt = "Background Rough Match Count",
-        Description = "How many matches should be maintained in the background, but "
-            + "it's only rough match data (e.g. win/loss and champion played).",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Slider,
-        DefaultValue = 250
+      Prompt = "Background Rough Match Count",
+      Description = "How many matches should be maintained in the background, but "
+                    + "it's only rough match data (e.g. win/loss and champion "
+                    + "played).",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Slider,
+      DefaultValue = 250
     )]
     int backgroundRoughMatchesToLoad = 250;
 
@@ -354,13 +365,13 @@ public struct Struct
     /// </summary>
     /// <default>3</default>
     [Setting(
-        Prompt = "Number of Games in a Row to consider a Player a Friend",
-        Description = "The threshold of games in a row to initially distinguish "
-            + "between a player that happened to be in multiple games with "
-            + "you and a friend.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Slider,
-        DefaultValue = 3
+      Prompt = "Number of Games in a Row to consider a Player a Friend",
+      Description = "The threshold of games in a row to initially distinguish "
+                    + "between a player that happened to be in multiple games with "
+                    + "you and a friend.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Slider,
+      DefaultValue = 3
     )]
     int thresholdInARowForPlayerFriend = 3;
 
@@ -370,38 +381,186 @@ public struct Struct
     /// </summary>
     /// <default>7</default>
     [Setting(
-        Prompt = "Total Number of Games in history to consider a Player a Friend",
-        Description = "The threshold of total games in history, included background "
-            + "history, to count a player as a friend.",
-        Group = SettingGroup.AppBehavior,
-        Type = SettingType.Slider,
-        DefaultValue = 7
+      Prompt = "Total Number of Games in history to consider a Player a Friend",
+      Description = "The threshold of total games in history, included background "
+                    + "history, to count a player as a friend.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Slider,
+      DefaultValue = 7
     )]
     int thresholdForPlayerFriend = 7;
 
-    bool showMyRank = true;
-    bool showAllyRank = true;
-    bool showEnemyRank = true;
-    bool showGameRanks = true;
-
-    bool showCurrentSession = false;
-    bool showPreGameSeparate = false;
-    bool autoClosePreGame = false;
-
     /// <summary>
-    /// Whether new League accounts should automatically be detected from the League
-    /// client and be added to the program and switch to them.
+    /// Whether the user's rank should be shown anywhere in the program.
     /// </summary>
     /// <default>true</default>
     [Setting(
-        Prompt = "Detect New Accounts",
-        Description = "Automatically detect new League accounts from the League client "
-            + "and add them to the program and switch to them.",
-        Group = SettingGroup.AccountManagement,
-        Type = SettingType.Checkbox,
-        DefaultValue = 1
+      Prompt = "Show My Rank to Me",
+      Description = "Show your rank in the program, on match history, your profile"
+                    + " and pre and post game screens.",
+      Group = SettingGroup.Privacy,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
+    )]
+    bool showMyRank = true;
+
+    /// <summary>
+    /// Whether allied player ranks should be shown in the program.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Show Ally Ranks",
+      Description = "Show the ranks of your allies in the program, on pre and post "
+                    + "game screens. ",
+      Group = SettingGroup.Privacy,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
+    )]
+    bool showAllyRank = true;
+
+    /// <summary>
+    /// Whether enemy player ranks should be shown in the program.
+    /// </summary>
+    /// <remarks>
+    /// Similar to <see cref="showAllyRank"/>, but for enemies.
+    /// </remarks>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Show Enemy Ranks",
+      Description = "Show the ranks of your enemies in the program, on pre and post "
+                    + "game screens.",
+      Group = SettingGroup.Privacy,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
+    )]
+    bool showEnemyRank = true;
+
+    /// <summary>
+    /// Whether Game average ranks will be shown in the program.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Show Game Ranks",
+      Description = "Show the average ranks of the game in the program, on match "
+                    + "history, and post game screens.",
+      Group = SettingGroup.Privacy,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
+    )]
+    bool showGameRanks = true;
+
+    /// <summary>
+    /// Whether the Current Session screen should open automatically, always as a
+    /// separate window, after the first game.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Show the Current Session Window",
+      Description = "Will open the Current Session window as a this-session match "
+                    + "history and performance screen, after the first game. Always"
+                    + " as a separate window.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
+    )]
+    bool showCurrentSession = true;
+
+    /// <summary>
+    /// Whether the In-Game screen should open, always as a separate window.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+      Prompt = "Show the In-Game Window",
+      Description = "Will open the In-Game window after the Pre-Game screen, always"
+                    + " as a separate window, displaying information that overlays"
+                    + " contain (such as gold differences, but at all times), and "
+                    + "more",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0
+    )]
+    bool showInGameScreen = false;
+
+    /// <summary>
+    /// Whether the In-Game screen should automatically close once you're out of
+    /// game.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Auto-Close In-Game Window",
+      Description = "Will automatically close the In-Game window once you're out of" + " game.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1,
+      DependsOn = "showInGameScreen"
+    )]
+    bool autoCloseInGame = true;
+
+    /// <summary>
+    /// Whether the Pre-Game screen should open as a separate window.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+      Prompt = "Show the Pre-Game Window",
+      Description = "Will open the Pre-Game window as a pre-game screen, always as a "
+                    + "separate window.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0
+    )]
+    bool showPreGameSeparate = false;
+
+    /// <summary>
+    /// Whether the Build Suggestions element of the Pre-Game screen should be shown
+    /// in a separate window, which auto-closes once you're in game.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+      Prompt = "Show Build Suggestions Separately",
+      Description = "Will show the Build Suggestions element of the Pre-Game window "
+                    + "in a separate window, which auto-closes once you're in game.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 0,
+      DependsOn = "showPreGameSeparate"
+    )]
+    bool showBuildsSeparate = false;
+
+    /// <summary>
+    /// Whether the Pre-Game window should automatically close once you're in game.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Auto-Close Pre-Game Window",
+      Description = "Will automatically close the Pre-Game window once you're in " + "game.",
+      Group = SettingGroup.AppBehavior,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1,
+      DependsOn = "showPreGameSeparate"
+    )]
+    bool autoClosePreGame = true;
+
+    #endregion
+
+    #region Account Management Settings
+
+    /// <summary>
+    /// Whether Accounts should be detected automatically from the League Client,
+    /// and added to the program and switched to as the active account.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Detect New Accounts",
+      Description = "Automatically detect new accounts from the League Client, and "
+                    + "add them to the program and switch to them as the active "
+                    + "account.",
+      Group = SettingGroup.AccountManagement,
+      Type = SettingType.Checkbox,
+      DefaultValue = 1
     )]
     bool detectNewAccounts = true;
+
+    #endregion
 
     public Struct() { }
 }
