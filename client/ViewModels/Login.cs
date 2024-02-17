@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
+using Avalonia.Controls;
 using Camille.Enums;
 using client.Models.Accounts;
 using client.Views;
@@ -9,8 +10,11 @@ using static System.Enum;
 
 namespace client.ViewModels;
 
-public class Login : ViewModelBase
+public class Login : ReactiveObject, IRoutableViewModel
 {
+    public string? UrlPathSegment { get; } = "Login";
+    public IScreen HostScreen { get; }
+
     /// <summary>
     /// The list of platforms available.
     /// </summary>
@@ -126,8 +130,11 @@ public class Login : ViewModelBase
     /// <summary>
     /// Construct initial data needed for the login window.
     /// </summary>
-    public Login()
+    public Login(IScreen screen)
     {
+        // Save the previous screen
+        this.HostScreen = screen;
+
         // Fill the Platforms list with the names of the platforms.
         this.Platforms = getPlatformRoutes();
         // We list platforms instead of continents/"regions", despite the latter being
@@ -219,14 +226,7 @@ public class Login : ViewModelBase
         {
             Console.WriteLine("Account Found!");
             // TODO: Save account locally
-            try
-            {
-              Program.View.Build(new LoadingView());
-            }
-            catch (Exception e)
-            {
-              Console.WriteLine(e);
-            }
+            // TODO: Open the main window
         }
     }
 }

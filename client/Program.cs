@@ -2,6 +2,7 @@
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
 using client.Models.Settings;
+using client.Views;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 
@@ -10,14 +11,9 @@ namespace client;
 internal static class Program
 {
     /// <summary>
-    /// Global settings for the application.
+    /// The global window - mostly just for controlling window size.
     /// </summary>
-    public static Settings Settings { get; } = new Settings();
-
-    /// <summary>
-    /// Global view locator for the application.
-    /// </summary>
-    public static ViewLocator View { get; } = new ViewLocator();
+    public static LoadingView? Window;
 
     /// <summary>
     /// The settings manager for the application, which saves updated settings to disk.
@@ -27,10 +23,10 @@ internal static class Program
     private static SettingsManager _settingsManager_DoNotUse;
 #pragma warning restore CS0169 // Field is never used
 
-    static Program()
-    {
-        _settingsManager_DoNotUse = new SettingsManager();
-    }
+    /// <summary>
+    /// Global settings for the application.
+    /// </summary>
+    public static Settings Settings { get; } = new Settings();
 
     /// <summary>
     /// The configuration for the Riot Games API to use throughout the application.
@@ -57,5 +53,10 @@ internal static class Program
         IconProvider.Current.Register<FontAwesomeIconProvider>();
 
         return AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
+    }
+
+    static Program()
+    {
+        _settingsManager_DoNotUse = new SettingsManager();
     }
 }

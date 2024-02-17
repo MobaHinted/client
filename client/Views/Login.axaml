@@ -1,25 +1,17 @@
-﻿<Window xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="https://github.com/projektanker/icons.avalonia"
-        Icon="/Assets/logo.ico" Title="MobaHinted"
+        xmlns:reactiveUi="http://reactiveui.net" xmlns:app="using:client"
         FontFamily="{StaticResource FiraMedium}" FontSize="16"
         RenderOptions.BitmapInterpolationMode="HighQuality"
         RenderOptions.EdgeMode="Antialias"
 
         d:DesignWidth="350" d:DesignHeight="550"
-        Width="350" Height="550"
-        MinWidth="350" MinHeight="550"
-        MaxWidth="350" MaxHeight="550"
 
         x:Class="client.Views.LoginView"
         x:DataType="vm:Login">
-
-  <!-- Design time context -->
-  <Design.DataContext>
-    <vm:Login />
-  </Design.DataContext>
 
   <!-- Content -->
 
@@ -85,4 +77,4 @@
 
   <!-- /Content -->
 
-</Window>
+</UserControl>

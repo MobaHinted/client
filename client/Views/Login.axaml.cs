@@ -1,11 +1,14 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.ReactiveUI;
+using client.ViewModels;
+using ReactiveUI;
 
 namespace client.Views;
 
-public partial class LoginView : Window
+public partial class LoginView : ReactiveUserControl<Login>
 {
-  public LoginView()
-  {
-    InitializeComponent();
-  }
+    public LoginView()
+    {
+        this.WhenActivated(disposables => { });
+        InitializeComponent();
+    }
 }
