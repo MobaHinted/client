@@ -3,7 +3,7 @@
 /// <summary>
 /// Data Pipeline to use for requests.
 /// </summary>
-/// <seealso cref="Struct.dataPipeline"/>
+/// <seealso cref="SettingsSettingseline"/>
 public enum DataPipeline
 {
     /// <summary>
@@ -22,7 +22,7 @@ public enum DataPipeline
 /// Types of controls that Settings can have.
 /// </summary>
 /// <seealso cref="Setting"/>
-/// <seealso cref="client.Models.Settings.Struct"/>
+/// <seealso cref="Settings"/>
 public enum SettingType
 {
     #region Generic Types
@@ -63,7 +63,7 @@ public enum SettingType
 /// Different categories of Settings.
 /// </summary>
 /// <seealso cref="Setting"/>
-/// <seealso cref="client.Models.Settings.Struct"/>
+/// <seealso cref="Settings"/>
 public enum SettingGroup
 {
     overlays,
@@ -76,8 +76,8 @@ public enum SettingGroup
 /// The custom attribute that will be used to fully define Settings and how they
 /// should be displayed in the settings window.
 /// </summary>
-/// <seealso cref="client.Models.Settings.Struct"/>
-public class Setting : Attribute
+/// <seealso cref="Settings"/>
+public class SettingDisplay : Attribute
 {
     #region Required Attributes
 
@@ -116,7 +116,7 @@ public class Setting : Attribute
     /// <summary>
     /// The Settings.Struct Field that this setting requires to be enabled.
     /// </summary>
-    /// <seealso cref="client.Models.Settings.Struct"/>
+    /// <seealso cref="Settings"/>
     public string? DependsOn { get; set; }
 
     /// <summary>
