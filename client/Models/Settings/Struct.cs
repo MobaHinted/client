@@ -566,6 +566,18 @@ public struct Struct
     )]
     bool detectNewAccounts = true;
 
+    /// <summary>
+    /// The active account.
+    /// </summary>
+    /// <default>null</default>
+    [Setting(
+      Prompt = "Active Account",
+      Description = "The active account.",
+      Group = SettingGroup.AccountManagement,
+      Type = SettingType.Account
+    )]
+    Guid? activeAccount = null;
+
     #endregion
 
     public Struct() { }
