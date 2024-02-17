@@ -18,5 +18,7 @@ public class SettingsManager
         // Save the values I need from the event
         string setting = args.PropertyName!;
         object value = args.NewValue;
+
+        // TODO: Save the setting to disk
     }
 }
