@@ -33,26 +33,30 @@ public class MainWindowViewModel : ViewModelBase
 
       var accounts = new[]
       {
-        riotApi.AccountV1().GetByRiotId(
-          RegionalRoute.AMERICAS,
-          "zbee",
-          "7777"
-        ),
-        riotApi.AccountV1().GetByRiotId(
-          RegionalRoute.AMERICAS,
-          "peace",
-          "chill"
-        ),
-        riotApi.AccountV1().GetByRiotId(
-          RegionalRoute.AMERICAS,
-          "weeb o clock",
-          "anime"
-        ),
-        riotApi.AccountV1().GetByRiotId(
-          RegionalRoute.AMERICAS,
-          "cdog44",
-          "na1"
-        ),
+        riotApi.AccountV1()
+          .GetByRiotId(
+            RegionalRoute.AMERICAS,
+            "zbee",
+            "7777"
+          ),
+        riotApi.AccountV1()
+          .GetByRiotId(
+            RegionalRoute.AMERICAS,
+            "peace",
+            "chill"
+          ),
+        riotApi.AccountV1()
+          .GetByRiotId(
+            RegionalRoute.AMERICAS,
+            "weeb o clock",
+            "anime"
+          ),
+        riotApi.AccountV1()
+          .GetByRiotId(
+            RegionalRoute.AMERICAS,
+            "cdog44",
+            "na1"
+          ),
       };
 
       foreach (Account? account in accounts)
@@ -65,10 +69,11 @@ public class MainWindowViewModel : ViewModelBase
 
         resultString += $"{account.GameName}'s Top Champs:\n";
 
-        var mastery = riotApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUID(
-          PlatformRoute.NA1,
-          account.Puuid
-        );
+        var mastery = riotApi.ChampionMasteryV4()
+          .GetAllChampionMasteriesByPUUID(
+            PlatformRoute.NA1,
+            account.Puuid
+          );
 
         for (int i = 0; i < 3; i++)
         {
