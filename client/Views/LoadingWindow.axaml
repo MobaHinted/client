@@ -10,19 +10,28 @@
         x:Class="client.Views.LoadingWindow"
         x:DataType="vm:LoadingWindowViewModel">
 
-    <!-- Design time context -->
-    <Design.DataContext>
-        
-        <vm:LoadingWindowViewModel />
-        
-    </Design.DataContext>
+  <!-- Design time context -->
+  <Design.DataContext>
 
-    <!-- Content -->
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        
-        <TextBlock Grid.Column="1" Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Top" />
-            
-    </StackPanel>
+    <vm:LoadingWindowViewModel />
 
-    <!-- /Content -->
+  </Design.DataContext>
+
+  <!-- Content -->
+  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+    <TextBlock Grid.Column="1" Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Top" />
+
+    <ProgressBar
+      Width="75"
+      Height="75"
+      Margin="20"
+      IsIndeterminate="True"
+      Background="Transparent"
+      Theme="{DynamicResource ProgressRing}"
+      ShowProgressText="False" />
+
+  </StackPanel>
+
+  <!-- /Content -->
 </Window>

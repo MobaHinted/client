@@ -69,7 +69,7 @@
       </StackPanel>
     </Button>
 
-    <Label Classes="Warning" HorizontalContentAlignment="Center"
+    <Label Classes="Danger" HorizontalContentAlignment="Center"
            Content="{Binding ErrorResult}" />
 
     <ProgressBar
