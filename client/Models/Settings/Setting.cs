@@ -79,21 +79,17 @@ public enum SettingGroup
 /// <seealso cref="client.Models.Settings.Struct"/>
 public class Setting : Attribute
 {
-    /// <summary>
-    /// If true, this setting is not meant to be manually edited and will not be
-    /// displayed in the settings window.
-    /// </summary>
-    public bool NotForManualEditing { get; set; } = false;
+    #region Required Attributes
 
     /// <summary>
     /// The settings as will be displayed in the settings window.
     /// </summary>
-    public string? Prompt { get; set; }
+    public string Prompt { get; set; } = string.Empty;
 
     /// <summary>
     /// The description that will be shown if the user hovers over the setting.
     /// </summary>
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// The group that this setting belongs to.
@@ -107,6 +103,16 @@ public class Setting : Attribute
     /// <seealso cref="SettingType"/>
     public SettingType Type { get; set; }
 
+    #endregion
+
+    #region Optional Attributes
+
+    /// <summary>
+    /// If true, this setting is not meant to be manually edited and will not be
+    /// displayed in the settings window.
+    /// </summary>
+    public bool NotForManualEditing { get; set; } = false;
+
     /// <summary>
     /// The Settings.Struct Field that this setting requires to be enabled.
     /// </summary>
@@ -117,6 +123,10 @@ public class Setting : Attribute
     /// The default value of this setting.
     /// </summary>
     public int DefaultValue { get; set; } = -1;
+
+    #endregion
+
+    #region Slider Conrol-specific Attributes
 
     /// <summary>
     /// The minimum value of a Slider control.
@@ -138,4 +148,6 @@ public class Setting : Attribute
     /// <seealso cref="Type"/>
     /// <seealso cref="SettingType.slider"/>
     public int SliderStep { get; set; } = -1;
+
+    #endregion
 }
