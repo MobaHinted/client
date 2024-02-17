@@ -50,8 +50,8 @@ public struct Struct
         Prompt = "Game Milestones Notifications",
         Description = "Show game milestones, such as: Global Ultimate champions hit "
             + "level 6, Specific item purchases, Smite level ups and more.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 0
     )]
     bool overlayMilestones = false;
@@ -68,8 +68,8 @@ public struct Struct
     [Setting(
         Prompt = "CS Tracker",
         Description = "Show CS tracker and comparison tool.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayCSTracker = true;
@@ -86,8 +86,8 @@ public struct Struct
         Prompt = "Objective Reminders",
         Description = "Show objective reminders, such as: Turret plates, Rift/Baron "
             + "spawning, Dragon and Baron spawns, and more.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 0
     )]
     bool overlayObjectives = false;
@@ -103,8 +103,8 @@ public struct Struct
     [Setting(
         Prompt = "Spell Tracker",
         Description = "Show a Spell-Cooldown tracker for enemy champions.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlaySpellTracker = true;
@@ -119,8 +119,8 @@ public struct Struct
     [Setting(
         Prompt = "Jungle Timers",
         Description = "Show Jungle Timers over the map.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayJungleTimers = true;
@@ -135,8 +135,8 @@ public struct Struct
     [Setting(
         Prompt = "ARAM Health Pack Timers",
         Description = "Show ARAM Health Pack timers over the map.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayARAMHealth = true;
@@ -153,8 +153,8 @@ public struct Struct
         Prompt = "Scoreboard Duos",
         Description = "Show indicators on the scoreboard to show players who are "
             + "queueing together.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayDuosDisplay = true;
@@ -171,8 +171,8 @@ public struct Struct
         Prompt = "Scoreboard Gold Difference",
         Description = "Show the gold difference of purchased items between "
             + "individual players and teams as a whole.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayGoldDiff = true;
@@ -188,8 +188,8 @@ public struct Struct
     [Setting(
         Prompt = "Map Check Reminder",
         Description = "Gives reminders to check the map at a specified interval.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 0
     )]
     bool overlayMapCheck = false;
@@ -204,8 +204,8 @@ public struct Struct
     [Setting(
         Prompt = "Back Reminder",
         Description = "Gives reminders to consider backing at a specified interval.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 0
     )]
     bool overlayBackReminder = false;
@@ -221,8 +221,8 @@ public struct Struct
     [Setting(
         Prompt = "Use-Trinket Reminder",
         Description = "Gives reminders to use your trinket at a specified interval.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayUseTrinket = true;
@@ -237,8 +237,8 @@ public struct Struct
     [Setting(
         Prompt = "Counter Item Suggestions",
         Description = "Adds some Counter item suggestions to the shop.",
-        Group = SettingGroup.Overlays,
-        Type = SettingType.Overlay,
+        Group = SettingGroup.overlays,
+        Type = SettingType.overlay,
         DefaultValue = 1
     )]
     bool overlayCounterBuild = true;
@@ -254,8 +254,8 @@ public struct Struct
     [Setting(
       Prompt = "Launch on Startup",
       Description = "Start the program when you log in to your computer.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0
     )]
     bool launchOnStartup = false;
@@ -270,8 +270,8 @@ public struct Struct
       Description = "Close the program to the system tray instead of actually "
                     + "closing - leaving the program running in the background in an even "
                     + "lighter state.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0
     )]
     bool closeToTray = false;
@@ -284,8 +284,8 @@ public struct Struct
       Prompt = "Always on Top",
       Description = "When the program opens new windows, they will always be on top "
                     + "of other windows.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0
     )]
     bool bringToFront = false;
@@ -298,8 +298,8 @@ public struct Struct
       Prompt = "Save Window Position",
       Description = "When the program closes, it will remember the position of the "
                     + "window and open in the same position next time.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool saveWindowPosition = true;
@@ -312,8 +312,8 @@ public struct Struct
       Prompt = "Match History Count",
       Description = "How many matches should be loaded and shown on the match "
                     + "history screen.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Slider,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.slider,
       DefaultValue = 30,
       SliderMin = 10,
       SliderMax = 300,
@@ -337,8 +337,8 @@ public struct Struct
       Prompt = "Background Match Count",
       Description = "How many matches should be maintained in the background as "
                     + "fully cached matches.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Slider,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.slider,
       DefaultValue = 150,
       SliderMin = 50,
       SliderMax = 500,
@@ -356,8 +356,8 @@ public struct Struct
       Description = "How many matches should be maintained in the background, but "
                     + "it's only rough match data (e.g. win/loss and champion "
                     + "played).",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Slider,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.slider,
       DefaultValue = 250,
       SliderMin = 100,
       SliderMax = 1000,
@@ -375,8 +375,8 @@ public struct Struct
       Description = "The threshold of games in a row to initially distinguish "
                     + "between a player that happened to be in multiple games with "
                     + "you and a friend.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Slider,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.slider,
       DefaultValue = 3
     )]
     int thresholdInARowForPlayerFriend = 3;
@@ -390,8 +390,8 @@ public struct Struct
       Prompt = "Total Number of Games in history to consider a Player a Friend",
       Description = "The threshold of total games in history, included background "
                     + "history, to count a player as a friend.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Slider,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.slider,
       DefaultValue = 7
     )]
     int thresholdForPlayerFriend = 7;
@@ -404,8 +404,8 @@ public struct Struct
       Prompt = "Show My Rank to Me",
       Description = "Show your rank in the program, on match history, your profile"
                     + " and pre and post game screens.",
-      Group = SettingGroup.Privacy,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.privacy,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool showMyRank = true;
@@ -418,8 +418,8 @@ public struct Struct
       Prompt = "Show Ally Ranks",
       Description = "Show the ranks of your allies in the program, on pre and post "
                     + "game screens. ",
-      Group = SettingGroup.Privacy,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.privacy,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool showAllyRank = true;
@@ -435,8 +435,8 @@ public struct Struct
       Prompt = "Show Enemy Ranks",
       Description = "Show the ranks of your enemies in the program, on pre and post "
                     + "game screens.",
-      Group = SettingGroup.Privacy,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.privacy,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool showEnemyRank = true;
@@ -449,8 +449,8 @@ public struct Struct
       Prompt = "Show Game Ranks",
       Description = "Show the average ranks of the game in the program, on match "
                     + "history, and post game screens.",
-      Group = SettingGroup.Privacy,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.privacy,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool showGameRanks = true;
@@ -465,8 +465,8 @@ public struct Struct
       Description = "Will open the Current Session window as a this-session match "
                     + "history and performance screen, after the first game. Always"
                     + " as a separate window.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool showCurrentSession = true;
@@ -481,8 +481,8 @@ public struct Struct
                     + " as a separate window, displaying information that overlays"
                     + " contain (such as gold differences, but at all times), and "
                     + "more",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0
     )]
     bool showInGameScreen = false;
@@ -495,8 +495,8 @@ public struct Struct
     [Setting(
       Prompt = "Auto-Close In-Game Window",
       Description = "Will automatically close the In-Game window once you're out of" + " game.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 1,
       DependsOn = "showInGameScreen"
     )]
@@ -510,8 +510,8 @@ public struct Struct
       Prompt = "Show the Pre-Game Window",
       Description = "Will open the Pre-Game window as a pre-game screen, always as a "
                     + "separate window.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0
     )]
     bool showPreGameSeparate = false;
@@ -525,8 +525,8 @@ public struct Struct
       Prompt = "Show Build Suggestions Separately",
       Description = "Will show the Build Suggestions element of the Pre-Game window "
                     + "in a separate window, which auto-closes once you're in game.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 0,
       DependsOn = "showPreGameSeparate"
     )]
@@ -539,8 +539,8 @@ public struct Struct
     [Setting(
       Prompt = "Auto-Close Pre-Game Window",
       Description = "Will automatically close the Pre-Game window once you're in " + "game.",
-      Group = SettingGroup.AppBehavior,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.appBehavior,
+      Type = SettingType.checkbox,
       DefaultValue = 1,
       DependsOn = "showPreGameSeparate"
     )]
@@ -560,8 +560,8 @@ public struct Struct
       Description = "Automatically detect new accounts from the League Client, and "
                     + "add them to the program and switch to them as the active "
                     + "account.",
-      Group = SettingGroup.AccountManagement,
-      Type = SettingType.Checkbox,
+      Group = SettingGroup.accountManagement,
+      Type = SettingType.checkbox,
       DefaultValue = 1
     )]
     bool detectNewAccounts = true;
@@ -573,10 +573,41 @@ public struct Struct
     [Setting(
       Prompt = "Active Account",
       Description = "The active account.",
-      Group = SettingGroup.AccountManagement,
-      Type = SettingType.Account
+      Group = SettingGroup.accountManagement,
+      Type = SettingType.account
     )]
     Guid? activeAccount = null;
+
+    #endregion
+
+    #region Privacy Settings
+
+    /// <summary>
+    /// Which pipeline to use for data.
+    /// </summary>
+    /// <default><see cref="DataPipeline.Proxied"/></default>
+    /// <seealso cref="DataPipeline"/>
+    [Setting(
+      Prompt = "Data Pipeline",
+      Description = "Which pipeline to use for data.",
+      Group = SettingGroup.privacy,
+      Type = SettingType.custom,
+      DefaultValue = 1
+    )]
+    int dataPipeline = (int)DataPipeline.Proxied;
+
+    /// <summary>
+    /// Whether basic usage data should be shared with the developer.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+      Prompt = "Share Telemetry Data",
+      Description = "Share basic program usage data with the developer.",
+      Group = SettingGroup.privacy,
+      Type = SettingType.custom,
+      DefaultValue = 1
+    )]
+    bool shareTelemetry = true;
 
     #endregion
 
