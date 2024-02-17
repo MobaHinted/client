@@ -187,11 +187,23 @@ public static class ValidateRiotID
            && ValidateRiotID.tagLine(tagLine) == ValidRiotIDStatus.valid;
   }
 
+  /// <summary>
+  /// Just a cleaner, standard way to check if search() found a Riot ID
+  /// </summary>
+  /// <param name="potentialPUUID">A potential PUUID from search()</param>
+  /// <returns></returns>
   public static bool exists(string potentialPUUID)
   {
     return potentialPUUID != "";
   }
 
+  /// <summary>
+  /// Request a Riot account on a shard given a Riot ID
+  /// </summary>
+  /// <param name="gameName">The GamName half of a Riot ID</param>
+  /// <param name="tagLine">The TagLine half of a Riot ID</param>
+  /// <param name="continent">The continent that should be searched for the Riot ID</param>
+  /// <param name="potentialPUUID">The variable that will hold the PUUID or empty string</param>
   public static void search(string gameName, string tagLine, RegionalRoute
       continent, out string potentialPUUID)
   {
