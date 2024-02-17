@@ -3,12 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using Camille.Enums;
 using client.Models.Accounts;
+using client.Views;
 using ReactiveUI;
 using static System.Enum;
 
 namespace client.ViewModels;
 
-public class LoginWindowViewModel : ViewModelBase
+public class Login : ViewModelBase
 {
     /// <summary>
     /// The list of platforms available.
@@ -125,7 +126,7 @@ public class LoginWindowViewModel : ViewModelBase
     /// <summary>
     /// Construct initial data needed for the login window.
     /// </summary>
-    public LoginWindowViewModel()
+    public Login()
     {
         // Fill the Platforms list with the names of the platforms.
         this.Platforms = getPlatformRoutes();
@@ -218,6 +219,14 @@ public class LoginWindowViewModel : ViewModelBase
         {
             Console.WriteLine("Account Found!");
             // TODO: Save account locally
+            try
+            {
+              Program.View.Build(new LoadingView());
+            }
+            catch (Exception e)
+            {
+              Console.WriteLine(e);
+            }
         }
     }
 }

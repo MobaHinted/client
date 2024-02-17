@@ -13,12 +13,12 @@
         MinWidth="350" MinHeight="550"
         MaxWidth="350" MaxHeight="550"
 
-        x:Class="client.Views.LoginWindow"
-        x:DataType="vm:LoginWindowViewModel">
+        x:Class="client.Views.LoginView"
+        x:DataType="vm:Login">
 
   <!-- Design time context -->
   <Design.DataContext>
-    <vm:LoginWindowViewModel />
+    <vm:Login />
   </Design.DataContext>
 
   <!-- Content -->

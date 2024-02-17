@@ -15,6 +15,11 @@ internal static class Program
     public static Settings Settings { get; } = new Settings();
 
     /// <summary>
+    /// Global view locator for the application.
+    /// </summary>
+    public static ViewLocator View { get; } = new ViewLocator();
+
+    /// <summary>
     /// The settings manager for the application, which saves updated settings to disk.
     /// </summary>
 #pragma warning disable CS0169 // Field is never used
