@@ -223,6 +223,7 @@ public struct Struct
         DefaultValue = 1
     )]
     bool overlayUseTrinket = true;
+
     /// <summary>
     /// Whether the Counter Items Shop overlay is enabled.
     /// </summary>
@@ -239,15 +240,144 @@ public struct Struct
     )]
     bool overlayCounterBuild = true;
 
+    /// <summary>
+    /// Whether the program should launch on startup.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+        Prompt = "Launch on Startup",
+        Description = "Start the program when you log in to your computer.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Checkbox,
+        DefaultValue = 0
+    )]
     bool launchOnStartup = false;
-    bool autoUpdate = true;
-    bool closeToTray = false;
-    bool bringToFront = false;
-    bool saveWindowPosition = true;
-    bool detectNewAccounts = true;
 
-    int matchHistoryCount = 50;
-    int thresholdForPlayerFriend = 5;
+    /// <summary>
+    /// Whether the program should close to the system tray instead of actually
+    /// closing.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+        Prompt = "Close to System Tray",
+        Description = "Close the program to the system tray instead of actually "
+            + "closing - leaving the program running in the background in an even "
+            + "lighter state.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Checkbox,
+        DefaultValue = 0
+    )]
+    bool closeToTray = false;
+
+    /// <summary>
+    /// Whether the program should always be on top of other windows.
+    /// </summary>
+    /// <default>false</default>
+    [Setting(
+        Prompt = "Always on Top",
+        Description = "When the program opens new windows, they will always be on top "
+            + "of other windows.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Checkbox,
+        DefaultValue = 0
+    )]
+    bool bringToFront = false;
+
+    /// <summary>
+    /// Whether the program should save the position of the window.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+        Prompt = "Save Window Position",
+        Description = "When the program closes, it will remember the position of the "
+            + "window and open in the same position next time.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Checkbox,
+        DefaultValue = 1
+    )]
+    bool saveWindowPosition = true;
+
+    /// <summary>
+    /// How many matches should be loaded and shown on the match history screen.
+    /// </summary>
+    /// <default>30</default>
+    [Setting(
+        Prompt = "Match History Count",
+        Description = "How many matches should be loaded and shown on the match "
+            + "history screen.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Slider,
+        DefaultValue = 30
+    )]
+    int matchHistoryCount = 30;
+
+    /// <summary>
+    /// How many matches should be maintained in the background.
+    /// </summary>
+    /// <remarks>
+    /// This controls how many matches are downloaded in the background (when not in
+    /// a game and not actively using the app), an th maximum to keep downloaded.
+    /// These games won't be shown in Match History, but they will be cached for if
+    /// you navigate to them in another way (eg, a less-active friend has your 31st
+    /// game as their most recent), and the data from these matches will also be used
+    /// for Players Played With statistics and similar.
+    /// </remarks>
+    /// <default>150</default>
+    [Setting(
+        Prompt = "Background Match Count",
+        Description = "How many matches should be maintained in the background as "
+            + "fully cached matches.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Slider,
+        DefaultValue = 150
+    )]
+    int backgroundMatchesToLoad = 150;
+
+    /// <summary>
+    /// Similar to <see cref="backgroundMatchesToLoad"/>, but it is only rough match
+    /// data (e.g. win/loss and champion played), for Champion Pool data.
+    /// </summary>
+    /// <default>250</default>
+    [Setting(
+        Prompt = "Background Rough Match Count",
+        Description = "How many matches should be maintained in the background, but "
+            + "it's only rough match data (e.g. win/loss and champion played).",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Slider,
+        DefaultValue = 250
+    )]
+    int backgroundRoughMatchesToLoad = 250;
+
+    /// <summary>
+    /// The threshold to initially distinguish between a player that happened to be
+    /// in multiple games with you and a friend in a row.
+    /// </summary>
+    /// <default>3</default>
+    [Setting(
+        Prompt = "Number of Games in a Row to consider a Player a Friend",
+        Description = "The threshold of games in a row to initially distinguish "
+            + "between a player that happened to be in multiple games with "
+            + "you and a friend.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Slider,
+        DefaultValue = 3
+    )]
+    int thresholdInARowForPlayerFriend = 3;
+
+    /// <summary>
+    /// Similar to <see cref="thresholdInARowForPlayerFriend"/>, but for the total
+    /// games in history, included background history, to count a plyer as a friend.
+    /// </summary>
+    /// <default>7</default>
+    [Setting(
+        Prompt = "Total Number of Games in history to consider a Player a Friend",
+        Description = "The threshold of total games in history, included background "
+            + "history, to count a player as a friend.",
+        Group = SettingGroup.AppBehavior,
+        Type = SettingType.Slider,
+        DefaultValue = 7
+    )]
+    int thresholdForPlayerFriend = 7;
 
     bool showMyRank = true;
     bool showAllyRank = true;
@@ -257,6 +387,21 @@ public struct Struct
     bool showCurrentSession = false;
     bool showPreGameSeparate = false;
     bool autoClosePreGame = false;
+
+    /// <summary>
+    /// Whether new League accounts should automatically be detected from the League
+    /// client and be added to the program and switch to them.
+    /// </summary>
+    /// <default>true</default>
+    [Setting(
+        Prompt = "Detect New Accounts",
+        Description = "Automatically detect new League accounts from the League client "
+            + "and add them to the program and switch to them.",
+        Group = SettingGroup.AccountManagement,
+        Type = SettingType.Checkbox,
+        DefaultValue = 1
+    )]
+    bool detectNewAccounts = true;
 
     public Struct() { }
 }
