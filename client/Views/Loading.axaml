@@ -7,13 +7,13 @@
         d:DesignWidth="350" d:DesignHeight="600"
         Width="350" Height="600"
 
-        x:Class="client.Views.LoadingWindow"
-        x:DataType="vm:LoadingWindowViewModel">
+        x:Class="client.Views.LoadingView"
+        x:DataType="vm:Loading">
 
   <!-- Design time context -->
   <Design.DataContext>
 
-    <vm:LoadingWindowViewModel />
+    <vm:Loading />
 
   </Design.DataContext>
 

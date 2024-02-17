@@ -2,9 +2,9 @@
 
 namespace client.Views;
 
-public partial class LoadingWindow : Window
+public partial class LoadingView : Window
 {
-    public LoadingWindow()
+    public LoadingView()
     {
         InitializeComponent();
     }
