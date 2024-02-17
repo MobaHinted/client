@@ -34,5 +34,9 @@ public class Setting: Attribute
 
   public string? DependsOn { get; set; }
 
-  public int DefaultValue { get; set; }
+  public int DefaultValue { get; set; } = -1;
+
+  public int SliderMin { get; set; } = -1;
+  public int SliderMax { get; set; } = -1;
+  public int SliderStep { get; set; } = -1;
 }

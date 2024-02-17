@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using Avalonia.Controls;
-using Avalonia.Metadata;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace client.Models.Settings;
 
@@ -317,7 +314,10 @@ public struct Struct
                     + "history screen.",
       Group = SettingGroup.AppBehavior,
       Type = SettingType.Slider,
-      DefaultValue = 30
+      DefaultValue = 30,
+      SliderMin = 10,
+      SliderMax = 300,
+      SliderStep = 10
     )]
     int matchHistoryCount = 30;
 
@@ -339,7 +339,10 @@ public struct Struct
                     + "fully cached matches.",
       Group = SettingGroup.AppBehavior,
       Type = SettingType.Slider,
-      DefaultValue = 150
+      DefaultValue = 150,
+      SliderMin = 50,
+      SliderMax = 500,
+      SliderStep = 50
     )]
     int backgroundMatchesToLoad = 150;
 
@@ -355,9 +358,12 @@ public struct Struct
                     + "played).",
       Group = SettingGroup.AppBehavior,
       Type = SettingType.Slider,
-      DefaultValue = 250
+      DefaultValue = 250,
+      SliderMin = 100,
+      SliderMax = 1000,
+      SliderStep = 100
     )]
-    int backgroundRoughMatchesToLoad = 250;
+    int backgroundRoughMatchesToLoad = 300;
 
     /// <summary>
     /// The threshold to initially distinguish between a player that happened to be
