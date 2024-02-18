@@ -19,6 +19,7 @@ public static class Constants
         data + "champion_roles.json";
 
     public readonly static string rankedEmblemsFolder = assets + "ranked_emblems\\";
-    public readonly static string avaloniaConfigFile = assets + "avalonia.json";
-    public readonly static string settingsFile = assets + "settings.json";
+
+    public readonly static string avaloniaConfigFile = mobahinted + "avalonia.json";
+    public readonly static string settingsFile = mobahinted + "settings.json";
 }
