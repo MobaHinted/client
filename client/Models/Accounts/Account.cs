@@ -4,6 +4,7 @@
 using System.Text.Json;
 using Camille.Enums;
 using client.Models.Data;
+using client.Models.UIHelpers;
 
 namespace client.Models.Accounts;
 
@@ -13,6 +14,7 @@ public struct Account
     public string GameName { get; set; }
     public string TagLine { get; set; }
     public string RiotID { get; set; }
+    public string PUUID { get; set; }
 
     public PlatformRoute Region { get; set; }
     public RegionalRoute Continent { get; set; }
@@ -23,13 +25,42 @@ public struct Account
     /// <param name="gameName">The GameName from the user's Riot ID</param>
     /// <param name="tagLine">The TagLine from the user's Riot ID</param>
     /// <param name="region">The region the user is in</param>
-    public Account(string gameName, string tagLine, PlatformRoute region)
+    /// <param name="puuid">The user's found PUUID</param>
+    public Account(
+        string gameName,
+        string tagLine,
+        PlatformRoute region,
+        string puuid
+    )
     {
+        // Check if the account is already saved
+        FileManagement.loadFromFile(
+                Constants.usersFile,
+                out List<Account>? accounts
+            );
+        // If the file does not have a list of users
+        if (accounts is not default(List<Account>))
+        {
+            // Search for a user already existing with the given info
+            Account? account = accounts.Find(
+                    account => account.GameName == gameName
+                        && account.TagLine == tagLine
+                        && account.Region == region
+                );
+            // If the user is not found, throw an exception
+            if (account is not null)
+            {
+                throw new DataValidationError("Account already added.");
+            }
+        }
+
+        // Save the account data
         this.ID = Guid.NewGuid();
 
         this.GameName = gameName;
         this.TagLine = tagLine;
         this.RiotID = $"{this.GameName}#{this.TagLine}";
+        this.PUUID = puuid;
 
         this.Region = region;
         this.Continent = region.ToRegional();

@@ -5,7 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using Camille.Enums;
+using client.Models;
 using client.Models.Accounts;
+using client.Models.Data;
+using client.Models.UIHelpers;
 using ReactiveUI;
 using static System.Enum;
 
@@ -43,6 +46,8 @@ public class Login : ReactiveObject, IRoutableViewModel
     /// </summary>
     public Login(IScreen screen)
     {
+        Console.WriteLine("Loading the login screen...");
+
         // Save the previous screen
         this.HostScreen = screen;
 
@@ -177,10 +182,11 @@ public class Login : ReactiveObject, IRoutableViewModel
 
     public ReactiveCommand<Unit, Unit> SearchAndAddAccount { get; }
 
-    public string? UrlPathSegment
+    public string UrlPathSegment
     {
         get => "Login";
     }
+
     public IScreen HostScreen { get; }
 
     /// <summary>
@@ -278,16 +284,42 @@ public class Login : ReactiveObject, IRoutableViewModel
         {
             Console.WriteLine("Account Found!");
 
-            // Save the account
-            var account = new Account(
-                    this.GameName,
-                    this.TagLine,
-                    platform
-                );
-            account.save();
+            // Try to save the account
+            try
+            {
+                // Create the account
+                var account = new Account(
+                        this.GameName,
+                        this.TagLine,
+                        platform,
+                        puuid
+                    );
+                // Save the account
+                account.save();
 
-            // Set the active account to the new account
-            Program.Settings.activeAccount = account.ID;
+                // Set the active account to the new account
+                Program.Settings.activeAccount = account.ID;
+                Program.Account = account;
+            }
+            // If the account already exists, set the active account to the existing
+            // account
+            catch (DataValidationError)
+            {
+                // Load the accounts from disk
+                FileManagement.loadFromFile(
+                        Constants.usersFile,
+                        out List<Account>? accounts
+                    );
+                // Search for the account
+                Account account = accounts!.Find(
+                        account => account.GameName == this.GameName
+                            && account.TagLine == this._tagLine
+                            && account.Region == platform
+                    );
+                // Set the active account to the existing account
+                Program.Settings.activeAccount = account.ID;
+                Program.Account = account;
+            }
 
             // Navigate back to the loading screen
             Program.Router.Navigate.Execute(new Loading(this.HostScreen));

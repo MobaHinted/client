@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using client.Models.Accounts;
 using client.Models.Data;
 
 namespace client.Models.Settings;
@@ -116,6 +117,7 @@ public class Settings : INotifyPropertyChanged
             if (field?.FieldType == typeof(Guid?))
             {
                 this._activeAccount = Guid.Parse(setting.Value);
+                Program.Account = new Account((Guid)this._activeAccount);
             }
             else
             {
