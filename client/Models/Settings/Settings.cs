@@ -3,7 +3,9 @@
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using client.Models.Data;
 
 namespace client.Models.Settings;
 
@@ -83,6 +85,51 @@ public class Settings : INotifyPropertyChanged
                 propertyName,
                 value!
             );
+    }
+
+    public void load()
+    {
+        // Verify the file has any content
+        if (!FileManagement.fileHasContent(Constants.settingsFile))
+            return;
+
+        // Verify the file can be loaded
+        FileManagement.loadFromFile(
+                Constants.settingsFile,
+                out Dictionary<string, string>? settings
+            );
+        if (settings is null)
+            return;
+
+        Console.WriteLine("Loading settings from file...");
+
+        // Load the settings dictionary from the file
+        foreach (var setting in settings)
+        {
+            // Get the property from this class
+            FieldInfo? field = typeof(Settings).GetField(
+                    setting.Key,
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                );
+
+            // Set the field
+            if (field?.FieldType == typeof(Guid?))
+            {
+                this._activeAccount = Guid.Parse(setting.Value);
+            }
+            else
+            {
+                field!.SetValue(
+                        this,
+                        Convert.ChangeType(
+                                setting.Value,
+                                field.FieldType
+                            )
+                    );
+            }
+
+            Console.WriteLine($"...Loaded setting: {setting.Key} = {setting.Value}");
+        }
     }
 
     #region Non-User-Editable Settings

@@ -53,9 +53,8 @@ public class Login : ReactiveObject, IRoutableViewModel
         // from the platform, and the platform is used for the majority of calls
 
         // Find the index of the default platform: NA.
-        this.Region = this.Platforms.FindIndex(
-                platform => platform == "North America"
-            );
+        this.Region =
+            this.Platforms.FindIndex(platform => platform == "North America");
 
         // Set up a command to handle the button click
         this.SearchAndAddAccount = ReactiveCommand.Create(searchAndAddAccount);
@@ -177,7 +176,11 @@ public class Login : ReactiveObject, IRoutableViewModel
     public int Region { get; set; }
 
     public ReactiveCommand<Unit, Unit> SearchAndAddAccount { get; }
-    public string? UrlPathSegment { get; } = "Login";
+
+    public string? UrlPathSegment
+    {
+        get => "Login";
+    }
     public IScreen HostScreen { get; }
 
     /// <summary>
@@ -192,25 +195,24 @@ public class Login : ReactiveObject, IRoutableViewModel
         return GetValues<PlatformRoute>()
             .Where(value => value != PlatformRoute.PBE1)
             .Select(
-                    value =>
+                value =>
+                {
+                    string? description = value.GetType().GetField(value.ToString())!
+                        .GetCustomAttributes(
+                                typeof(DisplayAttribute),
+                                false
+                            )
+                        .Cast<DisplayAttribute>()
+                        .FirstOrDefault()
+                        ?.Description;
+
+                    if (description != null && description.EndsWith('.'))
                     {
-                        string? description =
-                            value.GetType().GetField(value.ToString())!
-                                .GetCustomAttributes(
-                                        typeof(DisplayAttribute),
-                                        false
-                                    )
-                                .Cast<DisplayAttribute>()
-                                .FirstOrDefault()
-                                ?.Description;
-
-                        if (description != null && description.EndsWith('.'))
-                        {
-                            description = description[..^1];
-                        }
-
-                        return description;
+                        description = description[..^1];
                     }
+
+                    return description;
+                }
                 )
             .ToList()!;
     }
@@ -233,23 +235,22 @@ public class Login : ReactiveObject, IRoutableViewModel
         PlatformRoute platform = GetValues<PlatformRoute>()
             .Where(value => value != PlatformRoute.PBE1)
             .First(
-                    value =>
-                    {
-                        string? description =
-                            value.GetType().GetField(value.ToString())!
-                                .GetCustomAttributes(
-                                        typeof(DisplayAttribute),
-                                        false
-                                    )
-                                .Cast<DisplayAttribute>()
-                                .FirstOrDefault()
-                                ?.Description;
+                value =>
+                {
+                    string? description = value.GetType().GetField(value.ToString())!
+                        .GetCustomAttributes(
+                                typeof(DisplayAttribute),
+                                false
+                            )
+                        .Cast<DisplayAttribute>()
+                        .FirstOrDefault()
+                        ?.Description;
 
-                        if (description != null && description.EndsWith('.'))
-                            description = description[..^1];
+                    if (description != null && description.EndsWith('.'))
+                        description = description[..^1];
 
-                        return description == this.Platforms[this.Region];
-                    }
+                    return description == this.Platforms[this.Region];
+                }
                 );
 
         RegionalRoute continent = platform.ToRegional();
@@ -284,10 +285,12 @@ public class Login : ReactiveObject, IRoutableViewModel
                     platform
                 );
             account.save();
+
+            // Set the active account to the new account
             Program.Settings.activeAccount = account.ID;
 
-            // TODO: Save account locally
-            // TODO: Open the main window
+            // Navigate back to the loading screen
+            Program.Router.Navigate.Execute(new Loading(this.HostScreen));
         }
     }
 }

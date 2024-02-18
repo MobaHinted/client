@@ -7,7 +7,7 @@ public static class Constants
 {
     private readonly static string appdata =
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\";
-    private readonly static string mobahinted = appdata + "mobahinted\\";
+    public readonly static string mobahinted = appdata + "mobahinted\\";
 
     public readonly static string assets = mobahinted + "assets\\";
     public readonly static string data = mobahinted + "data\\";

@@ -2,7 +2,7 @@
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
 using System.ComponentModel;
-using System.Text.Json;
+using client.Models.Data;
 
 namespace client.Models.Settings;
 
@@ -27,12 +27,29 @@ public class SettingsManager
         string setting = args.PropertyName!;
         object value = args.NewValue;
 
-        Console.WriteLine("Setting changed: " + setting + " to:");
-        string jsonString = JsonSerializer.Serialize(setting);
-        Console.WriteLine(jsonString);
-        jsonString = JsonSerializer.Serialize(value);
-        Console.WriteLine(jsonString);
+        Dictionary<string, string>? settings;
 
-        // TODO: Save the setting to disk
+        // Load the settings dictionary from the disk
+        if (FileManagement.fileHasContent(Constants.settingsFile))
+        {
+            FileManagement.loadFromFile(
+                    Constants.settingsFile,
+                    out settings
+                );
+        }
+        else
+        {
+            // If the file does not exist, create the dictionary
+            settings = new Dictionary<string, string>();
+        }
+
+        // Update the dictionary with the new value
+        settings![setting] = value.ToString()!;
+
+        // Save the dictionary to the disk
+        FileManagement.saveToFile(
+                Constants.settingsFile,
+                settings
+            );
     }
 }

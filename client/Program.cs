@@ -8,6 +8,7 @@ using client.Models.Settings;
 using client.Views;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using ReactiveUI;
 
 namespace client;
 
@@ -47,6 +48,11 @@ internal static class Program
     ///     Global settings for the application.
     /// </summary>
     public static Settings Settings { get; } = new Settings();
+
+    /// <summary>
+    ///     The router for the application, which handles navigation between views.
+    /// </summary>
+    public static RoutingState Router { get; set; }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
