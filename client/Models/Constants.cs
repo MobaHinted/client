@@ -2,17 +2,19 @@
 
 public static class Constants
 {
-    private static readonly string _appdata = Environment.GetFolderPath(
-        Environment.SpecialFolder.ApplicationData
-    );
-    public static readonly string Mobahinted = _appdata + "\\mobahinted\\";
-    public static readonly string Assets = Mobahinted + "assets\\";
-    public static readonly string Data = Mobahinted + "data\\";
-    public static readonly string Image_Cache = Data + "image_cache\\";
-    public static readonly string Ranked_Emblems = Assets + "ranked_emblems\\";
-    public static readonly string Champion_Data = Data + "champion_roles.dat";
-    public static readonly string Avalonia = Assets + "avalonia.ini";
-    public static readonly string Settings = Assets + "settings.dat";
-    public static readonly string Users = Data + "users.dat";
-    public static readonly string Friends = Data + "friends.dat";
+    private static readonly string appdata =
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\";
+
+    public static readonly string mobahinted = appdata + "mobahinted\\";
+    public static readonly string assets = mobahinted + "assets\\";
+    public static readonly string data = mobahinted + "data\\";
+
+    public static readonly string imageCacheFolder = data + "image_cache\\";
+    public static readonly string usersFile = data + "users.json";
+    public static readonly string friendsFile = data + "friends.json";
+    public static readonly string championRolesDataFile = data + "champion_roles.json";
+
+    public static readonly string rankedEmblemsFolder = assets + "ranked_emblems\\";
+    public static readonly string avaloniaConfigFile = assets + "avalonia.json";
+    public static readonly string settingsFile = assets + "settings.json";
 }

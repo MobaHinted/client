@@ -1,6 +1,3 @@
 ﻿namespace client.Models.Data;
 
-public class Download
-{
-  
-}
+public class Download { }

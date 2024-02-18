@@ -1,28 +1,24 @@
-﻿using Camille.Enums;
-using Camille.RiotGames;
-using client.Models.UIHelpers;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Camille.Enums;
+using Camille.RiotGames;
+using client.Models.UIHelpers;
 
 namespace client.Models.Accounts;
-
 
 /// <summary>
 /// Turn a ValidRiotIDStatus into a DataValidationErrorz
 /// </summary>
 public class RiotIDValidationError : DataValidationError
 {
-  /// <summary>
-  /// Turn a ValidRiotIDStatus into a DataValidationError
-  /// </summary>
-  /// <param name="specifiedError">The resulting RiotID status</param>
-  public RiotIDValidationError(ValidRiotIDStatus specifiedError) : base(
-    specifiedError.getDescription()
-  )
-  {
-  }
+    /// <summary>
+    /// Turn a ValidRiotIDStatus into a DataValidationError
+    /// </summary>
+    /// <param name="specifiedError">The resulting RiotID status</param>
+    public RiotIDValidationError(ValidRiotIDStatus specifiedError)
+        : base(specifiedError.getDescription()) { }
 }
 
 /// <summary>
@@ -30,46 +26,53 @@ public class RiotIDValidationError : DataValidationError
 /// </summary>
 public enum ValidRiotIDStatus
 {
-  /// <summary>
-  /// The Riot ID is valid
-  /// </summary>
-  [Description("Valid")]
-  valid,
-  /// <summary>
-  /// The Riot ID is too short
-  /// </summary>
-  [Description("Too Short")]
-  tooShort,
-  /// <summary>
-  /// The Game Name is too long
-  /// </summary>
-  [Description("Too long; 16 max")]
-  gameNameTooLong,
-  /// <summary>
-  /// The Tag Line is too long (5 max)
-  /// </summary>
-  [Description("Too long")]
-  tagLineTooLong,
-  /// <summary>
-  /// The Riot ID contains invalid characters
-  /// </summary>
-  [Description("Invalid")]
-  invalidCharacters,
-  /// <summary>
-  /// The Riot ID contains invalid phrases
-  /// </summary>
-  [Description("Invalid phrase")]
-  invalidPhrases,
-  /// <summary>
-  /// The Riot ID was not found (on this region)
-  /// </summary>
-  [Description("Riot ID not found")]
-  notFound,
-  /// <summary>
-  /// The Riot ID was found
-  /// </summary>
-  [Description("Found!")]
-  found,
+    /// <summary>
+    /// The Riot ID is valid
+    /// </summary>
+    [Description("Valid")]
+    valid,
+
+    /// <summary>
+    /// The Riot ID is too short
+    /// </summary>
+    [Description("Too Short")]
+    tooShort,
+
+    /// <summary>
+    /// The Game Name is too long
+    /// </summary>
+    [Description("Too long; 16 max")]
+    gameNameTooLong,
+
+    /// <summary>
+    /// The Tag Line is too long (5 max)
+    /// </summary>
+    [Description("Too long")]
+    tagLineTooLong,
+
+    /// <summary>
+    /// The Riot ID contains invalid characters
+    /// </summary>
+    [Description("Invalid")]
+    invalidCharacters,
+
+    /// <summary>
+    /// The Riot ID contains invalid phrases
+    /// </summary>
+    [Description("Invalid phrase")]
+    invalidPhrases,
+
+    /// <summary>
+    /// The Riot ID was not found (on this region)
+    /// </summary>
+    [Description("Riot ID not found")]
+    notFound,
+
+    /// <summary>
+    /// The Riot ID was found
+    /// </summary>
+    [Description("Found!")]
+    found,
 }
 
 /// <summary>
@@ -77,19 +80,19 @@ public enum ValidRiotIDStatus
 /// </summary>
 public static class EnumExtensions
 {
-  public static string getDescription(this Enum value)
-  {
-    // Search for the ValidRiotIDStatus
-    FieldInfo? field = value.GetType().GetField(value.ToString());
+    public static string getDescription(this Enum value)
+    {
+        // Search for the ValidRiotIDStatus
+        FieldInfo? field = value.GetType().GetField(value.ToString());
 
-    // Get the Description attribute
-    var attribute = Attribute.GetCustomAttribute(
-        field!, typeof(DescriptionAttribute)
-      ) as DescriptionAttribute;
+        // Get the Description attribute
+        var attribute =
+            Attribute.GetCustomAttribute(field!, typeof(DescriptionAttribute))
+            as DescriptionAttribute;
 
-    // Return the description, or the value itself if there is none
-    return attribute?.Description ?? value.ToString();
-  }
+        // Return the description, or the value itself if there is none
+        return attribute?.Description ?? value.ToString();
+    }
 }
 
 /// <summary>
@@ -97,121 +100,121 @@ public static class EnumExtensions
 /// </summary>
 public static class ValidateRiotID
 {
-  /// <summary>
-  /// The Regular Expression for known-invalid Riot ID characters
-  /// </summary>
-  /// <returns>Ready Regular Expression</returns>
-  [SuppressMessage("Performance","SYSLIB1045:Convert to \'GeneratedRegexAttribute\'.")]
-  private static Regex invalidIDCharacters()
-  {
-    return new Regex(@"[#*\/\\?!%]| {2,}");
-  }
-
-  /// <summary>
-  /// Minimum length for a GameName
-  /// </summary>
-  private const int MIN_GAME_NAME_LENGTH = 3;
-
-  /// <summary>
-  /// Maximum length for a GameName
-  /// </summary>
-  private const int MAX_GAME_NAME_LENGTH = 16;
-
-  /// <summary>
-  /// Minimum length for a TagLine
-  /// </summary>
-  private const int MIN_TAG_LINE_LENGTH = 3;
-
-  /// <summary>
-  /// Maximum length for a TagLine
-  /// </summary>
-  private const int MAX_TAG_LINE_LENGTH = 5;
-
-  /// <summary>
-  /// Whether a given GameName for a Riot ID is valid.
-  /// Checks for length and known-invalid characters.
-  /// </summary>
-  /// <param name="gameName">The given GameName</param>
-  /// <returns>Riot ID Validity Status enum</returns>
-  public static ValidRiotIDStatus gameName(string gameName)
-  {
-    if (invalidIDCharacters().IsMatch(gameName))
+    /// <summary>
+    /// The Regular Expression for known-invalid Riot ID characters
+    /// </summary>
+    /// <returns>Ready Regular Expression</returns>
+    [SuppressMessage("Performance", "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'.")]
+    private static Regex invalidIDCharacters()
     {
-      return ValidRiotIDStatus.invalidCharacters;
+        return new Regex(@"[#*\/\\?!%]| {2,}");
     }
 
-    switch (gameName.Length)
+    /// <summary>
+    /// Minimum length for a GameName
+    /// </summary>
+    private const int MIN_GAME_NAME_LENGTH = 3;
+
+    /// <summary>
+    /// Maximum length for a GameName
+    /// </summary>
+    private const int MAX_GAME_NAME_LENGTH = 16;
+
+    /// <summary>
+    /// Minimum length for a TagLine
+    /// </summary>
+    private const int MIN_TAG_LINE_LENGTH = 3;
+
+    /// <summary>
+    /// Maximum length for a TagLine
+    /// </summary>
+    private const int MAX_TAG_LINE_LENGTH = 5;
+
+    /// <summary>
+    /// Whether a given GameName for a Riot ID is valid.
+    /// Checks for length and known-invalid characters.
+    /// </summary>
+    /// <param name="gameName">The given GameName</param>
+    /// <returns>Riot ID Validity Status enum</returns>
+    public static ValidRiotIDStatus gameName(string gameName)
     {
-      case < MIN_GAME_NAME_LENGTH:
-        return ValidRiotIDStatus.tooShort;
-      case > MAX_GAME_NAME_LENGTH:
-        return ValidRiotIDStatus.gameNameTooLong;
+        if (invalidIDCharacters().IsMatch(gameName))
+        {
+            return ValidRiotIDStatus.invalidCharacters;
+        }
+
+        switch (gameName.Length)
+        {
+            case < MIN_GAME_NAME_LENGTH:
+                return ValidRiotIDStatus.tooShort;
+            case > MAX_GAME_NAME_LENGTH:
+                return ValidRiotIDStatus.gameNameTooLong;
+        }
+
+        return ValidRiotIDStatus.valid;
     }
 
-    return ValidRiotIDStatus.valid;
-  }
-
-  /// <summary>
-  /// Whether a given TagLine for a Riot ID is valid.
-  /// Checks for length and known-invalid characters.
-  /// </summary>
-  /// <param name="tagLine">The given TagLine</param>
-  /// <returns>Riot ID Validity Status enum</returns>
-  public static ValidRiotIDStatus tagLine(string tagLine)
-  {
-    if (invalidIDCharacters().IsMatch(tagLine))
+    /// <summary>
+    /// Whether a given TagLine for a Riot ID is valid.
+    /// Checks for length and known-invalid characters.
+    /// </summary>
+    /// <param name="tagLine">The given TagLine</param>
+    /// <returns>Riot ID Validity Status enum</returns>
+    public static ValidRiotIDStatus tagLine(string tagLine)
     {
-      return ValidRiotIDStatus.invalidCharacters;
+        if (invalidIDCharacters().IsMatch(tagLine))
+        {
+            return ValidRiotIDStatus.invalidCharacters;
+        }
+
+        switch (tagLine.Length)
+        {
+            case < MIN_TAG_LINE_LENGTH:
+                return ValidRiotIDStatus.tooShort;
+            case > MAX_TAG_LINE_LENGTH:
+                return ValidRiotIDStatus.tagLineTooLong;
+        }
+
+        return ValidRiotIDStatus.valid;
     }
 
-    switch (tagLine.Length)
+    /// <summary>
+    /// Whether a given Riot ID is valid.
+    /// </summary>
+    /// <param name="gameName">The given GameName</param>
+    /// <param name="tagLine">The given TagLine</param>
+    /// <returns>Whether it is a valid Riot ID</returns>
+    public static bool wholeID(string gameName, string tagLine)
     {
-      case < MIN_TAG_LINE_LENGTH:
-        return ValidRiotIDStatus.tooShort;
-      case > MAX_TAG_LINE_LENGTH:
-        return ValidRiotIDStatus.tagLineTooLong;
+        return ValidateRiotID.gameName(gameName) == ValidRiotIDStatus.valid
+            && ValidateRiotID.tagLine(tagLine) == ValidRiotIDStatus.valid;
     }
 
-    return ValidRiotIDStatus.valid;
-  }
+    /// <summary>
+    /// Just a cleaner, standard way to check if search() found a Riot ID
+    /// </summary>
+    /// <param name="potentialPUUID">A potential PUUID from search()</param>
+    /// <returns></returns>
+    public static bool exists(string potentialPUUID)
+    {
+        return potentialPUUID != "";
+    }
 
-  /// <summary>
-  /// Whether a given Riot ID is valid.
-  /// </summary>
-  /// <param name="gameName">The given GameName</param>
-  /// <param name="tagLine">The given TagLine</param>
-  /// <returns>Whether it is a valid Riot ID</returns>
-  public static bool wholeID(string gameName, string tagLine)
-  {
-    return ValidateRiotID.gameName(gameName) == ValidRiotIDStatus.valid
-           && ValidateRiotID.tagLine(tagLine) == ValidRiotIDStatus.valid;
-  }
-
-  /// <summary>
-  /// Just a cleaner, standard way to check if search() found a Riot ID
-  /// </summary>
-  /// <param name="potentialPUUID">A potential PUUID from search()</param>
-  /// <returns></returns>
-  public static bool exists(string potentialPUUID)
-  {
-    return potentialPUUID != "";
-  }
-
-  /// <summary>
-  /// Request a Riot account on a shard given a Riot ID
-  /// </summary>
-  /// <param name="gameName">The GamName half of a Riot ID</param>
-  /// <param name="tagLine">The TagLine half of a Riot ID</param>
-  /// <param name="continent">The continent that should be searched for the Riot ID</param>
-  /// <param name="potentialPUUID">The variable that will hold the PUUID or empty string</param>
-  public static void search(string gameName, string tagLine, RegionalRoute
-      continent, out string potentialPUUID)
-  {
-    potentialPUUID = Program.riotAPI.AccountV1()
-      .GetByRiotId(
-        continent,
-        gameName,
-        tagLine
-      )?.Puuid ?? "";
-  }
+    /// <summary>
+    /// Request a Riot account on a shard given a Riot ID
+    /// </summary>
+    /// <param name="gameName">The GamName half of a Riot ID</param>
+    /// <param name="tagLine">The TagLine half of a Riot ID</param>
+    /// <param name="continent">The continent that should be searched for the Riot ID</param>
+    /// <param name="potentialPUUID">The variable that will hold the PUUID or empty string</param>
+    public static void search(
+        string gameName,
+        string tagLine,
+        RegionalRoute continent,
+        out string potentialPUUID
+    )
+    {
+        potentialPUUID =
+            Program.riotAPI.AccountV1().GetByRiotId(continent, gameName, tagLine)?.Puuid ?? "";
+    }
 }
