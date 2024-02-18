@@ -1,80 +1,81 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="using:client.ViewModels"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="https://github.com/projektanker/icons.avalonia"
-        xmlns:reactiveUi="http://reactiveui.net" xmlns:app="using:client"
-        FontFamily="{StaticResource FiraMedium}" FontSize="16"
-        RenderOptions.BitmapInterpolationMode="HighQuality"
-        RenderOptions.EdgeMode="Antialias"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:vm="using:client.ViewModels"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             FontFamily="{StaticResource FiraMedium}" FontSize="16"
+             RenderOptions.BitmapInterpolationMode="HighQuality"
+             RenderOptions.EdgeMode="Antialias"
 
-        d:DesignWidth="350" d:DesignHeight="550"
+             d:DesignWidth="350" d:DesignHeight="550"
 
-        x:Class="client.Views.LoginView"
-        x:DataType="vm:Login">
+             x:Class="client.Views.LoginView"
+             x:DataType="vm:Login">
 
-  <!-- Content -->
+    <!-- Content -->
 
-  <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-              Orientation="Vertical"
-              MinWidth="220" Width="220" MaxWidth="220">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                Orientation="Vertical"
+                MinWidth="220" Width="220" MaxWidth="220">
 
-    <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold"
-               Text="Add your Riot Account" />
+        <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold"
+                   Text="Add your Riot Account" />
 
-    <Separator Margin="0 5 0 0" />
+        <Separator Margin="0 5 0 0" />
 
-    <Grid ColumnDefinitions="7*,*,3*" Margin="0 40 0 0" MinHeight="55">
-      <TextBox Grid.Column="0" TabIndex="0" VerticalAlignment="Top"
-               Watermark="Game Name" Text="{Binding GameName}" />
+        <Grid ColumnDefinitions="7*,*,3*" Margin="0 40 0 0" MinHeight="55">
+            <TextBox Grid.Column="0" TabIndex="0" VerticalAlignment="Top"
+                     Watermark="Game Name" Text="{Binding GameName}" />
 
-      <i:Icon Grid.Column="1" VerticalAlignment="Top" Value="fa-solid fa-hashtag"
-              Margin="0 9" />
+            <i:Icon Grid.Column="1" VerticalAlignment="Top"
+                    Value="fa-solid fa-hashtag"
+                    Margin="0 9" />
 
-      <TextBox Grid.Column="2" TabIndex="1" VerticalAlignment="Top"
-               Watermark="Tag" Text="{Binding TagLine}" />
-    </Grid>
+            <TextBox Grid.Column="2" TabIndex="1" VerticalAlignment="Top"
+                     Watermark="Tag" Text="{Binding TagLine}" />
+        </Grid>
 
-    <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
-      <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Text="Region" />
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
+            <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Text="Region" />
 
-      <ComboBox HorizontalAlignment="Stretch" AutoScrollToSelectedItem="True"
-                MaxDropDownHeight="250" TabIndex="2"
-                MinWidth="160" Width="160" MaxWidth="160"
-                ItemsSource="{Binding Platforms}"
-                SelectedIndex="{Binding Region}">
-        <!-- The below is just to make the width static while scrolling -->
-        <ComboBox.ItemsPanel>
-          <ItemsPanelTemplate>
-            <StackPanel />
-          </ItemsPanelTemplate>
-        </ComboBox.ItemsPanel>
-      </ComboBox>
+            <ComboBox HorizontalAlignment="Stretch" AutoScrollToSelectedItem="True"
+                      MaxDropDownHeight="250" TabIndex="2"
+                      MinWidth="160" Width="160" MaxWidth="160"
+                      ItemsSource="{Binding Platforms}"
+                      SelectedIndex="{Binding Region}">
+                <!-- The below is just to make the width static while scrolling -->
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+        </StackPanel>
+
+        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                TabIndex="3" IsEnabled="{Binding CanAdd}"
+                Command="{Binding SearchAndAddAccount}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Add" Margin="0 0 20 0" />
+                <i:Icon Value="fa-solid fa-plus" />
+            </StackPanel>
+        </Button>
+
+        <Label Classes="Danger" HorizontalContentAlignment="Center"
+               Content="{Binding ErrorResult}" />
+
+        <ProgressBar
+            Width="75"
+            Height="75"
+            Margin="20"
+            IsIndeterminate="True"
+            Background="Transparent"
+            Theme="{DynamicResource ProgressRing}"
+            ShowProgressText="False"
+            IsVisible="{Binding IsLoading}" />
     </StackPanel>
 
-    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-            TabIndex="3" IsEnabled="{Binding CanAdd}"
-            Command="{Binding SearchAndAddAccount}">
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Add" Margin="0 0 20 0" />
-        <i:Icon Value="fa-solid fa-plus" />
-      </StackPanel>
-    </Button>
-
-    <Label Classes="Danger" HorizontalContentAlignment="Center"
-           Content="{Binding ErrorResult}" />
-
-    <ProgressBar
-      Width="75"
-      Height="75"
-      Margin="20"
-      IsIndeterminate="True"
-      Background="Transparent"
-      Theme="{DynamicResource ProgressRing}"
-      ShowProgressText="False"
-      IsVisible="{Binding IsLoading}" />
-  </StackPanel>
-
-  <!-- /Content -->
+    <!-- /Content -->
 
 </UserControl>

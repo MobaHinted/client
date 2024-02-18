@@ -1,4 +1,8 @@
-﻿using Camille.Enums;
+﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+using System.Text.Json;
+using Camille.Enums;
 
 namespace client.Models.Accounts;
 
@@ -22,5 +26,11 @@ public struct Account
 
         this.Region = region;
         this.Continent = region.ToRegional();
+    }
+
+    public void save()
+    {
+        string jsonString = JsonSerializer.Serialize(this);
+        Console.WriteLine(jsonString);
     }
 }

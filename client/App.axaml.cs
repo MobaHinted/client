@@ -1,3 +1,6 @@
+// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -6,7 +9,7 @@ using client.Views;
 
 namespace client;
 
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize()
     {
@@ -15,8 +18,13 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+            desktop)
         {
+            desktop.MainWindow = new LoadingView()
+            {
+                DataContext = new Loading(),
+            };
         }
 
         base.OnFrameworkInitializationCompleted();

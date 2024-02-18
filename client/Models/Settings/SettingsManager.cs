@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+using System.ComponentModel;
 using System.Text.Json;
 
 namespace client.Models.Settings;
@@ -14,7 +17,11 @@ public class SettingsManager
     {
         // Just ensuring the value is being passed along correctly
         if (e is not PropertyChangedEventArgsWithValue args)
-            throw new ArgumentException("The new Value of the Setting must be provided.");
+        {
+            throw new ArgumentException(
+                    "The new Value of the Setting must be provided."
+                );
+        }
 
         // Save the values I need from the event
         string setting = args.PropertyName!;

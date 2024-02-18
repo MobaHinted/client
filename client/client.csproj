@@ -20,21 +20,21 @@
 
     <!-- Most NuGets -->
     <ItemGroup>
-        <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0" />
-        <PackageReference Include="Semi.Avalonia" Version="11.0.7" />
-        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.0.1" />
-        <PackageReference Include="ReactiveUI.Validation" Version="3.1.7" />
+        <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0"/>
+        <PackageReference Include="Semi.Avalonia" Version="11.0.7"/>
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.0.1"/>
+        <PackageReference Include="ReactiveUI.Validation" Version="3.1.7"/>
     </ItemGroup>
 
     <!-- Local Camille fork -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <ProjectReference Include="../../Camille/src/Camille.Enums/Camille.Enums.csproj" />
-        <ProjectReference Include="../../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj" />
+        <ProjectReference Include="../../Camille/src/Camille.Enums/Camille.Enums.csproj"/>
+        <ProjectReference Include="../../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj"/>
     </ItemGroup>
     <!-- Standard Camille -->
     <ItemGroup Condition="'$(Configuration)'!='Debug'">
-        <PackageReference Include="Camille.Enums" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
-        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01" />
+        <PackageReference Include="Camille.Enums" Version="3.0.0-nightly-2024-02-07-85cb341f01"/>
+        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-02-07-85cb341f01"/>
     </ItemGroup>
 
     <!-- Avalonia -->

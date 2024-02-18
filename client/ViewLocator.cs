@@ -1,8 +1,9 @@
-using System;
+// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
 using System.Data;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using client.ViewModels;
 using ReactiveUI;
 
 namespace client;
@@ -14,8 +15,11 @@ public class ViewLocator : IDataTemplate, IViewLocator
         if (data is null)
             return null;
 
-        var name = data.GetType().FullName!
-              .Replace("ViewModel", "View", StringComparison.Ordinal)
+        string name = data.GetType().FullName!.Replace(
+                    "ViewModel",
+                    "View",
+                    StringComparison.Ordinal
+                )
             + "View";
         var type = Type.GetType(name);
 

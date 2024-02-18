@@ -2,7 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="https://github.com/projektanker/icons.avalonia"
         xmlns:reactiveUi="http://reactiveui.net" xmlns:app="using:client"
         Icon="/Assets/logo.ico" Title="MobaHinted"
         FontFamily="{StaticResource FiraMedium}" FontSize="16"
@@ -17,38 +16,38 @@
         x:Class="client.Views.LoadingView"
         x:DataType="vm:Loading">
 
-  <!-- Design time context -->
-  <Design.DataContext>
+    <!-- Design time context -->
+    <Design.DataContext>
 
-    <vm:Loading />
+        <vm:Loading />
 
-  </Design.DataContext>
+    </Design.DataContext>
 
-  <!-- Content -->
-  <reactiveUi:RoutedViewHost Router="{Binding Router}">
-    <reactiveUi:RoutedViewHost.DefaultContent>
+    <!-- Content -->
+    <reactiveUi:RoutedViewHost Router="{Binding Router}">
+        <reactiveUi:RoutedViewHost.DefaultContent>
 
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"
-                   Text="{Binding Greeting}" />
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"
+                           Text="{Binding Greeting}" />
 
-        <ProgressBar
-          Width="75"
-          Height="75"
-          Margin="20"
-          IsIndeterminate="True"
-          Background="Transparent"
-          Theme="{DynamicResource ProgressRing}"
-          ShowProgressText="False" />
+                <ProgressBar
+                    Width="75"
+                    Height="75"
+                    Margin="20"
+                    IsIndeterminate="True"
+                    Background="Transparent"
+                    Theme="{DynamicResource ProgressRing}"
+                    ShowProgressText="False" />
 
-      </StackPanel>
+            </StackPanel>
 
-    </reactiveUi:RoutedViewHost.DefaultContent>
-    <reactiveUi:RoutedViewHost.ViewLocator>
-      <app:ViewLocator />
-    </reactiveUi:RoutedViewHost.ViewLocator>
-  </reactiveUi:RoutedViewHost>
+        </reactiveUi:RoutedViewHost.DefaultContent>
+        <reactiveUi:RoutedViewHost.ViewLocator>
+            <app:ViewLocator />
+        </reactiveUi:RoutedViewHost.ViewLocator>
+    </reactiveUi:RoutedViewHost>
 
-  <!-- /Content -->
+    <!-- /Content -->
 </Window>

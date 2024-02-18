@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -9,12 +12,12 @@ using client.Models.UIHelpers;
 namespace client.Models.Accounts;
 
 /// <summary>
-/// Turn a ValidRiotIDStatus into a DataValidationErrorz
+///     Turn a ValidRiotIDStatus into a DataValidationErrorz
 /// </summary>
 public class RiotIDValidationError : DataValidationError
 {
     /// <summary>
-    /// Turn a ValidRiotIDStatus into a DataValidationError
+    ///     Turn a ValidRiotIDStatus into a DataValidationError
     /// </summary>
     /// <param name="specifiedError">The resulting RiotID status</param>
     public RiotIDValidationError(ValidRiotIDStatus specifiedError)
@@ -22,61 +25,61 @@ public class RiotIDValidationError : DataValidationError
 }
 
 /// <summary>
-/// Returns for various results of Riot ID validation attempts
+///     Returns for various results of Riot ID validation attempts
 /// </summary>
 public enum ValidRiotIDStatus
 {
     /// <summary>
-    /// The Riot ID is valid
+    ///     The Riot ID is valid
     /// </summary>
     [Description("Valid")]
     valid,
 
     /// <summary>
-    /// The Riot ID is too short
+    ///     The Riot ID is too short
     /// </summary>
     [Description("Too Short")]
     tooShort,
 
     /// <summary>
-    /// The Game Name is too long
+    ///     The Game Name is too long
     /// </summary>
     [Description("Too long; 16 max")]
     gameNameTooLong,
 
     /// <summary>
-    /// The Tag Line is too long (5 max)
+    ///     The Tag Line is too long (5 max)
     /// </summary>
     [Description("Too long")]
     tagLineTooLong,
 
     /// <summary>
-    /// The Riot ID contains invalid characters
+    ///     The Riot ID contains invalid characters
     /// </summary>
     [Description("Invalid")]
     invalidCharacters,
 
     /// <summary>
-    /// The Riot ID contains invalid phrases
+    ///     The Riot ID contains invalid phrases
     /// </summary>
     [Description("Invalid phrase")]
     invalidPhrases,
 
     /// <summary>
-    /// The Riot ID was not found (on this region)
+    ///     The Riot ID was not found (on this region)
     /// </summary>
     [Description("Riot ID not found")]
     notFound,
 
     /// <summary>
-    /// The Riot ID was found
+    ///     The Riot ID was found
     /// </summary>
     [Description("Found!")]
     found,
 }
 
 /// <summary>
-/// Get the descriptor of a Riot ID status
+///     Get the descriptor of a Riot ID status
 /// </summary>
 public static class EnumExtensions
 {
@@ -86,9 +89,10 @@ public static class EnumExtensions
         FieldInfo? field = value.GetType().GetField(value.ToString());
 
         // Get the Description attribute
-        var attribute =
-            Attribute.GetCustomAttribute(field!, typeof(DescriptionAttribute))
-            as DescriptionAttribute;
+        var attribute = Attribute.GetCustomAttribute(
+                field!,
+                typeof(DescriptionAttribute)
+            ) as DescriptionAttribute;
 
         // Return the description, or the value itself if there is none
         return attribute?.Description ?? value.ToString();
@@ -96,43 +100,46 @@ public static class EnumExtensions
 }
 
 /// <summary>
-/// Class for verifying the validity of a Riot ID, its parts, and finding it
+///     Class for verifying the validity of a Riot ID, its parts, and finding it
 /// </summary>
 public static class ValidateRiotID
 {
     /// <summary>
-    /// The Regular Expression for known-invalid Riot ID characters
+    ///     Minimum length for a GameName
+    /// </summary>
+    private const int MIN_GAME_NAME_LENGTH = 3;
+
+    /// <summary>
+    ///     Maximum length for a GameName
+    /// </summary>
+    private const int MAX_GAME_NAME_LENGTH = 16;
+
+    /// <summary>
+    ///     Minimum length for a TagLine
+    /// </summary>
+    private const int MIN_TAG_LINE_LENGTH = 3;
+
+    /// <summary>
+    ///     Maximum length for a TagLine
+    /// </summary>
+    private const int MAX_TAG_LINE_LENGTH = 5;
+
+    /// <summary>
+    ///     The Regular Expression for known-invalid Riot ID characters
     /// </summary>
     /// <returns>Ready Regular Expression</returns>
-    [SuppressMessage("Performance", "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'.")]
+    [SuppressMessage(
+            "Performance",
+            "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'."
+        )]
     private static Regex invalidIDCharacters()
     {
         return new Regex(@"[#*\/\\?!%]| {2,}");
     }
 
     /// <summary>
-    /// Minimum length for a GameName
-    /// </summary>
-    private const int MIN_GAME_NAME_LENGTH = 3;
-
-    /// <summary>
-    /// Maximum length for a GameName
-    /// </summary>
-    private const int MAX_GAME_NAME_LENGTH = 16;
-
-    /// <summary>
-    /// Minimum length for a TagLine
-    /// </summary>
-    private const int MIN_TAG_LINE_LENGTH = 3;
-
-    /// <summary>
-    /// Maximum length for a TagLine
-    /// </summary>
-    private const int MAX_TAG_LINE_LENGTH = 5;
-
-    /// <summary>
-    /// Whether a given GameName for a Riot ID is valid.
-    /// Checks for length and known-invalid characters.
+    ///     Whether a given GameName for a Riot ID is valid.
+    ///     Checks for length and known-invalid characters.
     /// </summary>
     /// <param name="gameName">The given GameName</param>
     /// <returns>Riot ID Validity Status enum</returns>
@@ -155,8 +162,8 @@ public static class ValidateRiotID
     }
 
     /// <summary>
-    /// Whether a given TagLine for a Riot ID is valid.
-    /// Checks for length and known-invalid characters.
+    ///     Whether a given TagLine for a Riot ID is valid.
+    ///     Checks for length and known-invalid characters.
     /// </summary>
     /// <param name="tagLine">The given TagLine</param>
     /// <returns>Riot ID Validity Status enum</returns>
@@ -179,7 +186,7 @@ public static class ValidateRiotID
     }
 
     /// <summary>
-    /// Whether a given Riot ID is valid.
+    ///     Whether a given Riot ID is valid.
     /// </summary>
     /// <param name="gameName">The given GameName</param>
     /// <param name="tagLine">The given TagLine</param>
@@ -191,7 +198,7 @@ public static class ValidateRiotID
     }
 
     /// <summary>
-    /// Just a cleaner, standard way to check if search() found a Riot ID
+    ///     Just a cleaner, standard way to check if search() found a Riot ID
     /// </summary>
     /// <param name="potentialPUUID">A potential PUUID from search()</param>
     /// <returns></returns>
@@ -201,7 +208,7 @@ public static class ValidateRiotID
     }
 
     /// <summary>
-    /// Request a Riot account on a shard given a Riot ID
+    ///     Request a Riot account on a shard given a Riot ID
     /// </summary>
     /// <param name="gameName">The GamName half of a Riot ID</param>
     /// <param name="tagLine">The TagLine half of a Riot ID</param>
@@ -214,7 +221,14 @@ public static class ValidateRiotID
         out string potentialPUUID
     )
     {
-        potentialPUUID =
-            Program.riotAPI.AccountV1().GetByRiotId(continent, gameName, tagLine)?.Puuid ?? "";
+        potentialPUUID = Program
+                .riotAPI.AccountV1()
+                .GetByRiotId(
+                        continent,
+                        gameName,
+                        tagLine
+                    )
+                ?.Puuid
+            ?? "";
     }
 }
