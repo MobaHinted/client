@@ -4,6 +4,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
+using client.Models.Accounts;
 using client.Models.Settings;
 using client.Views;
 using Projektanker.Icons.Avalonia;
@@ -17,7 +18,7 @@ internal static class Program
     /// <summary>
     ///     The global window - mostly just for controlling window size.
     /// </summary>
-    public static LoadingView? Window;
+    public static LaunchView? Window;
 
     /// <summary>
     ///     The settings manager for the application, which saves updated settings to disk.
@@ -53,6 +54,8 @@ internal static class Program
     ///     The router for the application, which handles navigation between views.
     /// </summary>
     public static RoutingState Router { get; set; }
+
+    public static Account? Account { get; set; }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized

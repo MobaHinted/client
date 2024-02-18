@@ -21,9 +21,9 @@ public class App : Application
         if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
             desktop)
         {
-            desktop.MainWindow = new LoadingView()
+            desktop.MainWindow = new LaunchView()
             {
-                DataContext = new Loading(),
+                DataContext = new Launch(),
             };
         }
 

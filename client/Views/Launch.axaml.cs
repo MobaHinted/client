@@ -1,17 +1,15 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
-using Avalonia.ReactiveUI;
-using client.ViewModels;
-using ReactiveUI;
+using Avalonia.Controls;
 
 namespace client.Views;
 
-public partial class LoadingView : ReactiveUserControl<Loading>
+public partial class LaunchView : Window
 {
-    public LoadingView()
+    public LaunchView()
     {
-        this.WhenActivated(disposables => { });
+        Program.Window = this;
         InitializeComponent();
     }
 }
