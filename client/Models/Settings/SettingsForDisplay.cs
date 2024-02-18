@@ -1,6 +1,3 @@
 ﻿namespace client.Models.Settings;
 
-public class SettingsForDisplay
-{
-  
-}
+public class SettingsForDisplay { }

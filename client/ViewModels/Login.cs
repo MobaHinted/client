@@ -225,6 +225,11 @@ public class Login : ReactiveObject, IRoutableViewModel
         else
         {
             Console.WriteLine("Account Found!");
+
+            // Save the account
+            var account = new Account(this.GameName, this.TagLine, platform);
+            Program.Settings.activeAccount = account;
+
             // TODO: Save account locally
             // TODO: Open the main window
         }

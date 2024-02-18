@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using client.Models.Accounts;
 
 namespace client.Models.Settings;
 
@@ -437,16 +438,16 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Launch on Startup",
-      Description = "Start the program when you log in to your computer.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0
+        Prompt = "Launch on Startup",
+        Description = "Start the program when you log in to your computer.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0
     )]
     public bool launchOnStartup
     {
-      get => this._launchOnStartup;
-      set => SetProperty(ref this._launchOnStartup, value, nameof(this._launchOnStartup));
+        get => this._launchOnStartup;
+        set => SetProperty(ref this._launchOnStartup, value, nameof(this._launchOnStartup));
     }
 
     #endregion
@@ -461,18 +462,18 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Close to System Tray",
-      Description = "Close the program to the system tray instead of actually "
-                    + "closing - leaving the program running in the background in an even "
-                    + "lighter state.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0
+        Prompt = "Close to System Tray",
+        Description = "Close the program to the system tray instead of actually "
+            + "closing - leaving the program running in the background in an even "
+            + "lighter state.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0
     )]
     public bool closeToTray
     {
-      get => this._closeToTray;
-      set => SetProperty(ref this._closeToTray, value, nameof(this._closeToTray));
+        get => this._closeToTray;
+        set => SetProperty(ref this._closeToTray, value, nameof(this._closeToTray));
     }
 
     #endregion
@@ -486,17 +487,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Bring Windows to Front",
-      Description = "When the program opens new windows, they will open on top of "
-                    + "other programs.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0
+        Prompt = "Bring Windows to Front",
+        Description = "When the program opens new windows, they will open on top of "
+            + "other programs.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0
     )]
     public bool bringToFront
     {
-      get => this._bringToFront;
-      set => SetProperty(ref this._bringToFront, value, nameof(this._bringToFront));
+        get => this._bringToFront;
+        set => SetProperty(ref this._bringToFront, value, nameof(this._bringToFront));
     }
 
     #endregion
@@ -510,17 +511,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Save Window Position",
-      Description = "When the program closes, it will remember the position of the "
-                    + "window and open in the same position next time.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Save Window Position",
+        Description = "When the program closes, it will remember the position of the "
+            + "window and open in the same position next time.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool saveWindowPosition
     {
-      get => this._saveWindowPosition;
-      set => SetProperty(ref this._saveWindowPosition, value, nameof(this._saveWindowPosition));
+        get => this._saveWindowPosition;
+        set => SetProperty(ref this._saveWindowPosition, value, nameof(this._saveWindowPosition));
     }
 
     #endregion
@@ -534,20 +535,20 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>30</default>
     [SettingDisplay(
-      Prompt = "Match History Count",
-      Description = "How many matches should be loaded and shown on the match "
-                    + "history screen.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.slider,
-      DefaultValue = 30,
-      SliderMin = 10,
-      SliderMax = 300,
-      SliderStep = 10
+        Prompt = "Match History Count",
+        Description = "How many matches should be loaded and shown on the match "
+            + "history screen.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.slider,
+        DefaultValue = 30,
+        SliderMin = 10,
+        SliderMax = 300,
+        SliderStep = 10
     )]
     public int matchHistoryCount
     {
-      get => this._matchHistoryCount;
-      set => SetProperty(ref this._matchHistoryCount, value, nameof(this._matchHistoryCount));
+        get => this._matchHistoryCount;
+        set => SetProperty(ref this._matchHistoryCount, value, nameof(this._matchHistoryCount));
     }
 
     #endregion
@@ -569,20 +570,25 @@ public class Settings : INotifyPropertyChanged
     /// </remarks>
     /// <default>150</default>
     [SettingDisplay(
-      Prompt = "Background Match Count",
-      Description = "How many matches should be maintained in the background as "
-                    + "fully cached matches.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.slider,
-      DefaultValue = 150,
-      SliderMin = 50,
-      SliderMax = 500,
-      SliderStep = 50
+        Prompt = "Background Match Count",
+        Description = "How many matches should be maintained in the background as "
+            + "fully cached matches.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.slider,
+        DefaultValue = 150,
+        SliderMin = 50,
+        SliderMax = 500,
+        SliderStep = 50
     )]
     public int backgroundMatchesToLoad
     {
-      get => this._backgroundMatchesToLoad;
-      set => SetProperty(ref this._backgroundMatchesToLoad, value, nameof(this._backgroundMatchesToLoad));
+        get => this._backgroundMatchesToLoad;
+        set =>
+            SetProperty(
+                ref this._backgroundMatchesToLoad,
+                value,
+                nameof(this._backgroundMatchesToLoad)
+            );
     }
 
     #endregion
@@ -597,21 +603,26 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>250</default>
     [SettingDisplay(
-      Prompt = "Background Rough Match Count",
-      Description = "How many matches should be maintained in the background, but "
-                    + "it's only rough match data (e.g. win/loss and champion "
-                    + "played).",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.slider,
-      DefaultValue = 250,
-      SliderMin = 100,
-      SliderMax = 1000,
-      SliderStep = 100
+        Prompt = "Background Rough Match Count",
+        Description = "How many matches should be maintained in the background, but "
+            + "it's only rough match data (e.g. win/loss and champion "
+            + "played).",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.slider,
+        DefaultValue = 250,
+        SliderMin = 100,
+        SliderMax = 1000,
+        SliderStep = 100
     )]
     public int backgroundRoughMatchesToLoad
     {
-      get => this._backgroundRoughMatchesToLoad;
-      set => SetProperty(ref this._backgroundRoughMatchesToLoad, value, nameof(this._backgroundRoughMatchesToLoad));
+        get => this._backgroundRoughMatchesToLoad;
+        set =>
+            SetProperty(
+                ref this._backgroundRoughMatchesToLoad,
+                value,
+                nameof(this._backgroundRoughMatchesToLoad)
+            );
     }
 
     #endregion
@@ -626,18 +637,23 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>3</default>
     [SettingDisplay(
-      Prompt = "Number of Games in a Row to consider a Player a Friend",
-      Description = "The threshold of games in a row to initially distinguish "
-                    + "between a player that happened to be in multiple games with "
-                    + "you and a friend.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.slider,
-      DefaultValue = 3
+        Prompt = "Number of Games in a Row to consider a Player a Friend",
+        Description = "The threshold of games in a row to initially distinguish "
+            + "between a player that happened to be in multiple games with "
+            + "you and a friend.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.slider,
+        DefaultValue = 3
     )]
     public int thresholdInARowForPlayerFriend
     {
-      get => this._thresholdInARowForPlayerFriend;
-      set => SetProperty(ref this._thresholdInARowForPlayerFriend, value, nameof(this._thresholdInARowForPlayerFriend));
+        get => this._thresholdInARowForPlayerFriend;
+        set =>
+            SetProperty(
+                ref this._thresholdInARowForPlayerFriend,
+                value,
+                nameof(this._thresholdInARowForPlayerFriend)
+            );
     }
 
     #endregion
@@ -652,17 +668,22 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>7</default>
     [SettingDisplay(
-      Prompt = "Total Number of Games in history to consider a Player a Friend",
-      Description = "The threshold of total games in history, included background "
-                    + "history, to count a player as a friend.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.slider,
-      DefaultValue = 7
+        Prompt = "Total Number of Games in history to consider a Player a Friend",
+        Description = "The threshold of total games in history, included background "
+            + "history, to count a player as a friend.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.slider,
+        DefaultValue = 7
     )]
     public int thresholdForPlayerFriend
     {
-      get => this._thresholdForPlayerFriend;
-      set => SetProperty(ref this._thresholdForPlayerFriend, value, nameof(this._thresholdForPlayerFriend));
+        get => this._thresholdForPlayerFriend;
+        set =>
+            SetProperty(
+                ref this._thresholdForPlayerFriend,
+                value,
+                nameof(this._thresholdForPlayerFriend)
+            );
     }
 
     #endregion
@@ -676,17 +697,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Show My Rank to Me",
-      Description = "Show your rank in the program, on match history, your profile"
-                    + " and pre and post game screens.",
-      Group = SettingGroup.privacy,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Show My Rank to Me",
+        Description = "Show your rank in the program, on match history, your profile"
+            + " and pre and post game screens.",
+        Group = SettingGroup.privacy,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool showMyRank
     {
-      get => this._showMyRank;
-      set => SetProperty(ref this._showMyRank, value, nameof(this._showMyRank));
+        get => this._showMyRank;
+        set => SetProperty(ref this._showMyRank, value, nameof(this._showMyRank));
     }
 
     #endregion
@@ -700,17 +721,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Show Ally Ranks",
-      Description = "Show the ranks of your allies in the program, on pre and post "
-                    + "game screens. ",
-      Group = SettingGroup.privacy,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Show Ally Ranks",
+        Description = "Show the ranks of your allies in the program, on pre and post "
+            + "game screens. ",
+        Group = SettingGroup.privacy,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool showAllyRank
     {
-      get => this._showAllyRank;
-      set => SetProperty(ref this._showAllyRank, value, nameof(this._showAllyRank));
+        get => this._showAllyRank;
+        set => SetProperty(ref this._showAllyRank, value, nameof(this._showAllyRank));
     }
 
     #endregion
@@ -727,17 +748,17 @@ public class Settings : INotifyPropertyChanged
     /// </remarks>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Show Enemy Ranks",
-      Description = "Show the ranks of your enemies in the program, on pre and post "
-                    + "game screens.",
-      Group = SettingGroup.privacy,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Show Enemy Ranks",
+        Description = "Show the ranks of your enemies in the program, on pre and post "
+            + "game screens.",
+        Group = SettingGroup.privacy,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool showEnemyRank
     {
-      get => this._showEnemyRank;
-      set => SetProperty(ref this._showEnemyRank, value, nameof(this._showEnemyRank));
+        get => this._showEnemyRank;
+        set => SetProperty(ref this._showEnemyRank, value, nameof(this._showEnemyRank));
     }
 
     #endregion
@@ -751,17 +772,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Show Game Ranks",
-      Description = "Show the average ranks of the game in the program, on match "
-                    + "history, and post game screens.",
-      Group = SettingGroup.privacy,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Show Game Ranks",
+        Description = "Show the average ranks of the game in the program, on match "
+            + "history, and post game screens.",
+        Group = SettingGroup.privacy,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool showGameRanks
     {
-      get => this._showGameRanks;
-      set => SetProperty(ref this._showGameRanks, value, nameof(this._showGameRanks));
+        get => this._showGameRanks;
+        set => SetProperty(ref this._showGameRanks, value, nameof(this._showGameRanks));
     }
 
     #endregion
@@ -776,18 +797,18 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Show the Current Session Window",
-      Description = "Will open the Current Session window as a this-session match "
-                    + "history and performance screen, after the first game. Always"
-                    + " as a separate window.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 1
+        Prompt = "Show the Current Session Window",
+        Description = "Will open the Current Session window as a this-session match "
+            + "history and performance screen, after the first game. Always"
+            + " as a separate window.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 1
     )]
     public bool showCurrentSession
     {
-      get => this._showCurrentSession;
-      set => SetProperty(ref this._showCurrentSession, value, nameof(this._showCurrentSession));
+        get => this._showCurrentSession;
+        set => SetProperty(ref this._showCurrentSession, value, nameof(this._showCurrentSession));
     }
 
     #endregion
@@ -801,19 +822,19 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Show the In-Game Window",
-      Description = "Will open the In-Game window after the Pre-Game screen, always"
-                    + " as a separate window, displaying information that overlays"
-                    + " contain (such as gold differences, but at all times), and "
-                    + "more",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0
+        Prompt = "Show the In-Game Window",
+        Description = "Will open the In-Game window after the Pre-Game screen, always"
+            + " as a separate window, displaying information that overlays"
+            + " contain (such as gold differences, but at all times), and "
+            + "more",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0
     )]
     public bool showInGameScreen
     {
-      get => this._showInGameScreen;
-      set => SetProperty(ref this._showInGameScreen, value, nameof(this._showInGameScreen));
+        get => this._showInGameScreen;
+        set => SetProperty(ref this._showInGameScreen, value, nameof(this._showInGameScreen));
     }
 
     #endregion
@@ -828,17 +849,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Auto-Close In-Game Window",
-      Description = "Will automatically close the In-Game window once you're out of" + " game.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 1,
-      DependsOn = "showInGameScreen"
+        Prompt = "Auto-Close In-Game Window",
+        Description = "Will automatically close the In-Game window once you're out of" + " game.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 1,
+        DependsOn = "showInGameScreen"
     )]
     public bool autoCloseInGame
     {
-      get => this._autoCloseInGame;
-      set => SetProperty(ref this._autoCloseInGame, value, nameof(this._autoCloseInGame));
+        get => this._autoCloseInGame;
+        set => SetProperty(ref this._autoCloseInGame, value, nameof(this._autoCloseInGame));
     }
 
     #endregion
@@ -852,17 +873,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Show the Pre-Game Window",
-      Description = "Will open the Pre-Game window as a pre-game screen, always as a "
-                    + "separate window.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0
+        Prompt = "Show the Pre-Game Window",
+        Description = "Will open the Pre-Game window as a pre-game screen, always as a "
+            + "separate window.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0
     )]
     public bool showPreGameSeparate
     {
-      get => this._showPreGameSeparate;
-      set => SetProperty(ref this._showPreGameSeparate, value, nameof(this._showPreGameSeparate));
+        get => this._showPreGameSeparate;
+        set => SetProperty(ref this._showPreGameSeparate, value, nameof(this._showPreGameSeparate));
     }
 
     #endregion
@@ -876,17 +897,17 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>true</default>
     [SettingDisplay(
-      Prompt = "Auto-Close Pre-Game Window",
-      Description = "Will automatically close the Pre-Game window once you're in " + "game.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 1,
-      DependsOn = "showPreGameSeparate"
+        Prompt = "Auto-Close Pre-Game Window",
+        Description = "Will automatically close the Pre-Game window once you're in " + "game.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 1,
+        DependsOn = "showPreGameSeparate"
     )]
     public bool autoClosePreGame
     {
-      get => this._autoClosePreGame;
-      set => SetProperty(ref this._autoClosePreGame, value, nameof(this._autoClosePreGame));
+        get => this._autoClosePreGame;
+        set => SetProperty(ref this._autoClosePreGame, value, nameof(this._autoClosePreGame));
     }
 
     #endregion
@@ -901,18 +922,18 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <default>false</default>
     [SettingDisplay(
-      Prompt = "Show Build Suggestions Separately",
-      Description = "Will show the Build Suggestions element of the Pre-Game window "
-                    + "in a separate window, which auto-closes once you're in game.",
-      Group = SettingGroup.appBehavior,
-      Type = SettingType.checkbox,
-      DefaultValue = 0,
-      DependsOn = "showPreGameSeparate"
+        Prompt = "Show Build Suggestions Separately",
+        Description = "Will show the Build Suggestions element of the Pre-Game window "
+            + "in a separate window, which auto-closes once you're in game.",
+        Group = SettingGroup.appBehavior,
+        Type = SettingType.checkbox,
+        DefaultValue = 0,
+        DependsOn = "showPreGameSeparate"
     )]
     public bool showBuildsSeparate
     {
-      get => this._showBuildsSeparate;
-      set => SetProperty(ref this._showBuildsSeparate, value, nameof(this._showBuildsSeparate));
+        get => this._showBuildsSeparate;
+        set => SetProperty(ref this._showBuildsSeparate, value, nameof(this._showBuildsSeparate));
     }
 
     #endregion
@@ -949,7 +970,7 @@ public class Settings : INotifyPropertyChanged
 
     #region ActiveAccount
 
-    private Guid? _activeAccount;
+    private Account? _activeAccount;
 
     /// <summary>
     /// The active account.
@@ -961,7 +982,7 @@ public class Settings : INotifyPropertyChanged
         Group = SettingGroup.accountManagement,
         Type = SettingType.account
     )]
-    public Guid? activeAccount
+    public Account? activeAccount
     {
         get => this._activeAccount;
         set => SetProperty(ref this._activeAccount, value, nameof(this._activeAccount));
@@ -1050,11 +1071,7 @@ public class Settings : INotifyPropertyChanged
     /// <param name="value">The 'new' value</param>
     /// <param name="propertyName">The name of the property to update</param>
     /// <returns>Whether the setting actually changed with the 'new' value</returns>
-    private void SetProperty<T>(
-        ref T storage,
-        T value,
-        [CallerMemberName] string propertyName = ""
-    )
+    private void SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = "")
     {
         if (EqualityComparer<T>.Default.Equals(storage, value))
             return;
