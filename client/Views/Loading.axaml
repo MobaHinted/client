@@ -42,8 +42,6 @@
           Theme="{DynamicResource ProgressRing}"
           ShowProgressText="False" />
 
-        <Button Command="{Binding Go}" Content="go" />
-
       </StackPanel>
 
     </reactiveUi:RoutedViewHost.DefaultContent>
