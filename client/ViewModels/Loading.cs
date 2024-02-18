@@ -1,5 +1,5 @@
-﻿using client.Models.Data;
-using System.Reactive;
+﻿using System.Reactive;
+using client.Models.Data;
 using ReactiveUI;
 
 namespace client.ViewModels;
@@ -15,10 +15,10 @@ public class Loading : ReactiveObject, IScreen
 
     public Loading()
     {
-      if (Program.Settings.activeAccount == null)
-      {
-        this.Router.Navigate.Execute(new Login(this));
-        return;
-      }
+        if (Program.Settings.activeAccount == null)
+        {
+            this.Router.Navigate.Execute(new Login(this));
+            return;
+        }
     }
 }

@@ -34,7 +34,7 @@ public class Login : ReactiveObject, IRoutableViewModel
     /// <summary>
     /// Whether the button should be disabled due to an error
     /// </summary>
-    private bool _canAdd = false;
+    private bool _canAdd;
 
     /// <summary>
     /// Public version of _canAdd that is translated to "true" or "false"
@@ -46,9 +46,9 @@ public class Login : ReactiveObject, IRoutableViewModel
     }
 
     /// <summary>
-    /// Whether the loading spinner should disply
+    /// Whether the loading spinner should display
     /// </summary>
-    private bool _isLoading = false;
+    private bool _isLoading;
 
     /// <summary>
     /// Public version of _isLoading that is translated to "true" or "false"

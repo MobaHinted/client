@@ -8,8 +8,7 @@ indent_size = 2
 
 # Microsoft .NET properties
 csharp_new_line_before_members_in_object_initializers = false
-csharp_preferred_modifier_order = internal, public, protected, private, new, abstract, virtual, sealed, override, readonly, static, extern, unsafe, volatile, async, file, required:suggestion
-csharp_space_after_cast = true
+csharp_preferred_modifier_order = internal, private, protected, public, new, abstract, virtual, sealed, readonly, override, static, extern, unsafe, volatile, async, file, required:suggestion
 csharp_style_prefer_utf8_string_literals = true:suggestion
 csharp_style_var_for_built_in_types = false:suggestion
 dotnet_naming_rule.constants_rule.import_to_resharper = as_predefined
@@ -54,6 +53,12 @@ dotnet_naming_rule.unity_serialized_field_rule.resharper_guid = 5f0fdb63-c892-4d
 dotnet_naming_rule.unity_serialized_field_rule.severity = warning
 dotnet_naming_rule.unity_serialized_field_rule.style = lower_camel_case_style
 dotnet_naming_rule.unity_serialized_field_rule.symbols = unity_serialized_field_symbols
+dotnet_naming_rule.unity_serialized_field_rule_1.import_to_resharper = True
+dotnet_naming_rule.unity_serialized_field_rule_1.resharper_description = Unity serialized field
+dotnet_naming_rule.unity_serialized_field_rule_1.resharper_guid = 5f0fdb63-c892-4d2c-9324-15c80b22a7ef
+dotnet_naming_rule.unity_serialized_field_rule_1.severity = warning
+dotnet_naming_rule.unity_serialized_field_rule_1.style = lower_camel_case_style
+dotnet_naming_rule.unity_serialized_field_rule_1.symbols = unity_serialized_field_symbols_1
 dotnet_naming_style.all_upper_style.capitalization = all_upper
 dotnet_naming_style.all_upper_style.word_separator = _
 dotnet_naming_style.ilower_camel_case_style.capitalization = camel_case
@@ -87,7 +92,10 @@ dotnet_naming_symbols.unity_serialized_field_symbols.applicable_accessibilities 
 dotnet_naming_symbols.unity_serialized_field_symbols.applicable_kinds = 
 dotnet_naming_symbols.unity_serialized_field_symbols.resharper_applicable_kinds = unity_serialised_field
 dotnet_naming_symbols.unity_serialized_field_symbols.resharper_required_modifiers = instance
-dotnet_sort_system_directives_first = false
+dotnet_naming_symbols.unity_serialized_field_symbols_1.applicable_accessibilities = *
+dotnet_naming_symbols.unity_serialized_field_symbols_1.applicable_kinds = 
+dotnet_naming_symbols.unity_serialized_field_symbols_1.resharper_applicable_kinds = unity_serialised_field
+dotnet_naming_symbols.unity_serialized_field_symbols_1.resharper_required_modifiers = instance
 dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:none
 dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:none
 dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:none
@@ -101,45 +109,62 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggest
 
 # ReSharper properties
 resharper_accessor_owner_body = accessors_with_expression_body
-resharper_blank_lines_after_multiline_statements = 1
-resharper_blank_lines_before_block_statements = 1
+resharper_blank_lines_after_control_transfer_statements = 1
 resharper_braces_for_foreach = required
+resharper_braces_for_ifelse = required_for_multiline
 resharper_braces_redundant = false
-resharper_csharp_allow_far_alignment = true
-resharper_csharp_indent_size = 2
+resharper_cpp_indent_size = 4
+resharper_csharp_blank_lines_around_field = 0
+resharper_csharp_indent_size = 4
 resharper_csharp_insert_final_newline = true
 resharper_csharp_naming_rule.enum_member = aaBb
 resharper_csharp_naming_rule.other = aaBb
 resharper_csharp_tab_width = 2
-resharper_csharp_wrap_after_declaration_lpar = true
 resharper_csharp_wrap_after_invocation_lpar = true
 resharper_csharp_wrap_arguments_style = chop_if_long
 resharper_csharp_wrap_before_binary_opsign = true
-resharper_csharp_wrap_before_declaration_rpar = true
 resharper_csharp_wrap_before_invocation_rpar = true
-resharper_csharp_wrap_parameters_style = chop_if_long
 resharper_formatter_off_tag = @formatter:off
 resharper_formatter_on_tag = @formatter:on
 resharper_formatter_tags_enabled = true
 resharper_for_simple_types = use_var_when_evident
+resharper_fsharp_indent_size = 4
+resharper_fsharp_insert_final_newline = false
+resharper_html_indent_size = 4
+resharper_html_insert_final_newline = false
 resharper_keep_existing_expr_member_arrangement = false
 resharper_keep_existing_linebreaks = false
 resharper_max_invocation_arguments_on_line = 1
+resharper_object_creation_when_type_evident = explicitly_typed
 resharper_parentheses_redundancy_style = remove
-resharper_place_expr_accessor_on_single_line = true
+resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_expr_method_on_single_line = false
 resharper_place_expr_property_on_single_line = true
+resharper_place_field_attribute_on_same_line = false
 resharper_place_simple_embedded_statement_on_same_line = false
 resharper_place_simple_initializer_on_single_line = false
+resharper_resx_indent_size = 4
+resharper_resx_insert_final_newline = false
+resharper_shaderlab_indent_size = 4
+resharper_shaderlab_insert_final_newline = false
+resharper_T4_indent_size = 4
+resharper_T4_insert_final_newline = false
 resharper_trailing_comma_in_multiline_lists = true
 resharper_use_indent_from_vs = false
+resharper_vb_indent_size = 4
+resharper_vb_insert_final_newline = false
 resharper_wrap_array_initializer_style = chop_always
 resharper_wrap_before_eq = true
+resharper_wrap_before_first_method_call = true
+resharper_wrap_before_primary_constructor_declaration_rpar = true
 resharper_wrap_chained_binary_expressions = chop_if_long
-resharper_wrap_chained_method_calls = chop_always
+resharper_wrap_chained_method_calls = chop_if_long
 resharper_wrap_object_and_collection_initializer_style = chop_always
 resharper_wrap_property_pattern = chop_always
+resharper_xmldoc_indent_size = 4
+resharper_xmldoc_insert_final_newline = false
 resharper_xml_indent_size = 2
+resharper_xml_insert_final_newline = false
 resharper_xml_tab_width = 2
 
 # ReSharper inspection severities
@@ -169,6 +194,7 @@ indent_size = 4
 [*.cs]
 indent_style = space
 indent_size = 4
+tab_width = 2
 
 [{*.dtd,*.elt,*.ent,*.mod}]
 indent_style = space
@@ -220,6 +246,27 @@ indent_size = 4
 tab_width = 4
 
 [*.{appxmanifest,axaml,build,cs,dtd,nuspec,paml,uxml,xaml,xamlx,xoml,xsd}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+[.editorconfig]
+indent_style = space
+indent_size = 4
+
+[*.css]
+indent_style = space
+indent_size = 4
+
+[{*.ddl,*.fnc,*.pck,*.pkb,*.pks,*.pls,*.prc,*.sql,*.tpb,*.tps,*.trg,*.vw}]
+indent_style = space
+indent_size = 4
+
+[{*.fs,*.fsi,*.ml,*.mli}]
+indent_style = space
+indent_size = 4
+
+[*.{appxmanifest,axaml,build,dtd,nuspec,paml,uxml,xaml,xamlx,xoml,xsd}]
 indent_style = space
 indent_size = 2
 tab_width = 2
