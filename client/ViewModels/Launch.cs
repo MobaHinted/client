@@ -18,16 +18,16 @@ public class Launch : ReactiveObject, IScreen
         // Load the settings from disk
         Program.Settings.load();
 
+        // Create all the necessary files and directories
+        if (!Setup.allContentExists())
+            Setup.createAllContent();
+
         // Check if the user is logged in
         if (Program.Settings.activeAccount == null)
         {
             this.Router.Navigate.Execute(new Login(this));
             return;
         }
-
-        // Create all the necessary files and directories
-        if (!Setup.allContentExists())
-            Setup.createAllContent();
 
         // If all checks pass, navigate to the loading screen
         this.Router.Navigate.Execute(new Loading(this));
