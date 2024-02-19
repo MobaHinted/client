@@ -13,7 +13,11 @@ public static class Constants
     public readonly static string data = mobahinted + "data\\";
 
     public readonly static string imageCacheFolder = data + "image_cache\\";
+    public readonly static string imageCacheDataDragonFolder =
+        imageCacheFolder + "data_dragon\\";
     public readonly static string dataDragonFolder = data + "data_dragon\\";
+    public readonly static string dataDragonChampionFolder =
+        dataDragonFolder + "champions\\";
     public readonly static string usersFile = data + "users.json";
     public readonly static string friendsFile = data + "friends.json";
     public readonly static string championRolesDataFile =
