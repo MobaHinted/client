@@ -52,11 +52,6 @@ internal static class Program
     public static ProgramAssets Assets { get; } = new ProgramAssets();
 
     /// <summary>
-    ///     The current game version.
-    /// </summary>
-    public static string? LeagueVersion { get; set; }
-
-    /// <summary>
     ///     Global settings for the application.
     /// </summary>
     public static Settings Settings { get; } = new Settings();
