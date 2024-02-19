@@ -28,6 +28,12 @@
             Theme="{DynamicResource ProgressRing}"
             ShowProgressText="False" />
 
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                   Text="{Binding Status}" />
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                   MinWidth="176" TextAlignment="Center"
+                   Text="{Binding SubStatus}" />
+
     </StackPanel>
 
     <!-- /Content -->

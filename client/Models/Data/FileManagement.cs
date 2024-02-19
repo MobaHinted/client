@@ -52,4 +52,24 @@ public static class FileManagement
     {
         File.Create(path).Close();
     }
+
+    public static void deleteFile(string path)
+    {
+        File.Delete(path);
+    }
+
+    public static void emptyDirectory(string path)
+    {
+        var directory = new DirectoryInfo(path);
+
+        foreach (FileInfo file in directory.GetFiles())
+        {
+            file.Delete();
+        }
+
+        foreach (DirectoryInfo subDirectory in directory.GetDirectories())
+        {
+            subDirectory.Delete(true);
+        }
+    }
 }

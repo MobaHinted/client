@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
 using client.Models.Accounts;
+using client.Models.Data;
 using client.Models.Settings;
 using client.Views;
 using Projektanker.Icons.Avalonia;
@@ -46,6 +47,16 @@ internal static class Program
     }
 
     /// <summary>
+    ///     Global Assets manager for the application.
+    /// </summary>
+    public static ProgramAssets Assets { get; } = new ProgramAssets();
+
+    /// <summary>
+    ///     The current game version.
+    /// </summary>
+    public static string? LeagueVersion { get; set; }
+
+    /// <summary>
     ///     Global settings for the application.
     /// </summary>
     public static Settings Settings { get; } = new Settings();
@@ -55,7 +66,10 @@ internal static class Program
     /// </summary>
     public static RoutingState Router { get; set; }
 
-    public static Account? Account { get; set; }
+    /// <summary>
+    ///     The active user account.
+    /// </summary>
+    public static Account Account { get; set; }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
