@@ -10,35 +10,53 @@ public class Loading : ReactiveObject, IRoutableViewModel
     /// <summary>
     ///     What the loading screen is currently doing.
     /// </summary>
-    private string _status;
+    private string _status = string.Empty;
     /// <summary>
     ///     What the loading screen is currently doing, more specifically.
     /// </summary>
-    private string _subStatus;
+    private string _subStatus = string.Empty;
 
     public Loading(IScreen? screen = null)
     {
         Console.WriteLine("Loading the application...");
 
         // Save the previous screen
-        this.HostScreen = screen;
+        this.HostScreen = screen!;
 
-        Program.Assets.checkForUpdates(
-                (status, subStatus) =>
-                {
-                    this.RaiseAndSetIfChanged(
-                            ref this._status!,
-                            status,
-                            nameof(this.Status)
-                        );
+        // Check for updates to static data
+        Task
+            .Run(
+                    () => Program.Assets.checkForUpdates(
+                            loadIn,
+                            (status, subStatus) =>
+                            {
+                                this.RaiseAndSetIfChanged(
+                                        ref this._status!,
+                                        status,
+                                        nameof(this.Status)
+                                    );
 
-                    this.RaiseAndSetIfChanged(
-                            ref this._subStatus!,
-                            subStatus,
-                            nameof(this.SubStatus)
-                        );
-                }
-            );
+                                this.RaiseAndSetIfChanged(
+                                        ref this._subStatus!,
+                                        subStatus,
+                                        nameof(this.SubStatus)
+                                    );
+                            }
+                        )
+                )
+            .ContinueWith(t => loadIn());
+    }
+
+    public void loadIn()
+    {
+        Console.WriteLine(">> actually loading now");
+
+        // Clear the status
+        this.Status = string.Empty;
+        this.SubStatus = string.Empty;
+
+        // Navigate to the Match History screen
+        Program.Router.Navigate.Execute(new MatchHistory(this.HostScreen));
     }
 
     /// <summary>
@@ -72,5 +90,5 @@ public class Loading : ReactiveObject, IRoutableViewModel
         get => "Loading";
     }
 
-    public IScreen? HostScreen { get; }
+    public IScreen HostScreen { get; }
 }
