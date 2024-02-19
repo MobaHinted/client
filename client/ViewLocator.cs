@@ -26,6 +26,8 @@ public class ViewLocator : IDataTemplate, IViewLocator
         if (type == null)
             throw new EvaluateException("View not found: " + name);
 
+        Console.WriteLine("Building view: " + name);
+
         var control = (Control)Activator.CreateInstance(type)!;
         control.DataContext = data;
         return control;
