@@ -35,8 +35,8 @@ internal static class Program
     public readonly static RiotGamesApi riotAPI = RiotGamesApi.NewInstance(
             new RiotGamesApiConfig.Builder("")
             {
-                MaxConcurrentRequests = 30,
-                Retries = 3,
+                MaxConcurrentRequests = 300,
+                Retries = 5,
                 ApiURL = "proxy.mobahinted.app",
             }.Build()
         );

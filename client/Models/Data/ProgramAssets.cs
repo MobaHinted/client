@@ -185,7 +185,6 @@ public class ProgramAssets
     /// <param name="updateStatus">The action to update the status text</param>
     /// <seealso cref="setup" />
     public async void checkForUpdates(
-        Action callback,
         Action<string, string> updateStatus
     )
     {
@@ -227,11 +226,8 @@ public class ProgramAssets
 
             // If the latest version is the same as the current version, bail
             if (versions!.latestVersion == this.Version)
-            {
                 // Finish the loading screen
-                //callback();
                 return;
-            }
         }
 
         // Re-download the data dragon files if no check bailed the process
@@ -239,9 +235,6 @@ public class ProgramAssets
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
         FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
         await setup(updateStatus);
-
-        // Finish the loading screen
-        //callback();
     }
 
     /// <summary>
