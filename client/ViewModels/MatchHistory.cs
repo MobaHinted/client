@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using Camille.RiotGames;
+using client.Models;
 using client.Models.Data;
 using ReactiveUI;
 
@@ -14,7 +15,13 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
 
     public MatchHistory(IScreen? screen = null)
     {
-        Console.WriteLine("Loading match history...");
+        Program.log(
+                source: nameof(MatchHistory),
+                method: "ctor()",
+                doing: "Loading",
+                message: "Match History View",
+                logLevel: LogLevel.info
+            );
 
         // Save the previous screen
         this.HostScreen = screen!;

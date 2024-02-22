@@ -1,6 +1,7 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+using client.Models;
 using ReactiveUI;
 
 namespace client.ViewModels;
@@ -19,7 +20,13 @@ public class Loading : ReactiveObject, IRoutableViewModel
 
     public Loading(IScreen? screen = null)
     {
-        Console.WriteLine("Loading the application...");
+        Program.log(
+                source: nameof(Loading),
+                method: "ctor()",
+                doing: "Loading",
+                message: "Loading View",
+                logLevel: LogLevel.info
+            );
 
         // Save the previous screen
         this.HostScreen = screen!;

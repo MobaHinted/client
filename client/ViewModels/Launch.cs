@@ -1,6 +1,7 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+using client.Models;
 using client.Models.Data;
 using ReactiveUI;
 
@@ -10,7 +11,13 @@ public class Launch : ReactiveObject, IScreen
 {
     public Launch()
     {
-        Console.WriteLine("Launching the application...");
+        Program.log(
+                source: nameof(Launch),
+                method: "ctor()",
+                doing: "Loading",
+                message: "Launch View",
+                logLevel: LogLevel.info
+            );
 
         // Set the program router to this instance
         Program.Router = this.Router;

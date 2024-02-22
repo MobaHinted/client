@@ -4,6 +4,7 @@
 using System.Data;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using client.Models;
 using ReactiveUI;
 
 namespace client;
@@ -24,9 +25,28 @@ public class ViewLocator : IDataTemplate, IViewLocator
         var type = Type.GetType(name);
 
         if (type == null)
-            throw new EvaluateException("View not found: " + name);
+        {
+            var error = new EvaluateException("View not found: " + name);
 
-        Console.WriteLine("Building view: " + name);
+            Program.log(
+                    source: nameof(ViewLocator),
+                    method: "Build()",
+                    message: "Building View" + error.Message,
+                    debugSymbols:
+                    [$"from: {data.GetType().FullName!}", $"to: {name}"],
+                    logLevel: LogLevel.fatal
+                );
+
+            throw error;
+        }
+
+        Program.log(
+                source: nameof(ViewLocator),
+                method: "Build()",
+                message: "Building View",
+                debugSymbols: [$"name: {name}"],
+                logLevel: LogLevel.debug
+            );
 
         var control = (Control)Activator.CreateInstance(type)!;
         control.DataContext = data;

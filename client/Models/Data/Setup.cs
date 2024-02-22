@@ -27,7 +27,22 @@ public static class Setup
 
     public static bool allContentExists()
     {
-        return allFilesExist() && allDirectoriesExist();
+        bool filesExist = allFilesExist();
+        bool directoriesExist = allDirectoriesExist();
+
+        Program.log(
+                source: nameof(Setup),
+                method: "allContentExists()",
+                message: "Checking if all necessary files and directories exist...",
+                debugSymbols:
+                [
+                    $"files: {filesExist}",
+                    $"directories: {directoriesExist}",
+                ],
+                logLevel: LogLevel.debug
+            );
+
+        return filesExist && directoriesExist;
     }
 
     private static void createAllFiles()
@@ -52,6 +67,13 @@ public static class Setup
 
     public static void createAllContent()
     {
+        Program.log(
+                source: nameof(Setup),
+                method: "createAllContent()",
+                message: "Creating all necessary files and directories...",
+                logLevel: LogLevel.info
+            );
+
         createAllDirectories();
         createAllFiles();
     }

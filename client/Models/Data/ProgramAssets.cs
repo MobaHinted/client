@@ -24,9 +24,18 @@ public class ProgramAssets
         // Ensure the type is from the DataDragon namespace
         if (!typeof(T).Namespace!.Contains("DataDragon"))
         {
-            throw new ArgumentException(
+            var error = new ArgumentException(
                     "Type must be from the DataDragon namespace"
                 );
+            Program.log(
+                    source: nameof(ProgramAssets),
+                    method: "getDataDragon()",
+                    message: "Type must be from the DataDragon namespace\n" + error,
+                    debugSymbols: [typeof(T).Name],
+                    url: url,
+                    logLevel: LogLevel.fatal
+                );
+            throw error;
         }
 
         try
@@ -40,19 +49,24 @@ public class ProgramAssets
             // Return the response, deserialized into the given type, if not Simple
             if (!typeof(Simple).IsAssignableFrom(typeof(T)))
             {
-                Console.WriteLine(
-                        "Downloading: "
-                        + typeof(T).Name
-                        + " (complex) "
-                        + "["
-                        + url
-                        + "]"
+                Program.log(
+                        source: nameof(ProgramAssets),
+                        method: "getDataDragon()",
+                        doing: "Downloading",
+                        message: typeof(T).Name + " (complex)",
+                        url: url,
+                        logLevel: LogLevel.debug
                     );
                 return JsonSerializer.Deserialize<T>(result.Result)!;
             }
 
-            Console.WriteLine(
-                    "Downloading: " + typeof(T).Name + " (simple) " + "[" + url + "]"
+            Program.log(
+                    source: nameof(ProgramAssets),
+                    method: "getDataDragon()",
+                    doing: "Downloading",
+                    message: typeof(T).Name + " (simple)",
+                    url: url,
+                    logLevel: LogLevel.debug
                 );
 
             // Get the type of the first variable in T, and save the variable
@@ -192,23 +206,53 @@ public class ProgramAssets
                 ""
             );
 
+        bool haveFiles = noMissingFiles();
+        bool versionUp = versionUpToDate();
+
+        Program.log(
+                source: nameof(ProgramAssets),
+                method: "checkForUpdates()",
+                message: "Checking if update is necessary...",
+                debugSymbols:
+                [
+                    $"files: {haveFiles}",
+                    $"version: {versionUp}",
+                ],
+                logLevel: LogLevel.debug
+            );
+
         // Check if all files are accessible and the version is up to date
-        if (noMissingFiles() && versionUpToDate())
+        if (haveFiles && versionUp)
         {
-            Console.WriteLine($"Already on {this.Version}");
+            Program.log(
+                    source: nameof(ProgramAssets),
+                    method: "checkForUpdates()",
+                    message: $"Already on {this.Version}",
+                    logLevel: LogLevel.info
+                );
             await Task.Delay(1200);
             return;
         }
 
         // Re-download the data dragon files if no check bailed the process
-        Console.WriteLine($"Updating to {this.Version}...");
+        Program.log(
+                source: nameof(ProgramAssets),
+                method: "checkForUpdates()",
+                message: $"Updating to {this.Version}...",
+                logLevel: LogLevel.info
+            );
         FileManagement.emptyDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
         FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
         await setup(updateStatus);
 
         // Succeed
-        Console.WriteLine("Updated");
+        Program.log(
+                source: nameof(ProgramAssets),
+                method: "checkForUpdates()",
+                message: "Updated",
+                logLevel: LogLevel.info
+            );
     }
 
     /// <summary>
@@ -668,9 +712,21 @@ public class ProgramAssets
     /// </summary>
     private void getRankImages()
     {
-        Console.WriteLine($"Downloading: Ranked Icons... [{this.RankedEmblemsURL}]");
-
         string folder = Constants.imageCacheDataDragonFolder;
+
+        Program.log(
+                source: nameof(ProgramAssets),
+                method: "getRankImages()",
+                doing: "Downloading",
+                message: "Ranked Images",
+                debugSymbols:
+                [
+                    $"path: {folder}",
+                    "size: 256",
+                ],
+                url: this.RankedEmblemsURL,
+                logLevel: LogLevel.debug
+            );
 
         // Skip downloading if the images already exist
         if (FileManagement.fileHasContent(folder + "rank.Emerald.png"))

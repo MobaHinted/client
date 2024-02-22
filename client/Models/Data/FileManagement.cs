@@ -112,7 +112,19 @@ public static class FileManagement
         )]
     public static void downloadImage(string url, string path, int size = 128)
     {
-        Console.WriteLine($"Downloading image... [{url}]");
+        Program.log(
+                source: nameof(FileManagement),
+                method: "downloadImage()",
+                doing: "Downloading",
+                message: "Image",
+                debugSymbols:
+                [
+                    $"path: {path}",
+                    $"size: {size}",
+                ],
+                url: url,
+                logLevel: LogLevel.debug
+            );
 
         // Download the image
         var client = new HttpClient();

@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
 using Camille.RiotGames.Enums;
+using client.Models;
 using client.Models.Accounts;
 using client.Models.Data;
 using client.Models.Settings;
@@ -59,6 +60,14 @@ internal static class Program
     public static Settings Settings { get; } = new Settings();
 
     /// <summary>
+    ///     Global logging for the application, but not for direct usage.
+    /// </summary>
+    /// <seealso cref="Models.Logging" />
+    /// <seealso cref="Models.Logging.log" />
+    /// <seealso cref="Log" />
+    private static Logging Logging { get; } = new Logging();
+
+    /// <summary>
     ///     The router for the application, which handles navigation between views.
     /// </summary>
     public static RoutingState Router { get; set; }
@@ -67,6 +76,45 @@ internal static class Program
     ///     The active user account.
     /// </summary>
     public static Account Account { get; set; }
+
+
+    /// <summary>
+    ///     The global logging function for the application.
+    /// </summary>
+    /// <seealso cref="Models.Logging.log" />
+    /// <param name="logTo">How the log should be displayed</param>
+    /// <param name="source"></param>
+    /// <param name="method"></param>
+    /// <param name="doing"></param>
+    /// <param name="message"></param>
+    /// <param name="debugSymbols"></param>
+    /// <param name="url"></param>
+    /// <param name="logLevel"></param>
+    /// <param name="logLocation"></param>
+    public static void log(
+        LogTo logTo = LogTo.file | LogTo.console,
+        string source = "",
+        string method = "",
+        string doing = "",
+        string message = "",
+        string[]? debugSymbols = null,
+        string url = "",
+        LogLevel logLevel = LogLevel.debug,
+        LogLocation logLocation = LogLocation.main
+    )
+    {
+        Logging.log(
+                logTo,
+                source,
+                method,
+                doing,
+                message,
+                debugSymbols ?? Array.Empty<string>(),
+                url,
+                logLevel,
+                logLocation
+            );
+    }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized

@@ -46,7 +46,13 @@ public class Login : ReactiveObject, IRoutableViewModel
     /// </summary>
     public Login(IScreen screen)
     {
-        Console.WriteLine("Loading the login screen...");
+        Program.log(
+                source: nameof(Login),
+                method: "ctor()",
+                doing: "Loading",
+                message: "Login View",
+                logLevel: LogLevel.info
+            );
 
         // Save the previous screen
         this.HostScreen = screen;

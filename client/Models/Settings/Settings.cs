@@ -102,7 +102,13 @@ public class Settings : INotifyPropertyChanged
         if (settings is null)
             return;
 
-        Console.WriteLine("Loading settings from file...");
+        Program.log(
+                source: nameof(Settings),
+                method: "load()",
+                doing: "Loading",
+                message: "Settings from file",
+                logLevel: LogLevel.info
+            );
 
         // Load the settings dictionary from the file
         foreach (var setting in settings)
@@ -130,7 +136,16 @@ public class Settings : INotifyPropertyChanged
                     );
             }
 
-            Console.WriteLine($"...Loaded setting: {setting.Key} = {setting.Value}");
+            Program.log(
+                    source: nameof(Settings),
+                    method: "load()",
+                    message: "Loaded Setting",
+                    debugSymbols:
+                    [
+                        $"{setting.Key}: {setting.Value}",
+                    ],
+                    logLevel: LogLevel.debug
+                );
         }
     }
 
