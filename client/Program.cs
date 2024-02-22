@@ -4,6 +4,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
+using Camille.RiotGames.Enums;
 using client.Models.Accounts;
 using client.Models.Data;
 using client.Models.Settings;
@@ -38,7 +39,7 @@ internal static class Program
                 MaxConcurrentRequests = 300,
                 Retries = 5,
                 ApiUrl = "proxy.mobahinted.app",
-                ApiCallRegionConfig = RegionConfig.inUrlAsRegionQueryParameter,
+                ApiCallRegionConfig = RegionConfig.InUrlAsRegionQueryParameter,
             }.Build()
         );
 
