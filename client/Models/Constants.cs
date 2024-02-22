@@ -12,9 +12,6 @@ public static class Constants
     public readonly static string assets = mobahinted + "assets\\";
     public readonly static string data = mobahinted + "data\\";
 
-    public readonly static string imageCacheFolder = data + "image_cache\\";
-    public readonly static string imageCacheDataDragonFolder =
-        imageCacheFolder + "data_dragon\\";
     public readonly static string dataDragonFolder = data + "data_dragon\\";
     public readonly static string dataDragonChampionFolder =
         dataDragonFolder + "champions\\";
@@ -23,7 +20,9 @@ public static class Constants
     public readonly static string championRolesDataFile =
         data + "champion_roles.json";
 
-    public readonly static string rankedEmblemsFolder = assets + "ranked_emblems\\";
+    public readonly static string imageCacheFolder = assets + "image_cache\\";
+    public readonly static string imageCacheDataDragonFolder =
+        imageCacheFolder + "data_dragon\\";
 
     public readonly static string avaloniaConfigFile = mobahinted + "avalonia.json";
     public readonly static string settingsFile = mobahinted + "settings.json";

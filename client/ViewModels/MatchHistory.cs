@@ -10,10 +10,12 @@ namespace client.ViewModels;
 
 public class MatchHistory : ReactiveObject, IRoutableViewModel
 {
-    private int _currentMatch = 0;
+    private int _currentMatch;
 
     public MatchHistory(IScreen? screen = null)
     {
+        Console.WriteLine("Loading match history...");
+
         // Save the previous screen
         this.HostScreen = screen!;
 

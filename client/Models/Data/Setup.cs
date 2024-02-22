@@ -22,8 +22,7 @@ public static class Setup
             && FileManagement.directoryExists(Constants.imageCacheFolder)
             && FileManagement.directoryExists(Constants.imageCacheDataDragonFolder)
             && FileManagement.directoryExists(Constants.dataDragonFolder)
-            && FileManagement.directoryExists(Constants.dataDragonChampionFolder)
-            && FileManagement.directoryExists(Constants.rankedEmblemsFolder);
+            && FileManagement.directoryExists(Constants.dataDragonChampionFolder);
     }
 
     public static bool allContentExists()
@@ -49,7 +48,6 @@ public static class Setup
         FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
-        FileManagement.createDirectory(Constants.rankedEmblemsFolder);
     }
 
     public static void createAllContent()

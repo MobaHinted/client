@@ -170,12 +170,13 @@ public class ProgramAssets
                 "Profile Picture data"
             );
         getProfilePictures();
+        await Task.Delay(200);
 
         updateStatus(
                 "Cleaning up...",
                 ""
             );
-        await Task.Delay(500);
+        await Task.Delay(700);
     }
 
     /// <summary>
@@ -184,57 +185,81 @@ public class ProgramAssets
     /// </summary>
     /// <param name="updateStatus">The action to update the status text</param>
     /// <seealso cref="setup" />
-    public async void checkForUpdates(
-        Action<string, string> updateStatus
-    )
+    public async Task checkForUpdates(Action<string, string> updateStatus)
     {
         updateStatus(
                 "Checking for updates...",
                 ""
             );
 
-        // Check that every Data Dragon file exists
-        if (FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "champions.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "versions.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "items.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "summonerSpells.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "runes.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.dataDragonFolder + "profilePictures.json"
-                )
-            && FileManagement.fileHasContent(
-                    Constants.imageCacheDataDragonFolder + "spell.Flash.png"
-                ))
+        // Check if all files are accessible and the version is up to date
+        if (noMissingFiles() && versionUpToDate())
         {
-            // If all the files exist...
-
-            // If the versions file does exist, check it
-            FileManagement.loadFromFile(
-                    Constants.dataDragonFolder + "versions.json",
-                    out Versions? versions
-                );
-
-            // If the latest version is the same as the current version, bail
-            if (versions!.latestVersion == this.Version)
-                // Finish the loading screen
-                return;
+            Console.WriteLine($"Already on {this.Version}");
+            await Task.Delay(1200);
+            return;
         }
 
         // Re-download the data dragon files if no check bailed the process
+        Console.WriteLine($"Updating to {this.Version}...");
         FileManagement.emptyDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
         FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
         await setup(updateStatus);
+
+        // Succeed
+        Console.WriteLine("Updated");
+    }
+
+    /// <summary>
+    ///     Check if the game data is missing from the user's computer.
+    /// </summary>
+    /// <returns>If all downloaded files are present</returns>
+    private static bool noMissingFiles()
+    {
+        return
+            FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "champions.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "versions.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "items.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "summonerSpells.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "runes.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.dataDragonFolder + "profilePictures.json"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.imageCacheDataDragonFolder + "spell.Flash.png"
+                )
+            || FileManagement.fileHasContent(
+                    Constants.imageCacheDataDragonFolder + "rank.Emerald.png"
+                );
+    }
+
+    /// <summary>
+    ///     Check if the latest version data is out of date.
+    /// </summary>
+    /// <returns>
+    ///     If the latest downloaded version matches the latest game version
+    /// </returns>
+    private bool versionUpToDate()
+    {
+        // If the versions file does exist, check it
+        FileManagement.loadFromFile(
+                Constants.dataDragonFolder + "versions.json",
+                out Versions? versions
+            );
+
+        // If the latest version is the same as the current version
+        return versions!.latestVersion == this.Version;
     }
 
     /// <summary>
@@ -392,14 +417,7 @@ public class ProgramAssets
             #region Abilities
 
             // Iterate over each ability from the champion
-            var abilityLabels = new List<string>
-            {
-                "Q",
-                "W",
-                "E",
-                "R",
-                "P",
-            };
+            var abilityLabels = new List<string> { "Q", "W", "E", "R", "P" };
             int counter = 0;
             foreach (ChampionSpell ability in champion.spells)
                 // Download the ability's image
@@ -527,7 +545,6 @@ public class ProgramAssets
                         )
                 );
 
-
             // Iterate over each rune in the tree
             foreach (Rune rune in runeTree.slots.SelectMany(slot => slot.runes))
             {
@@ -651,6 +668,8 @@ public class ProgramAssets
     /// </summary>
     private void getRankImages()
     {
+        Console.WriteLine($"Downloading: Ranked Icons... [{this.RankedEmblemsURL}]");
+
         string folder = Constants.imageCacheDataDragonFolder;
 
         // Skip downloading if the images already exist

@@ -81,6 +81,8 @@ public class Loading : ReactiveObject, IRoutableViewModel
                         }
                     )
             );
+
+        // Load into Match History
         loadIn();
     }
 
