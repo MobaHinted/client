@@ -37,7 +37,8 @@ internal static class Program
             {
                 MaxConcurrentRequests = 300,
                 Retries = 5,
-                ApiURL = "proxy.mobahinted.app",
+                ApiUrl = "proxy.mobahinted.app",
+                ApiCallRegionConfig = RegionConfig.inUrlAsRegionQueryParameter,
             }.Build()
         );
 
