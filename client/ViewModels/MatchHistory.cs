@@ -4,9 +4,9 @@
 using System.Text.Json;
 using Camille.RiotGames;
 using client.Models;
-using client.Models.Data;
 using client.Views;
 using ReactiveUI;
+using Matches = client.Models.Data.Matches;
 
 namespace client.ViewModels;
 
@@ -27,7 +27,7 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     ///     First, <see cref="MatchHistoryLoadingView" /> then
     ///     <see cref="MatchHistoryMatchesView" />
     /// </remarks>
-    private View _currentView;
+    private IsubView _currentView = new Views.MatchHistory.Loading();
 
     public MatchHistory(IScreen? screen = null)
     {
@@ -38,9 +38,6 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
                 message: "Match History View",
                 logLevel: LogLevel.info
             );
-
-        // First, set the current view to the loading view
-        this.CurrentView = new MatchHistoryLoadingView();
 
         // Save the previous screen
         this.HostScreen = screen!;
@@ -70,7 +67,7 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     ///     First, <see cref="MatchHistoryLoadingView" /> then
     ///     <see cref="MatchHistoryMatchesView" />
     /// </remarks>
-    public View CurrentView
+    public IsubView CurrentView
     {
         get => this._currentView;
         set =>

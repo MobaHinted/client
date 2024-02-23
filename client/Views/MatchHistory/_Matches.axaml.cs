@@ -4,12 +4,11 @@
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 
-namespace client.Views;
+namespace client.Views.MatchHistory;
 
-public partial class MatchHistoryView : ReactiveUserControl<ViewModels.MatchHistory>,
-    View
+public partial class Matches : ReactiveUserControl<ViewModels.MatchHistory>, IsubView
 {
-    public MatchHistoryView()
+    public Matches()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

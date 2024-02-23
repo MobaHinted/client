@@ -215,8 +215,8 @@ public class ProgramAssets
                 message: "Checking if update is necessary...",
                 debugSymbols:
                 [
-                    $"files: {haveFiles}",
-                    $"version: {versionUp}",
+                    $"files all available: {haveFiles}",
+                    $"version up to date: {versionUp}",
                 ],
                 logLevel: LogLevel.debug
             );

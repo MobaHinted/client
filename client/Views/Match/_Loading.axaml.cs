@@ -4,14 +4,14 @@
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 
-namespace client.Views.MatchHistory;
+namespace client.Views.Match;
 
-public partial class ChampionPool : ReactiveUserControl<ViewModels.MatchHistory>,
-    Ielement
+public partial class Loading : ReactiveUserControl<ViewModels.MatchHistory>, IsubView
 {
-    public ChampionPool()
+    public Loading()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();
     }
 }
+

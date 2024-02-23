@@ -4,14 +4,14 @@
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 
-namespace client.Views;
+namespace client.Views.Match;
 
-public partial class
-    MatchHistoryLoadingView : ReactiveUserControl<ViewModels.MatchHistory>, View
+public partial class Match : ReactiveUserControl<ViewModels.MatchHistory>, IsubView
 {
-    public MatchHistoryLoadingView()
+    public Match()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();
     }
 }
+

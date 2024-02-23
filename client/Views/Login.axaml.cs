@@ -7,7 +7,7 @@ using ReactiveUI;
 
 namespace client.Views;
 
-public partial class LoginView : ReactiveUserControl<Login>, View
+public partial class LoginView : ReactiveUserControl<Login>, Iview
 {
     public LoginView()
     {
