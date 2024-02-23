@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using Camille.RiotGames;
+using CamilleMatch = Camille.RiotGames.MatchV5.Match;
 
 namespace client.Models.Data.Matches;
 
@@ -87,7 +88,7 @@ public class Matches
                     () =>
                     {
                         // Get the match data
-                        Camille.RiotGames.MatchV5.Match? match = Program
+                        CamilleMatch? match = Program
                             .riotAPI.MatchV5()
                             .GetMatch(
                                     Program.Account.Continent,
