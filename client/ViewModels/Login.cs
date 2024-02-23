@@ -268,8 +268,16 @@ public class Login : ReactiveObject, IRoutableViewModel
         RegionalRoute continent = platform.ToRegional();
 
         // Search for the account
-        Console.WriteLine(
-                $"Searching for {this.GameName}#{this.TagLine}@{continent}..."
+        Program.log(
+                source: nameof(Login),
+                method: "searchAndAddAccount()",
+                doing: "Login",
+                message: "Searching for...",
+                debugSymbols:
+                [
+                    $"{this.GameName}#{this.TagLine}@{continent}",
+                ],
+                logLevel: LogLevel.debug
             );
         ValidateRiotID.search(
                 this.GameName,
@@ -281,14 +289,34 @@ public class Login : ReactiveObject, IRoutableViewModel
         // If the search failed, set the error message and disable the button
         if (!ValidateRiotID.exists(puuid))
         {
-            Console.WriteLine("Account not found");
-            this.ErrorResult = "Account not found.";
+            Program.log(
+                    source: nameof(Login),
+                    method: "searchAndAddAccount()",
+                    doing: "Login",
+                    message: "Account not found",
+                    debugSymbols:
+                    [
+                        $"{this.GameName}#{this.TagLine}@{continent}",
+                    ],
+                    logLevel: LogLevel.debug
+                );
+            this.ErrorResult = "Account not found on Riot";
             this.CanAdd = "false";
             this.IsLoading = "false";
         }
         else
         {
-            Console.WriteLine("Account Found!");
+            Program.log(
+                    source: nameof(Login),
+                    method: "searchAndAddAccount()",
+                    doing: "Login",
+                    message: "Account found on Riot",
+                    debugSymbols:
+                    [
+                        $"{this.GameName}#{this.TagLine}@{continent}",
+                    ],
+                    logLevel: LogLevel.debug
+                );
 
             // Try to save the account
             try
@@ -303,6 +331,18 @@ public class Login : ReactiveObject, IRoutableViewModel
                 // Save the account
                 account.save();
 
+                Program.log(
+                        source: nameof(Login),
+                        method: "searchAndAddAccount()",
+                        doing: "Login",
+                        message: "Added account locally",
+                        debugSymbols:
+                        [
+                            $"{this.GameName}#{this.TagLine}@{continent}",
+                        ],
+                        logLevel: LogLevel.debug
+                    );
+
                 // Set the active account to the new account
                 Program.Settings.activeAccount = account.ID;
                 Program.Account = account;
@@ -311,6 +351,18 @@ public class Login : ReactiveObject, IRoutableViewModel
             // account
             catch (DataValidationError)
             {
+                Program.log(
+                        source: nameof(Launch),
+                        method: "ctor()",
+                        doing: "Login",
+                        message: "Account already exists locally",
+                        debugSymbols:
+                        [
+                            $"{this.GameName}#{this.TagLine}@{continent}",
+                        ],
+                        logLevel: LogLevel.debug
+                    );
+
                 // Load the accounts from disk
                 FileManagement.loadFromFile(
                         Constants.usersFile,

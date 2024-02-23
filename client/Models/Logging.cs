@@ -58,8 +58,7 @@ public class Logging
 
             log += message + "\n";
 
-            if (debugSymbols.Length > 0
-                && logLevel is LogLevel.debug or LogLevel.fatal)
+            if (debugSymbols.Length > 0)
             {
                 log += "".PadRight(preface.Length)
                     + $"({string.Join(", ", debugSymbols)})\n";

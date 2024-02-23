@@ -1,8 +1,6 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
-using System.Text.Json;
-using Camille.RiotGames;
 using client.Models;
 using client.Models.Data.Matches;
 using client.Views;
@@ -52,21 +50,15 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
         Program.Window.Height = Program.Settings.windowHeight;
 
         // Load the matches
-        var t = new Matches(
-                current => this.RaiseAndSetIfChanged(
-                        ref this._currentProgressMatch,
-                        current,
-                        nameof(this.CurrentMatch)
-                    )
-            );
+        loadMatches();
     }
 
     /// <summary>
     ///     The current view that is being displayed within Match History.
     /// </summary>
     /// <remarks>
-    ///     First, <see cref="MatchHistoryLoadingView" /> then
-    ///     <see cref="MatchHistoryMatchesView" />
+    ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
+    ///     <see cref="client.Views.MatchHistory.HistorySubView" />
     /// </remarks>
     public IsubView CurrentView
     {
@@ -102,49 +94,27 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
                 );
     }
 
+    /// <summary>
+    ///     The URL path segment for the view.
+    /// </summary>
     public string? UrlPathSegment
     {
         get => "MatchHistory";
     }
 
+    /// <summary>
+    ///     The screen that is hosting the view.
+    /// </summary>
     public IScreen HostScreen { get; }
 
     private void loadMatches()
     {
-        Program
-            .riotAPI.MatchV5()
-            .GetMatchIdsByPUUIDAsync(
-                    Program.Account.Continent,
-                    Program.Account.PUUID,
-                    Program.Settings.matchHistoryCount
-                )
-            .ContinueWith(
-                    task =>
-                    {
-                        if (task.IsFaulted)
-                        {
-                            Console.WriteLine(task.Exception);
-                            return;
-                        }
-
-                        string[] matchList = task.Result;
-
-                        foreach (string match in matchList)
-                        {
-                            Console.WriteLine(
-                                    $"{match}: "
-                                    + JsonSerializer.Serialize(
-                                            Program
-                                                .riotAPI.MatchV5()
-                                                .GetMatchAsync(
-                                                        Program.Account.Continent,
-                                                        match
-                                                    )
-                                                .Result
-                                        )
-                                );
-                        }
-                    }
-                );
+        var matches = new Matches(
+                current => this.RaiseAndSetIfChanged(
+                        ref this._currentProgressMatch,
+                        current,
+                        nameof(this.CurrentMatch)
+                    )
+            );
     }
 }

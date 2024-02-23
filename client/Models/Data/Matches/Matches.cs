@@ -10,6 +10,10 @@ namespace client.Models.Data.Matches;
 public class Matches
 {
     private Dictionary<string, MatchData>? _matchData;
+
+    /// <summary>
+    ///     The action to update the progress bar.
+    /// </summary>
     private Action<int> _update;
 
     public Matches(Action<int> updateProgress)
@@ -48,8 +52,18 @@ public class Matches
                     {
                         if (task.IsFaulted)
                         {
-                            Console.WriteLine("Faulted!\n\n");
-                            Console.WriteLine(task.Exception);
+                            Program.log(
+                                    source: nameof(Matches),
+                                    method: "getMatches()",
+                                    doing: "Loading Matches",
+                                    message: "Task to retrieve match faulted \n"
+                                    + task.Exception.Message,
+                                    debugSymbols:
+                                    [
+                                        JsonSerializer.Serialize(task.Result),
+                                    ],
+                                    logLevel: LogLevel.error
+                                );
                             return;
                         }
 
@@ -59,9 +73,19 @@ public class Matches
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("No string[]!\n\n");
-                            Console.WriteLine(JsonSerializer.Serialize(task.Result));
-                            Console.WriteLine(e);
+                            Program.log(
+                                    source: nameof(Matches),
+                                    method: "getMatches()",
+                                    doing: "Loading Matches",
+                                    message: "Received no string[] data from Riot;"
+                                    + "API error status\n"
+                                    + e.Message,
+                                    debugSymbols:
+                                    [
+                                        JsonSerializer.Serialize(task.Result),
+                                    ],
+                                    logLevel: LogLevel.error
+                                );
                         }
                     }
                 );
@@ -69,13 +93,26 @@ public class Matches
         if (matchList == null)
         {
             // TODO: inspect the exception here, probably direct to error screen
-            Console.WriteLine("No matches found.");
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Received no usable data from Riot. Possible API error",
+                    logLevel: LogLevel.error
+                );
             return;
         }
 
         if (matchList.Contains("400-series"))
         {
-            Console.WriteLine("400");
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Received a 400-series error from Riot."
+                    + "API key issue? Invalid request?",
+                    logLevel: LogLevel.warning
+                );
             return;
         }
 
@@ -87,19 +124,60 @@ public class Matches
             Task.Run(
                     () =>
                     {
-                        // Get the match data
-                        CamilleMatch? match = Program
-                            .riotAPI.MatchV5()
-                            .GetMatch(
-                                    Program.Account.Continent,
-                                    matchID
+                        try
+                        {
+                            Program.log(
+                                    source: nameof(Matches),
+                                    method: "getMatches()",
+                                    doing: "Loading Matches",
+                                    message: "Trying to load match data",
+                                    debugSymbols:
+                                    [
+                                        matchID,
+                                    ],
+                                    logLevel: LogLevel.debug
                                 );
+                            // Get the match data
+                            CamilleMatch? match = Program
+                                .riotAPI.MatchV5()
+                                .GetMatch(
+                                        Program.Account.Continent,
+                                        matchID
+                                    );
+                        }
+                        catch (Exception e)
+                        {
+                            Program.log(
+                                    source: nameof(Matches),
+                                    method: "getMatches()",
+                                    doing: "Loading Matches",
+                                    message: "Failed to load Match\n" + e.Message,
+                                    debugSymbols:
+                                    [
+                                        matchID,
+                                    ],
+                                    logLevel: LogLevel.warning
+                                );
+                        }
                         // TODO: catch and add to misses, updating with count+misses
 
                         // Add the match data to the dictionary
                         this._matchData.Add(
                                 matchID,
                                 new MatchData()
+                            );
+                        Program.log(
+                                source: nameof(Matches),
+                                method: "getMatches()",
+                                doing: "Loading Matches",
+                                message: "Loaded match data",
+                                //+ JsonSerializer.Serialize(match),
+                                debugSymbols:
+                                [
+                                    matchID,
+                                    $"{this._matchData.Count.ToString()}/{Program.Settings.matchHistoryCount}",
+                                ],
+                                logLevel: LogLevel.debug
                             );
 
                         // Update the progress
