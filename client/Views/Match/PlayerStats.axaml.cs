@@ -6,10 +6,11 @@ using ReactiveUI;
 
 namespace client.Views.Match;
 
-public partial class PlayerStats : ReactiveUserControl<ViewModels.MatchHistory>,
+public partial class PlayerStatsElement :
+    ReactiveUserControl<ViewModels.MatchHistory>,
     Ielement
 {
-    public PlayerStats()
+    public PlayerStatsElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

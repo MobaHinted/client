@@ -6,9 +6,10 @@ using ReactiveUI;
 
 namespace client.Views.Match;
 
-public partial class Match : ReactiveUserControl<ViewModels.MatchHistory>, IsubView
+public partial class MatchSubView : ReactiveUserControl<ViewModels.MatchHistory>,
+    IsubView
 {
-    public Match()
+    public MatchSubView()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

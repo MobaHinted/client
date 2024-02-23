@@ -6,10 +6,10 @@ using ReactiveUI;
 
 namespace client.Views.Match;
 
-public partial class Accolades : ReactiveUserControl<ViewModels.MatchHistory>,
+public partial class AccoladesElement : ReactiveUserControl<ViewModels.MatchHistory>,
     Ielement
 {
-    public Accolades()
+    public AccoladesElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

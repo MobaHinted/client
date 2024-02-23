@@ -6,10 +6,10 @@ using ReactiveUI;
 
 namespace client.Views.Match;
 
-public partial class EventsTimeline : ReactiveUserControl<ViewModels.MatchHistory>,
-    Ielement
+public partial class
+    EventsTimelineElement : ReactiveUserControl<ViewModels.MatchHistory>, Ielement
 {
-    public EventsTimeline()
+    public EventsTimelineElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();
