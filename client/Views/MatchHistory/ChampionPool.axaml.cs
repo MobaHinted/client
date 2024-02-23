@@ -6,10 +6,11 @@ using ReactiveUI;
 
 namespace client.Views.MatchHistory;
 
-public partial class ChampionPool : ReactiveUserControl<ViewModels.MatchHistory>,
+public partial class ChampionPoolElement :
+    ReactiveUserControl<ViewModels.MatchHistory>,
     Ielement
 {
-    public ChampionPool()
+    public ChampionPoolElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

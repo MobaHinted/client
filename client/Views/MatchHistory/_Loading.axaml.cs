@@ -6,9 +6,10 @@ using ReactiveUI;
 
 namespace client.Views.MatchHistory;
 
-public partial class Loading : ReactiveUserControl<ViewModels.MatchHistory>, IsubView
+public partial class LoadingSubView : ReactiveUserControl<ViewModels.MatchHistory>,
+    IsubView
 {
-    public Loading()
+    public LoadingSubView()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

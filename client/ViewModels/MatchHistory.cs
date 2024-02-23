@@ -4,9 +4,10 @@
 using System.Text.Json;
 using Camille.RiotGames;
 using client.Models;
+using client.Models.Data;
 using client.Views;
+using client.Views.MatchHistory;
 using ReactiveUI;
-using Matches = client.Models.Data.Matches;
 
 namespace client.ViewModels;
 
@@ -24,10 +25,10 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     ///     The current view that is being displayed within Match History.
     /// </summary>
     /// <remarks>
-    ///     First, <see cref="MatchHistoryLoadingView" /> then
-    ///     <see cref="MatchHistoryMatchesView" />
+    ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
+    ///     <see cref="client.Views.MatchHistory.HistorySubView" />
     /// </remarks>
-    private IsubView _currentView = new Views.MatchHistory.Loading();
+    private IsubView _currentView = new LoadingSubView();
 
     public MatchHistory(IScreen? screen = null)
     {

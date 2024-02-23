@@ -6,9 +6,9 @@ using ReactiveUI;
 
 namespace client.Views.MatchHistory;
 
-public partial class Player : ReactiveUserControl<ViewModels.MatchHistory>
+public partial class PlayerElement : ReactiveUserControl<ViewModels.MatchHistory>
 {
-    public Player()
+    public PlayerElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();

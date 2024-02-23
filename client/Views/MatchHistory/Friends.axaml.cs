@@ -6,9 +6,10 @@ using ReactiveUI;
 
 namespace client.Views.MatchHistory;
 
-public partial class Friends : ReactiveUserControl<ViewModels.MatchHistory>, Ielement
+public partial class FriendsElement : ReactiveUserControl<ViewModels.MatchHistory>,
+    Ielement
 {
-    public Friends()
+    public FriendsElement()
     {
         this.WhenActivated(disposables => { });
         InitializeComponent();
