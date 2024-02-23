@@ -3,13 +3,12 @@
 
 using Avalonia.Controls;
 
-namespace client.Views;
+namespace client.Views.MatchHistory;
 
-public partial class LaunchView : Window, View
+public partial class ChampionPool : UserControl
 {
-    public LaunchView()
+    public ChampionPool()
     {
-        Program.Window = this;
         InitializeComponent();
     }
 }

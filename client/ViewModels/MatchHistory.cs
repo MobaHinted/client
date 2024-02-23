@@ -5,13 +5,29 @@ using System.Text.Json;
 using Camille.RiotGames;
 using client.Models;
 using client.Models.Data;
+using client.Views;
 using ReactiveUI;
 
 namespace client.ViewModels;
 
 public class MatchHistory : ReactiveObject, IRoutableViewModel
 {
-    private int _currentMatch;
+    /// <summary>
+    ///     The match that was most recently loaded.
+    /// </summary>
+    /// <remarks>
+    ///     Used to get the next set of matches, if there are more than the limit.
+    /// </remarks>
+    private int _currentProgressMatch;
+
+    /// <summary>
+    ///     The current view that is being displayed within Match History.
+    /// </summary>
+    /// <remarks>
+    ///     First, <see cref="MatchHistoryLoadingView" /> then
+    ///     <see cref="MatchHistoryMatchesView" />
+    /// </remarks>
+    private View _currentView;
 
     public MatchHistory(IScreen? screen = null)
     {
@@ -22,6 +38,9 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
                 message: "Match History View",
                 logLevel: LogLevel.info
             );
+
+        // First, set the current view to the loading view
+        this.CurrentView = new MatchHistoryLoadingView();
 
         // Save the previous screen
         this.HostScreen = screen!;
@@ -34,29 +53,53 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
         Program.Window.Width = Program.Settings.windowWidth;
         Program.Window.Height = Program.Settings.windowHeight;
 
+        // Load the matches
         var t = new Matches(
                 current => this.RaiseAndSetIfChanged(
-                        ref this._currentMatch,
+                        ref this._currentProgressMatch,
                         current,
                         nameof(this.CurrentMatch)
                     )
             );
     }
 
+    /// <summary>
+    ///     The current view that is being displayed within Match History.
+    /// </summary>
+    /// <remarks>
+    ///     First, <see cref="MatchHistoryLoadingView" /> then
+    ///     <see cref="MatchHistoryMatchesView" />
+    /// </remarks>
+    public View CurrentView
+    {
+        get => this._currentView;
+        set =>
+            this.RaiseAndSetIfChanged(
+                    ref this._currentView,
+                    value
+                );
+    }
+
+    /// <summary>
+    ///     How many matches to load.
+    /// </summary>
     public static int MatchHistoryCount
     {
         get => Program.Settings.matchHistoryCount;
     }
 
     /// <summary>
-    ///     What step of match history loading we are on.
+    ///     The match that was most recently loaded.
     /// </summary>
+    /// <remarks>
+    ///     Used to get the next set of matches, if there are more than the limit.
+    /// </remarks>
     public int CurrentMatch
     {
-        get => this._currentMatch;
+        get => this._currentProgressMatch;
         set =>
             this.RaiseAndSetIfChanged(
-                    ref this._currentMatch,
+                    ref this._currentProgressMatch,
                     value
                 );
     }

@@ -3,13 +3,12 @@
 
 using Avalonia.Controls;
 
-namespace client.Views;
+namespace client.Views.MatchHistory;
 
-public partial class LaunchView : Window, View
+public partial class Loading : UserControl
 {
-    public LaunchView()
+    public Loading()
     {
-        Program.Window = this;
         InitializeComponent();
     }
 }

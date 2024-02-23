@@ -7,7 +7,7 @@ using ReactiveUI;
 
 namespace client.Views;
 
-public partial class LoadingView : ReactiveUserControl<Loading>
+public partial class LoadingView : ReactiveUserControl<Loading>, View
 {
     public LoadingView()
     {
