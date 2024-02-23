@@ -79,18 +79,37 @@ internal static class Program
 
 
     /// <summary>
-    ///     The global logging function for the application.
+    ///     The global logging functionality for the application.
     /// </summary>
+    /// <example>
+    ///     <code>
+    ///     Program.log(
+    ///         source: nameof(MatchHistory),
+    ///         method: "ctor()",
+    ///         doing: "Loading",
+    ///         message: "Match History View",
+    ///         logLevel: LogLevel.info
+    ///     );
+    ///     </code>
+    /// </example>
     /// <seealso cref="Models.Logging.log" />
-    /// <param name="logTo">How the log should be displayed</param>
-    /// <param name="source"></param>
-    /// <param name="method"></param>
-    /// <param name="doing"></param>
-    /// <param name="message"></param>
-    /// <param name="debugSymbols"></param>
-    /// <param name="url"></param>
-    /// <param name="logLevel"></param>
-    /// <param name="logLocation"></param>
+    /// <param name="logTo">
+    ///     How the log should be given, see: <see cref="LogTo" />
+    /// </param>
+    /// <param name="source">
+    ///     The class giving the log <code>nameof( [this class] )</code>
+    /// </param>
+    /// <param name="method">The method giving the log</param>
+    /// <param name="doing">What is being done - used to group logs together</param>
+    /// <param name="message">The message to display</param>
+    /// <param name="debugSymbols">Any debug symbols to include</param>
+    /// <param name="url">Any URL the reader can open to test directly with</param>
+    /// <param name="logLevel">
+    ///     <see cref="LogLevel" /> for this log. Also decides coloration in console.
+    /// </param>
+    /// <param name="logLocation">
+    ///     The log file this log should appear in, see: <see cref="LogLocation" />
+    /// </param>
     public static void log(
         LogTo logTo = LogTo.file | LogTo.console,
         string source = "",

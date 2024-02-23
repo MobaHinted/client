@@ -34,6 +34,43 @@ public class Logging
 {
     private readonly static object consoleLock = new object();
 
+    /// <summary>
+    ///     The code behind the global logging functionality for the application.
+    /// </summary>
+    /// <remarks>
+    ///     This method should not be used directly.
+    ///     Use Program.Log instead.
+    ///     See the example for usage.
+    /// </remarks>
+    /// <example>
+    ///     <code>
+    ///     Program.log(
+    ///         source: nameof(MatchHistory),
+    ///         method: "ctor()",
+    ///         doing: "Loading",
+    ///         message: "Match History View",
+    ///         logLevel: LogLevel.info
+    ///     );
+    ///     </code>
+    /// </example>
+    /// <seealso cref="Program.log" />
+    /// <param name="logTo">
+    ///     How the log should be given, see: <see cref="LogTo" />
+    /// </param>
+    /// <param name="source">
+    ///     The class giving the log <code>nameof( [this class] )</code>
+    /// </param>
+    /// <param name="method">The method giving the log</param>
+    /// <param name="doing">What is being done - used to group logs together</param>
+    /// <param name="message">The message to display</param>
+    /// <param name="debugSymbols">Any debug symbols to include</param>
+    /// <param name="url">Any URL the reader can open to test directly with</param>
+    /// <param name="logLevel">
+    ///     <see cref="LogLevel" /> for this log. Also decides coloration in console.
+    /// </param>
+    /// <param name="logLocation">
+    ///     The log file this log should appear in, see: <see cref="LogLocation" />
+    /// </param>
     public void log(
         LogTo logTo,
         string source,

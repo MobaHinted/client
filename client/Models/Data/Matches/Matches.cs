@@ -24,10 +24,10 @@ public class Matches
 
     private async void load()
     {
-        await Task.Run(getMatches);
+        await Task.Run(() => { getMatches(); });
     }
 
-    private async void getMatches()
+    private async void getMatches(float? endDate = null)
     {
         // If match history count is >100, throw an exception
         // TODO: Loop for >100 matches
@@ -126,17 +126,6 @@ public class Matches
                     {
                         try
                         {
-                            Program.log(
-                                    source: nameof(Matches),
-                                    method: "getMatches()",
-                                    doing: "Loading Matches",
-                                    message: "Trying to load match data",
-                                    debugSymbols:
-                                    [
-                                        matchID,
-                                    ],
-                                    logLevel: LogLevel.debug
-                                );
                             // Get the match data
                             CamilleMatch? match = Program
                                 .riotAPI.MatchV5()
