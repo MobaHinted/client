@@ -4,7 +4,7 @@
 using System.Text.Json;
 using Camille.RiotGames;
 using client.Models;
-using client.Models.Data;
+using client.Models.Data.Matches;
 using client.Views;
 using client.Views.MatchHistory;
 using ReactiveUI;
