@@ -45,6 +45,10 @@
             Width="120" Height="120" ShowProgressText="True"
             Maximum="{Binding MatchHistoryCount}"
             Value="{Binding CurrentMatch}" />
+
+        <TextBlock VerticalAlignment="Center" Margin="0 40 0 0"
+                   HorizontalAlignment="Center" Foreground="DarkGray"
+                   Text="(This can take a couple minutes)" />
     </StackPanel>
 
 </UserControl>
