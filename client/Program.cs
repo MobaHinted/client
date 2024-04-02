@@ -41,6 +41,7 @@ internal static class Program
                 Retries = 5,
                 ApiUrl = "proxy.mobahinted.app",
                 ApiCallRegionConfig = RegionConfig.InUrlAsRegionQueryParameter,
+                RegionKey = "region",
             }.Build()
         );
 
@@ -64,7 +65,7 @@ internal static class Program
     /// </summary>
     /// <seealso cref="Models.Logging" />
     /// <seealso cref="Models.Logging.log" />
-    /// <seealso cref="Log" />
+    /// <seealso cref="log" />
     private static Logging Logging { get; } = new Logging();
 
     /// <summary>
