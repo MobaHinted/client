@@ -119,6 +119,7 @@ public class Settings : INotifyPropertyChanged
                     BindingFlags.NonPublic | BindingFlags.Instance
                 );
 
+            // TODO: this should be in a try/catch, and should bail and remove the setting if it fails
             // Set the field
             if (field?.FieldType == typeof(Guid?))
             {
