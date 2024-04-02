@@ -9,12 +9,33 @@ namespace client.Models.Data.Matches;
 
 public class Matches
 {
-    private Dictionary<string, MatchData>? _matchData;
-
     /// <summary>
     ///     The action to update the progress bar.
     /// </summary>
-    private Action<int> _update;
+    private readonly Action<int> _update;
+
+    /// <summary>
+    ///     The number of matches that have been loaded successfully.
+    /// </summary>
+    private int _loadedMatches;
+
+    /// <summary>
+    ///     The match data that has been loaded successfully.
+    /// </summary>
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    private Dictionary<string, MatchData> _matchData =
+        new Dictionary<string, MatchData>();
+
+    /// <summary>
+    ///     Any matches that failed to load, and will be retried.
+    /// </summary>
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    private List<string> _matchesToRetry = [];
+
+    /// <summary>
+    ///     The number of matches that have failed to load, and will be retried once.
+    /// </summary>
+    private int _missedMatches;
 
     public Matches(Action<int> updateProgress)
     {
@@ -24,32 +45,38 @@ public class Matches
 
     private async void load()
     {
-        await Task.Run(() => { getMatches(); });
+        // Calculate how many steps to take, rounded up
+        int steps = (int)Math.Ceiling(Program.Settings.matchHistoryCount / 25.0);
+
+        // Get steps of 25 games
+        for (int i = 0; i < steps; i++)
+        {
+            await Task.Run(() => { getMatches(i * 25); });
+
+            // If on the last step, but we are missing matches, get more
+            if (i == steps - 1
+                && (this._missedMatches != 0
+                    || this._matchData.Count < Program.Settings.matchHistoryCount))
+                await Task.Run(() => { getMatches((i + 1) * 25); });
+        }
     }
 
-    private async void getMatches(float? endDate = null)
+    private async void getMatches(int startIndex, int count = 25)
     {
-        // If match history count is >100, throw an exception
-        // TODO: Loop for >100 matches
-        if (Program.Settings.matchHistoryCount > 100)
-        {
-            throw new ArgumentOutOfRangeException(
-                    nameof(Program.Settings.matchHistoryCount),
-                    "Match history count cannot exceed 100"
-                );
-        }
-
         string[]? matchList = null;
         await Program
             .riotAPI.MatchV5()
             .GetMatchIdsByPUUIDAsync(
                     Program.Account.Continent,
                     Program.Account.PUUID,
-                    Program.Settings.matchHistoryCount
+                    count,
+                    start: startIndex
                 )
             .ContinueWith(
                     task =>
                     {
+                        #region Task Error
+
                         if (task.IsFaulted)
                         {
                             Program.log(
@@ -67,10 +94,15 @@ public class Matches
                             return;
                         }
 
+                        #endregion
+
                         try
                         {
                             matchList = task.Result;
                         }
+
+                        #region Result Error
+
                         catch (Exception e)
                         {
                             Program.log(
@@ -87,8 +119,12 @@ public class Matches
                                     logLevel: LogLevel.error
                                 );
                         }
+
+                        #endregion
                     }
                 );
+
+        #region API Error
 
         if (matchList == null)
         {
@@ -103,6 +139,10 @@ public class Matches
             return;
         }
 
+        #endregion
+
+        #region API 400 Error
+
         if (matchList.Contains("400-series"))
         {
             Program.log(
@@ -116,65 +156,152 @@ public class Matches
             return;
         }
 
-        this._matchData = new Dictionary<string, MatchData>();
+        #endregion
 
+#pragma warning disable CS4014
         // For each match string in matchList
         foreach (string matchID in matchList)
+            // Get the match data, and update the list
+        {
+            Task.Run(() => { getMatchData(matchID); });
+        }
+
+        // Retry any matches that failed to load
+        var matchesToRetryCopy = new List<string>(this._matchesToRetry);
+        foreach (string matchID in matchesToRetryCopy)
         {
             Task.Run(
                     () =>
                     {
-                        try
-                        {
-                            // Get the match data
-                            CamilleMatch? match = Program
-                                .riotAPI.MatchV5()
-                                .GetMatch(
-                                        Program.Account.Continent,
-                                        matchID
-                                    );
-                        }
-                        catch (Exception e)
-                        {
-                            Program.log(
-                                    source: nameof(Matches),
-                                    method: "getMatches()",
-                                    doing: "Loading Matches",
-                                    message: "Failed to load Match\n" + e.Message,
-                                    debugSymbols:
-                                    [
-                                        matchID,
-                                    ],
-                                    logLevel: LogLevel.warning
-                                );
-                        }
-                        // TODO: catch and add to misses, updating with count+misses
-
-                        // Add the match data to the dictionary
-                        this._matchData.Add(
+                        getMatchData(
                                 matchID,
-                                new MatchData()
+                                true
                             );
-                        Program.log(
-                                source: nameof(Matches),
-                                method: "getMatches()",
-                                doing: "Loading Matches",
-                                message: "Loaded match data",
-                                //+ JsonSerializer.Serialize(match),
-                                debugSymbols:
-                                [
-                                    matchID,
-                                    $"{this._matchData.Count.ToString()}/{Program.Settings.matchHistoryCount}",
-                                ],
-                                logLevel: LogLevel.debug
-                            );
-
-                        // Update the progress
-                        this._update(this._matchData.Count);
                     }
                 );
         }
+#pragma warning restore CS4014
+
+        if (this._missedMatches != 0)
+        {
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Finished Loading matches, but had misses",
+                    debugSymbols:
+                    [
+                        $"Missed: {this._missedMatches} ({this._matchesToRetry.Count})",
+                        "Misses: " + JsonSerializer.Serialize(this._matchesToRetry),
+                    ],
+                    logLevel: LogLevel.warning
+                );
+        }
+
+        // Update the progress
+        this._update(this._loadedMatches + this._missedMatches);
     }
 
-    private async void getMatchData() { }
+    private void getMatchData(string matchID, bool retry = false)
+    {
+        // Remove the match from the retry list to avoid infinite retries
+        if (retry)
+            this._matchesToRetry.Remove(matchID);
+
+        try
+        {
+            string cacheFile = $"{Constants.cachedMatchesFolder}{matchID}.json";
+            CamilleMatch? match;
+
+            // If the match is already cached, use that instead
+            if (FileManagement.fileExists(cacheFile))
+            {
+                FileManagement.loadFromFile(
+                        cacheFile,
+                        out match
+                    );
+            }
+            // Otherwise download the data
+            else
+            {
+                // Get the match data
+                match = Program
+                    .riotAPI.MatchV5()
+                    // ReSharper disable once MethodHasAsyncOverload
+                    .GetMatch(
+                            Program.Account.Continent,
+                            matchID
+                        );
+
+                FileManagement.saveToFile(
+                        cacheFile,
+                        match
+                    );
+            }
+
+            // Add the match data to the dictionary
+            this._matchData.Add(
+                    matchID,
+                    new MatchData(match!)
+                );
+
+            // Log the success
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Loaded match data",
+                    debugSymbols:
+                    [
+                        matchID,
+                        this._matchData.Count
+                        + "/"
+                        + Program.Settings.matchHistoryCount,
+                    ],
+                    logLevel: LogLevel.debug
+                );
+
+            // Handle a retry
+            if (retry)
+            {
+                this._missedMatches--;
+            }
+
+            // Update the progress
+            this._loadedMatches++;
+            this._update(this._loadedMatches + this._missedMatches);
+        }
+
+        #region Load Match Error
+
+        catch (Exception e)
+        {
+            // Log the error
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Failed to load Match\n" + e.Message,
+                    debugSymbols:
+                    [
+                        matchID,
+                    ],
+                    logLevel: LogLevel.warning
+                );
+
+            // Only add to these variables if it's not a retry
+            if (!retry)
+            {
+                this._missedMatches++;
+
+                // Add the match to the retry list
+                this._matchesToRetry.Add(matchID);
+            }
+
+            // Update the progress
+            this._update(this._loadedMatches + this._missedMatches);
+        }
+
+        #endregion
+    }
 }

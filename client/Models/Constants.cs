@@ -12,6 +12,8 @@ public static class Constants
     public readonly static string assets = mobahinted + "assets\\";
     public readonly static string data = mobahinted + "data\\";
 
+    public readonly static string cachedMatchesFolder = data + "cachedMatches\\";
+
     public readonly static string dataDragonFolder = data + "data_dragon\\";
     public readonly static string dataDragonChampionFolder =
         dataDragonFolder + "champions\\";

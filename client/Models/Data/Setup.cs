@@ -19,6 +19,7 @@ public static class Setup
         return FileManagement.directoryExists(Constants.mobahinted)
             && FileManagement.directoryExists(Constants.assets)
             && FileManagement.directoryExists(Constants.data)
+            && FileManagement.directoryExists(Constants.cachedMatchesFolder)
             && FileManagement.directoryExists(Constants.imageCacheFolder)
             && FileManagement.directoryExists(Constants.imageCacheDataDragonFolder)
             && FileManagement.directoryExists(Constants.dataDragonFolder)
@@ -59,6 +60,7 @@ public static class Setup
         FileManagement.createDirectory(Constants.mobahinted);
         FileManagement.createDirectory(Constants.assets);
         FileManagement.createDirectory(Constants.data);
+        FileManagement.createDirectory(Constants.cachedMatchesFolder);
         FileManagement.createDirectory(Constants.imageCacheFolder);
         FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonFolder);
