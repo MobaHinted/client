@@ -10,6 +10,14 @@ public static class Setup
         return FileManagement.fileExists(Constants.usersFile)
             && FileManagement.fileExists(Constants.friendsFile)
             && FileManagement.fileExists(Constants.championRolesDataFile)
+            && FileManagement.fileExists(Constants.fullLogFile)
+            && FileManagement.fileExists(Constants.warningsPlusLogFile)
+            && FileManagement.fileExists(Constants.mainLogFile)
+            && FileManagement.fileExists(Constants.downloadLogFile)
+            && FileManagement.fileExists(Constants.downloadLogFile)
+            && FileManagement.fileExists(Constants.gameFlowLogFile)
+            && FileManagement.fileExists(Constants.automationLogFile)
+            && FileManagement.fileExists(Constants.overlayLogFile)
             && FileManagement.fileExists(Constants.avaloniaConfigFile)
             && FileManagement.fileExists(Constants.settingsFile);
     }
@@ -19,6 +27,7 @@ public static class Setup
         return FileManagement.directoryExists(Constants.mobahinted)
             && FileManagement.directoryExists(Constants.assets)
             && FileManagement.directoryExists(Constants.data)
+            && FileManagement.directoryExists(Constants.logs)
             && FileManagement.directoryExists(Constants.cachedMatchesFolder)
             && FileManagement.directoryExists(Constants.imageCacheFolder)
             && FileManagement.directoryExists(Constants.imageCacheDataDragonFolder)
@@ -51,6 +60,13 @@ public static class Setup
         FileManagement.createFile(Constants.usersFile);
         FileManagement.createFile(Constants.friendsFile);
         FileManagement.createFile(Constants.championRolesDataFile);
+        FileManagement.createFile(Constants.fullLogFile);
+        FileManagement.createFile(Constants.warningsPlusLogFile);
+        FileManagement.createFile(Constants.mainLogFile);
+        FileManagement.createFile(Constants.downloadLogFile);
+        FileManagement.createFile(Constants.gameFlowLogFile);
+        FileManagement.createFile(Constants.automationLogFile);
+        FileManagement.createFile(Constants.overlayLogFile);
         FileManagement.createFile(Constants.avaloniaConfigFile);
         FileManagement.createFile(Constants.settingsFile);
     }
@@ -60,6 +76,7 @@ public static class Setup
         FileManagement.createDirectory(Constants.mobahinted);
         FileManagement.createDirectory(Constants.assets);
         FileManagement.createDirectory(Constants.data);
+        FileManagement.createDirectory(Constants.logs);
         FileManagement.createDirectory(Constants.cachedMatchesFolder);
         FileManagement.createDirectory(Constants.imageCacheFolder);
         FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
