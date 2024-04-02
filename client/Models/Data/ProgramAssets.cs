@@ -130,6 +130,12 @@ public class ProgramAssets
         getEachChampion();
         await Task.Delay(200);
 
+        // Wait until is champion is downloaded
+        while (this._champions!.data.Values.Count != this._champion!.Count)
+        {
+            await Task.Delay(100);
+        }
+
         updateStatus(
                 "Downloading...",
                 "Champion images"
@@ -302,8 +308,12 @@ public class ProgramAssets
                 out Versions? versions
             );
 
+        // Bail if no versions were loaded
+        if (versions is null)
+            return false;
+
         // If the latest version is the same as the current version
-        return versions!.latestVersion == this.Version;
+        return versions.latestVersion == this.Version;
     }
 
     /// <summary>
@@ -408,24 +418,29 @@ public class ProgramAssets
                         file,
                         out individualChampion!
                     );
+                champions.Add(individualChampion);
             }
             // Download and save the individual champion
             else
             {
-                individualChampion = getDataDragon<IndividualChampion>(
-                        string.Format(
-                                this.ChampionDataURL,
-                                championName
-                            )
-                    );
+                Task.Run(
+                        () =>
+                        {
+                            individualChampion = getDataDragon<IndividualChampion>(
+                                    string.Format(
+                                            this.ChampionDataURL,
+                                            championName
+                                        )
+                                );
 
-                FileManagement.saveToFile(
-                        file,
-                        individualChampion
+                            FileManagement.saveToFile(
+                                    file,
+                                    individualChampion
+                                );
+                            champions.Add(individualChampion);
+                        }
                     );
             }
-
-            champions.Add(individualChampion);
         }
 
         this._champion = champions;
