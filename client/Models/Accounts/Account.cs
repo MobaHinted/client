@@ -81,7 +81,7 @@ public struct Account
                 Constants.usersFile,
                 out List<Account>? accounts
             );
-        // If the file does not have a list of users, add this user to it
+        // If the file does not have a list of users
         if (accounts is default(List<Account>))
         {
             throw new ArgumentException("No users found");
