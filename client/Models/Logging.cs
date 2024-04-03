@@ -1,6 +1,8 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+using client.Models.Data;
+
 namespace client.Models;
 
 [Flags]
@@ -12,13 +14,64 @@ public enum LogTo
     errorScreen = 4,
 }
 
+[Flags]
 public enum LogLocation
 {
-    main,
-    download,
-    gameFlow,
-    automation,
-    overlays,
+    /// <summary>
+    ///     The main log file.
+    /// </summary>
+    /// <seealso cref="Constants.mainLogFile" />
+    main = 0,
+    /// <summary>
+    ///     The download-flow log file.
+    /// </summary>
+    /// <remarks>
+    ///     Primarily this pertains to updating at launch, and downloading games for
+    ///     match history and similar pages.
+    /// </remarks>
+    /// <seealso cref="Constants.downloadLogFile" />
+    download = 1,
+    /// <summary>
+    ///     The game flow log file, as in pre-game, in-game, and post-game.
+    /// </summary>
+    /// <seealso cref="Constants.gameFlowLogFile" />
+    gameFlow = 2,
+    /// <summary>
+    ///     The automation log file, for all operations running continuously in the
+    ///     background.
+    /// </summary>
+    /// <seealso cref="Constants.automationLogFile" />
+    automation = 4,
+    /// <summary>
+    ///     The overlay log file, for overlay-specific operations.
+    /// </summary>
+    /// <seealso cref="Constants.overlayLogFile" />
+    overlays = 8,
+    /// <summary>
+    ///     The verbose log file, for all logs. An auto-targeted log.
+    /// </summary>
+    /// <seealso cref="Constants.fullLogFile" />
+    verbose = 16,
+    /// <summary>
+    ///     The warningsPlus log file, for all logs of warning level or higher. An
+    ///     auto-targeted log.
+    /// </summary>
+    /// <seealso cref="Constants.warningsPlusLogFile" />
+    warningsPlus = 32,
+    /// <summary>
+    ///     All log locations.
+    /// </summary>
+    /// <remarks>
+    ///     For Announcement logs.
+    /// </remarks>
+    /// <seealso cref="App.OnExit" />
+    all = main
+        | download
+        | gameFlow
+        | automation
+        | overlays
+        | verbose
+        | warningsPlus,
 }
 
 public enum LogLevel
@@ -32,7 +85,39 @@ public enum LogLevel
 
 public class Logging
 {
+    /// <summary>
+    ///     A lock object for the console to prevent color bleeding.
+    /// </summary>
     private readonly static object consoleLock = new object();
+    /// <summary>
+    ///     A dictionary of log locations and their respective log files.
+    /// </summary>
+    private Dictionary<LogLocation, string> _logLocations =
+        new Dictionary<LogLocation, string>
+        {
+            { LogLocation.main, Constants.mainLogFile },
+            { LogLocation.download, Constants.downloadLogFile },
+            { LogLocation.gameFlow, Constants.gameFlowLogFile },
+            { LogLocation.automation, Constants.automationLogFile },
+            { LogLocation.overlays, Constants.overlayLogFile },
+            { LogLocation.verbose, Constants.fullLogFile },
+            { LogLocation.warningsPlus, Constants.warningsPlusLogFile },
+        };
+
+    /// <summary>
+    ///     A lock for each log location to prevent file access conflicts.
+    /// </summary>
+    private Dictionary<LogLocation, object> _logLocks =
+        new Dictionary<LogLocation, object>
+        {
+            { LogLocation.main, new object() },
+            { LogLocation.download, new object() },
+            { LogLocation.gameFlow, new object() },
+            { LogLocation.automation, new object() },
+            { LogLocation.overlays, new object() },
+            { LogLocation.verbose, new object() },
+            { LogLocation.warningsPlus, new object() },
+        };
 
     /// <summary>
     ///     The code behind the global logging functionality for the application.
@@ -83,32 +168,66 @@ public class Logging
         LogLocation logLocation
     )
     {
+        // Turn on all console logs for debug
+        if (Program.Settings.debug)
+            logTo |= LogTo.console;
+
+        // Format and save the log
+        string log = format(
+                source,
+                method,
+                doing,
+                message,
+                debugSymbols,
+                url,
+                logLocation
+            );
+
+        // Write the log to the console if it's enabled
         if (logTo.HasFlag(LogTo.console))
         {
-            string preface = $"[{source}"
-                + (method == "" ? "" : $"::{method}")
-                + "] ";
-            string log = preface;
-
-            if (doing != "")
-                log += $"{doing}> ";
-
-            log += message + "\n";
-
-            if (debugSymbols.Length > 0)
-            {
-                log += "".PadRight(preface.Length)
-                    + $"({string.Join(", ", debugSymbols)})\n";
-            }
-
-            if (url != "")
-                log += "".PadRight(preface.Length) + url + "\n";
-
+            // Lock the console so color doesn't bleed
             lock (consoleLock)
             {
                 color(logLevel);
                 Console.Write(log);
                 Console.ResetColor();
+            }
+        }
+
+        if (logTo.HasFlag(LogTo.file))
+        {
+            // Always log to the verbose log
+            logLocation |= LogLocation.verbose;
+
+            // Include the log in the main log if it's an info or higher
+            if (logLevel >= LogLevel.info)
+                logLocation |= LogLocation.main;
+
+            // Include the log in the warningsPlus log if it's a warning or worse
+            if (logLevel >= LogLevel.warning)
+                logLocation |= LogLocation.warningsPlus;
+
+            // For each log location option
+            foreach (LogLocation location in Enum.GetValues(typeof(LogLocation)))
+                // If the location was selected
+            {
+                if (logLocation.HasFlag(location))
+                    // Lock the log file
+                {
+                    lock (this._logLocks[location])
+                    {
+                        // Recreate the log file if it was cleared
+                        if (!FileManagement.fileExists(this._logLocations[location]))
+                            FileManagement.createFile(this._logLocations[location]);
+
+                        // Append the log to the file
+                        FileManagement.appendToFile(
+                                this._logLocations[location],
+                                log
+                            );
+                    }
+                }
             }
         }
     }

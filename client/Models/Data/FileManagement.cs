@@ -12,6 +12,8 @@ namespace client.Models.Data;
 
 public static class FileManagement
 {
+    #region Writing
+
     public static void saveToFile<T>(string path, T data)
     {
         string jsonString = JsonSerializer.Serialize(data);
@@ -20,6 +22,18 @@ public static class FileManagement
                 jsonString
             );
     }
+
+    public static void appendToFile(string path, string data)
+    {
+        File.AppendAllText(
+                path,
+                data
+            );
+    }
+
+    #endregion
+
+    #region Reading
 
     public static void loadFromFile<T>(string path, out T? data)
     {
@@ -32,6 +46,22 @@ public static class FileManagement
         string jsonString = File.ReadAllText(path);
         data = JsonSerializer.Deserialize<T>(jsonString);
     }
+
+    #endregion
+
+    #region Compressed File Manipulation
+
+    public static void unpackFile(string path, string destination)
+    {
+        ZipFile.ExtractToDirectory(
+                path,
+                destination
+            );
+    }
+
+    #endregion
+
+    #region Validation
 
     public static bool fileExists(string path)
     {
@@ -48,6 +78,10 @@ public static class FileManagement
         return fileExists(path) && new FileInfo(path).Length > 5;
     }
 
+    #endregion
+
+    #region Creating
+
     public static void createDirectory(string path)
     {
         Directory.CreateDirectory(path);
@@ -57,6 +91,10 @@ public static class FileManagement
     {
         File.Create(path).Close();
     }
+
+    #endregion
+
+    #region Deleting
 
     public static void deleteFile(string path)
     {
@@ -86,6 +124,10 @@ public static class FileManagement
         }
     }
 
+    #endregion
+
+    #region Downloading
+
     public static void downloadFile(string url, string path)
     {
         var client = new HttpClient();
@@ -101,6 +143,7 @@ public static class FileManagement
     /// </summary>
     /// <remarks>
     ///     If the image is larger than the specified size, it will be resized.
+    ///
     ///     TODO: Add cross-platform support for image resizing.
     /// </remarks>
     /// <param name="url">The image URL to download</param>
@@ -123,7 +166,8 @@ public static class FileManagement
                     $"size: {size}",
                 ],
                 url: url,
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.download
             );
 
         // Download the image
@@ -150,6 +194,10 @@ public static class FileManagement
                 ImageFormat.Png
             );
     }
+
+    #endregion
+
+    #region Image Manipulation
 
     [SuppressMessage(
             "Interoperability",
@@ -213,11 +261,5 @@ public static class FileManagement
             );
     }
 
-    public static void unpackFile(string path, string destination)
-    {
-        ZipFile.ExtractToDirectory(
-                path,
-                destination
-            );
-    }
+    #endregion
 }
