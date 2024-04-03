@@ -34,6 +34,8 @@ public class App : Application
 
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
+        // TODO: Save settings like window size here
+
         Program.log(
                 source: nameof(App),
                 method: "OnExit()",
