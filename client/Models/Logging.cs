@@ -113,6 +113,55 @@ public class Logging
         }
     }
 
+    private static string format(
+        string source,
+        string method,
+        string doing,
+        string message,
+        string[] debugSymbols,
+        string url,
+        LogLocation logLocation,
+        bool forFile = false
+    )
+    {
+        string log = "";
+
+        // Form the header
+        string preface = $"[{source}" + (method == "" ? "" : $"::{method}") + "] ";
+        log += preface;
+
+        // Continue the header if an operation is specified
+        if (doing != "")
+            log += $"{doing}> ";
+
+        // Finish the header with the message
+        log += message + "\n";
+
+        // Add debug symbols if they exist
+        if (debugSymbols.Length > 0)
+        {
+            log += "".PadRight(preface.Length);
+            log += $"({string.Join(", ", debugSymbols)})\n";
+        }
+
+        // Add a URL if it exists
+        if (url != "")
+        {
+            log += "".PadRight(preface.Length);
+            log += url + "\n";
+        }
+
+        // Format announcement logs
+        if (logLocation == LogLocation.all)
+        {
+            log += "===============================================";
+            log += "==============================================";
+            log += $" [{DateTime.Now:O}]\n";
+        }
+
+        return log;
+    }
+
     private static void color(LogLevel logLevel)
     {
         Console.ForegroundColor = logLevel switch
