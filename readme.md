@@ -95,13 +95,16 @@ have access to any data in that case.
 ## Contributing
 
 The biggest contribution would be trying it out, and opening an issue if you
-find one.
+find one. You can include a screenshot, if applicable, a description of what you
+were doing when it happened, and `verbose.log` from `%AppData%\mobahinted\logs`.
 
 If you want to code on this, try fixing an issue, or implementing something from
-the ToDo list, and opening a pull request.
+the ToDo list or `TODO`s in the code, and opening a pull request.
 
-If you want to thank me, then email me, report an issue, or star this
-repository; there are also Sponsor options on the GitHub page, go crazy.
+If you want to thank me, then email me (see below), star this repository, or
+simply share the program with your friends; there are also Sponsor options on the
+GitHub page and at the bottom of Settings in the program to support continued
+development.
 
 ## License
 This software is licensed under GPLv3, and as such can be shared and modified freely.
@@ -125,9 +128,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ### Attribution
 
-MobaHinted is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially
-involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or
-registered trademarks of Riot Games, Inc.
+MobaHinted is not endorsed by Riot Games and does not reflect the views or opinions
+of Riot Games or anyone officially involved in producing or managing Riot Games
+properties. Riot Games and all associated properties are trademarks or registered
+trademarks of Riot Games, Inc.
 
 ---
 
