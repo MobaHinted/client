@@ -4,6 +4,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using client.Models;
 using client.ViewModels;
 using client.Views;
 
@@ -25,8 +26,25 @@ public class App : Application
             {
                 DataContext = new Launch(),
             };
+            desktop.Exit += OnExit;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        Program.log(
+                source: nameof(App),
+                method: "OnExit()",
+                doing: "Exiting",
+                message: "Exiting the application...",
+                debugSymbols:
+                [
+                    "Exit Code: " + e.ApplicationExitCode,
+                ],
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.all
+            );
     }
 }
