@@ -51,7 +51,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                 method: "ctor()",
                 doing: "Loading",
                 message: "Login View",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         // Save the previous screen
@@ -277,7 +278,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                 [
                     $"{this.GameName}#{this.TagLine}@{continent}",
                 ],
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.verbose
             );
         ValidateRiotID.search(
                 this.GameName,
@@ -298,7 +300,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                     [
                         $"{this.GameName}#{this.TagLine}@{continent}",
                     ],
-                    logLevel: LogLevel.debug
+                    logLevel: LogLevel.debug,
+                    logLocation: LogLocation.warningsPlus
                 );
             this.ErrorResult = "Account not found on Riot";
             this.CanAdd = "false";
@@ -315,7 +318,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                     [
                         $"{this.GameName}#{this.TagLine}@{continent}",
                     ],
-                    logLevel: LogLevel.debug
+                    logLevel: LogLevel.debug,
+                    logLocation: LogLocation.verbose
                 );
 
             // Try to save the account
@@ -340,7 +344,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                         [
                             $"{this.GameName}#{this.TagLine}@{continent}",
                         ],
-                        logLevel: LogLevel.debug
+                        logLevel: LogLevel.debug,
+                        logLocation: LogLocation.main
                     );
 
                 // Set the active account to the new account
@@ -360,7 +365,8 @@ public class Login : ReactiveObject, IRoutableViewModel
                         [
                             $"{this.GameName}#{this.TagLine}@{continent}",
                         ],
-                        logLevel: LogLevel.debug
+                        logLevel: LogLevel.debug,
+                        logLocation: LogLocation.warningsPlus
                     );
 
                 // Load the accounts from disk

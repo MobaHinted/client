@@ -33,7 +33,8 @@ public class ProgramAssets
                     message: "Type must be from the DataDragon namespace\n" + error,
                     debugSymbols: [typeof(T).Name],
                     url: url,
-                    logLevel: LogLevel.fatal
+                    logLevel: LogLevel.fatal,
+                    logLocation: LogLocation.warningsPlus
                 );
             throw error;
         }
@@ -55,7 +56,8 @@ public class ProgramAssets
                         doing: "Downloading",
                         message: typeof(T).Name + " (complex)",
                         url: url,
-                        logLevel: LogLevel.debug
+                        logLevel: LogLevel.debug,
+                        logLocation: LogLocation.download
                     );
                 return JsonSerializer.Deserialize<T>(result.Result)!;
             }
@@ -66,7 +68,8 @@ public class ProgramAssets
                     doing: "Downloading",
                     message: typeof(T).Name + " (simple)",
                     url: url,
-                    logLevel: LogLevel.debug
+                    logLevel: LogLevel.debug,
+                    logLocation: LogLocation.download
                 );
 
             // Get the type of the first variable in T, and save the variable
@@ -224,7 +227,8 @@ public class ProgramAssets
                     $"files all available: {haveFiles}",
                     $"version up to date: {versionUp}",
                 ],
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.verbose
             );
 
         // Check if all files are accessible and the version is up to date
@@ -234,9 +238,10 @@ public class ProgramAssets
                     source: nameof(ProgramAssets),
                     method: "checkForUpdates()",
                     message: $"Already on {this.Version}",
-                    logLevel: LogLevel.info
+                    logLevel: LogLevel.info,
+                    logLocation: LogLocation.main
                 );
-            await Task.Delay(1200);
+            await Task.Delay(600);
             return;
         }
 
@@ -245,7 +250,8 @@ public class ProgramAssets
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
                 message: $"Updating to {this.Version}...",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.download | LogLocation.main
             );
         FileManagement.emptyDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
@@ -257,7 +263,8 @@ public class ProgramAssets
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
                 message: "Updated",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.download | LogLocation.main
             );
     }
 
@@ -271,25 +278,25 @@ public class ProgramAssets
             FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "champions.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "versions.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "items.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "summonerSpells.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "runes.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "profilePictures.json"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.imageCacheDataDragonFolder + "spell.Flash.png"
                 )
-            || FileManagement.fileHasContent(
+            && FileManagement.fileHasContent(
                     Constants.imageCacheDataDragonFolder + "rank.Emerald.png"
                 );
     }
@@ -740,7 +747,8 @@ public class ProgramAssets
                     "size: 256",
                 ],
                 url: this.RankedEmblemsURL,
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.download
             );
 
         // Skip downloading if the images already exist

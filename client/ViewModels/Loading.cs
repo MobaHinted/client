@@ -25,7 +25,8 @@ public class Loading : ReactiveObject, IRoutableViewModel
                 method: "ctor()",
                 doing: "Loading",
                 message: "Loading View",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         // Save the previous screen

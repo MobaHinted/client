@@ -35,7 +35,8 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
                 method: "ctor()",
                 doing: "Loading",
                 message: "Match History View",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         // Save the previous screen

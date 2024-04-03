@@ -49,7 +49,8 @@ public static class Setup
                     $"files: {filesExist}",
                     $"directories: {directoriesExist}",
                 ],
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.verbose
             );
 
         return filesExist && directoriesExist;
@@ -90,7 +91,8 @@ public static class Setup
                 source: nameof(Setup),
                 method: "createAllContent()",
                 message: "Creating all necessary files and directories...",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         createAllDirectories();

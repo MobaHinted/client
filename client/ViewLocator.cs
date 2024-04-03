@@ -37,7 +37,8 @@ public class ViewLocator : IDataTemplate, IViewLocator
                     doing: "Found no view",
                     message: "Checking client.Views.*",
                     debugSymbols: [$"searching for: {name}"],
-                    logLevel: LogLevel.debug
+                    logLevel: LogLevel.debug,
+                    logLocation: LogLocation.verbose
                 );
 
             type = Type.GetType(name);
@@ -54,7 +55,8 @@ public class ViewLocator : IDataTemplate, IViewLocator
                     message: "Building View" + error.Message,
                     debugSymbols:
                     [$"from: {data.GetType().FullName!}", $"to: {name}"],
-                    logLevel: LogLevel.fatal
+                    logLevel: LogLevel.fatal,
+                    logLocation: LogLocation.warningsPlus
                 );
 
             throw error;
@@ -66,7 +68,8 @@ public class ViewLocator : IDataTemplate, IViewLocator
                 method: "Build()",
                 message: "Building View",
                 debugSymbols: [$"name: {name}"],
-                logLevel: LogLevel.debug
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.verbose
             );
 
         // Set the data context and load the view

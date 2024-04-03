@@ -89,7 +89,11 @@ public class Matches
                                     [
                                         JsonSerializer.Serialize(task.Result),
                                     ],
-                                    logLevel: LogLevel.error
+                                    logLevel: LogLevel.error,
+                                    logTo: LogTo.file
+                                    | LogTo.console
+                                    | LogTo.errorScreen,
+                                    logLocation: LogLocation.download
                                 );
                             return;
                         }
@@ -116,7 +120,11 @@ public class Matches
                                     [
                                         JsonSerializer.Serialize(task.Result),
                                     ],
-                                    logLevel: LogLevel.error
+                                    logLevel: LogLevel.error,
+                                    logTo: LogTo.file
+                                    | LogTo.console
+                                    | LogTo.errorScreen,
+                                    logLocation: LogLocation.download
                                 );
                         }
 
@@ -134,7 +142,9 @@ public class Matches
                     method: "getMatches()",
                     doing: "Loading Matches",
                     message: "Received no usable data from Riot. Possible API error",
-                    logLevel: LogLevel.error
+                    logLevel: LogLevel.error,
+                    logTo: LogTo.file | LogTo.console | LogTo.retryPopup,
+                    logLocation: LogLocation.download
                 );
             return;
         }
@@ -151,7 +161,9 @@ public class Matches
                     doing: "Loading Matches",
                     message: "Received a 400-series error from Riot."
                     + "API key issue? Invalid request?",
-                    logLevel: LogLevel.warning
+                    logLevel: LogLevel.warning,
+                    logTo: LogTo.file | LogTo.console | LogTo.errorScreen,
+                    logLocation: LogLocation.download
                 );
             return;
         }
@@ -194,7 +206,8 @@ public class Matches
                         $"Missed: {this._missedMatches} ({this._matchesToRetry.Count})",
                         "Misses: " + JsonSerializer.Serialize(this._matchesToRetry),
                     ],
-                    logLevel: LogLevel.warning
+                    logLevel: LogLevel.warning,
+                    logLocation: LogLocation.main
                 );
         }
 
@@ -216,9 +229,28 @@ public class Matches
             // If the match is already cached, use that instead
             if (FileManagement.fileExists(cacheFile))
             {
+                // Load the match from the cache
                 FileManagement.loadFromFile(
                         cacheFile,
                         out match
+                    );
+
+                // Log the success
+                Program.log(
+                        source: nameof(Matches),
+                        method: "getMatches()",
+                        doing: "Loading Matches",
+                        message: "Loaded match data from cache",
+                        debugSymbols:
+                        [
+                            matchID,
+                            this._matchData.Count
+                            + "/"
+                            + Program.Settings.matchHistoryCount,
+                        ],
+                        logLevel: LogLevel.debug,
+                        logTo: LogTo.file,
+                        logLocation: LogLocation.download
                     );
             }
             // Otherwise download the data
@@ -233,9 +265,28 @@ public class Matches
                             matchID
                         );
 
+                // Cache the match data
                 FileManagement.saveToFile(
                         cacheFile,
                         match
+                    );
+
+                // Log the success
+                Program.log(
+                        source: nameof(Matches),
+                        method: "getMatches()",
+                        doing: "Loading Matches",
+                        message: "Loaded match data",
+                        debugSymbols:
+                        [
+                            matchID,
+                            this._matchData.Count
+                            + "/"
+                            + Program.Settings.matchHistoryCount,
+                        ],
+                        logLevel: LogLevel.debug,
+                        logTo: LogTo.file,
+                        logLocation: LogLocation.download
                     );
             }
 
@@ -243,22 +294,6 @@ public class Matches
             this._matchData.Add(
                     matchID,
                     new MatchData(match!)
-                );
-
-            // Log the success
-            Program.log(
-                    source: nameof(Matches),
-                    method: "getMatches()",
-                    doing: "Loading Matches",
-                    message: "Loaded match data",
-                    debugSymbols:
-                    [
-                        matchID,
-                        this._matchData.Count
-                        + "/"
-                        + Program.Settings.matchHistoryCount,
-                    ],
-                    logLevel: LogLevel.debug
                 );
 
             // Handle a retry
@@ -286,7 +321,9 @@ public class Matches
                     [
                         matchID,
                     ],
-                    logLevel: LogLevel.warning
+                    logLevel: LogLevel.warning,
+                    logTo: LogTo.file | LogTo.console,
+                    logLocation: LogLocation.download
                 );
 
             // Only add to these variables if it's not a retry

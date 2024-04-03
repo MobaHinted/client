@@ -16,7 +16,8 @@ public class Launch : ReactiveObject, IScreen
                 method: "ctor()",
                 doing: "Loading",
                 message: "Launch View",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         // Set the program router to this instance

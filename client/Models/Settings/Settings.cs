@@ -107,7 +107,8 @@ public class Settings : INotifyPropertyChanged
                 method: "load()",
                 doing: "Loading",
                 message: "Settings from file",
-                logLevel: LogLevel.info
+                logLevel: LogLevel.info,
+                logLocation: LogLocation.main
             );
 
         // Load the settings dictionary from the file
@@ -145,7 +146,8 @@ public class Settings : INotifyPropertyChanged
                     [
                         $"{setting.Key}: {setting.Value}",
                     ],
-                    logLevel: LogLevel.debug
+                    logLevel: LogLevel.debug,
+                    logLocation: LogLocation.verbose
                 );
         }
     }
@@ -231,6 +233,28 @@ public class Settings : INotifyPropertyChanged
                     ref this._windowHeight,
                     value,
                     nameof(this._windowHeight)
+                );
+    }
+
+    #endregion
+
+    #region Debug
+
+    private bool _debug = false;
+
+    /// <summary>
+    ///     Whether all warningPlus and debug logs should be shown, as well as
+    ///     feature testing.
+    /// </summary>
+    [SettingDisplay(NotForManualEditing = true)]
+    public bool debug
+    {
+        get => this._debug;
+        set =>
+            SetProperty(
+                    ref this._debug,
+                    value,
+                    nameof(this._debug)
                 );
     }
 
@@ -760,7 +784,7 @@ public class Settings : INotifyPropertyChanged
 
     #region MatchHistoryCount
 
-    private int _matchHistoryCount = 30;
+    private int _matchHistoryCount = 100;
 
     /// <summary>
     ///     How many matches should be loaded and shown on the match history screen.
