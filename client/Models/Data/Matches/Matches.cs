@@ -229,6 +229,7 @@ public class Matches
             // If the match is already cached, use that instead
             if (FileManagement.fileExists(cacheFile))
             {
+                // TODO: Load MatchData instead of CamilleMatch
                 // Load the match from the cache
                 FileManagement.loadFromFile(
                         cacheFile,
@@ -265,6 +266,7 @@ public class Matches
                             matchID
                         );
 
+                // TODO: Save MatchData instead of CamilleMatch
                 // Cache the match data
                 FileManagement.saveToFile(
                         cacheFile,
