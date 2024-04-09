@@ -805,7 +805,7 @@ public class ProgramAssets
     #region Variables and their Backers
 
     /// <summary>
-    ///     Convert the user's <see cref="PlatformRoute" /> to a string.
+    ///     Convert the user's <see cref="PlatformRoute">Platform</see> to a string.
     /// </summary>
     private readonly static string regionString =
         Program.Account.Region.AsRegionString().ToLower();
@@ -813,10 +813,8 @@ public class ProgramAssets
     /// <summary>
     ///     The locale used for the game data downloads.
     /// </summary>
-    /// <remarks>
-    ///     TODO: This should be an option on Login and in settings once app is
-    ///     localized.
-    /// </remarks>
+    /// <!--TODO: This should be an option on Login and in settings once app is
+    ///     localized.-->
     // ReSharper disable once ConvertToConstant.Local
     private readonly static string locale = "en_US";
 

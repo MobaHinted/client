@@ -143,9 +143,8 @@ public static class FileManagement
     /// </summary>
     /// <remarks>
     ///     If the image is larger than the specified size, it will be resized.
-    ///
-    ///     TODO: Add cross-platform support for image resizing.
     /// </remarks>
+    /// <!--TODO: Add cross-platform support for image resizing.-->
     /// <param name="url">The image URL to download</param>
     /// <param name="path">The path to save the image to</param>
     /// <param name="size">The size to resize the image to. Defaults to 128(x128)</param>

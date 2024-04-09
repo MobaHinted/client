@@ -24,9 +24,7 @@ public class PropertyChangedEventArgsWithValue(string propertyName, object newVa
 /// <summary>
 ///     A structure for storing settings.
 /// </summary>
-/// <remarks>
-///     TODO: I think this should be changed to be auto-generated.
-/// </remarks>
+/// <!--TODO: I think this should be changed to be auto-generated.-->
 /// <seealso cref="SettingsManager" />
 [SuppressMessage(
         "ReSharper",
