@@ -15,10 +15,20 @@ public class PlayerData { }
 
 /// <summary>
 ///     A class to hold the data for each <see cref="PlayerData">Player</see> for a
-///     team in a <see cref="MatchData">Match</see>.
+///     team in a <see cref="MatchData">Match</see>, as well as the team's combined
+///     stats.
 /// </summary>
 public class TeamData
 {
+    /// <summary>
+    ///     A dictionary of the players on the team.
+    /// </summary>
+    /// <remarks>
+    ///     Key is converted to the player's role <see cref="Role">Role</see> on
+    ///     Summoner's Rift.
+    /// </remarks>
+    public Dictionary<byte, PlayerData> Players = new Dictionary<byte, PlayerData>();
+
     /// <summary>
     ///     Creates a new instance of <see cref="TeamData" />.
     /// </summary>
@@ -26,7 +36,29 @@ public class TeamData
     ///     A <see cref="Camille.RiotGames.MatchV5.Team" /> from a
     ///     <see cref="Camille.RiotGames.MatchV5.Match.Info">Match's Info</see>.
     /// </param>
-    public TeamData(Team team) { }
+    /// <param name="players">
+    ///     A sub-array of
+    ///     <see cref="Camille.RiotGames.MatchV5.Participant">
+    ///         Players
+    ///     </see>
+    ///     from a
+    ///     <see cref="Camille.RiotGames.MatchV5.Match.Info">Match's Info</see>.
+    /// </param>
+    public TeamData(Team team, IReadOnlyCollection<Participant> players)
+    {
+        Program.log(
+                source: nameof(TeamData),
+                method: "TeamData()",
+                doing: "Parsing Team Data",
+                message: "Team: " + team.TeamId,
+                debugSymbols:
+                [
+                    "Players: " + players.Count,
+                ],
+                logLevel: LogLevel.debug,
+                logLocation: LogLocation.verbose
+            );
+    }
 }
 
 /// <summary>
@@ -69,20 +101,15 @@ public class MatchData
     public MatchData(CamilleMatch match)
     {
         this._match = match;
-        ParseTeams();
+        parseTeams();
 
         Program.log(
                 source: nameof(MatchData),
                 method: "MatchData()",
                 doing: "Parsing Match Data",
-                message: "Loaded match data"
-                + match.Metadata.MatchId
-                + " in "
+                message: match.Metadata.MatchId
+                + " in patch "
                 + match.Info.GameVersion,
-                debugSymbols:
-                [
-                    match.Metadata.MatchId,
-                ],
                 logLevel: LogLevel.debug,
                 logLocation: LogLocation.verbose
             );
@@ -99,15 +126,23 @@ public class MatchData
     /// <summary>
     ///     Parsing of the teams and their players in the match.
     /// </summary>
-    private void ParseTeams()
+    private void parseTeams()
     {
         // Parse each team, and their players
         foreach (Team team in this._match.Info.Teams)
         {
             // Add the team to the list
             this._teams.Add(
-                    team.TeamId,
-                    new TeamData(team)
+                    team.TeamId, // The team, eg red or blue
+                    new TeamData(
+                            team, // The team's data
+                            this
+                                ._match.Info.Participants //The players in the match
+                                .Where(
+                                        p => p.TeamId == team.TeamId
+                                    ) // Filtered to the same team
+                                .ToArray() // Converted to an array
+                        )
                 );
         }
     }
