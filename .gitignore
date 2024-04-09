@@ -10,7 +10,7 @@
 /bin/
 /client/obj/
 /obj/
-sample*.*
+sample*
 .env
 *.spec
 *.exe
