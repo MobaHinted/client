@@ -1,7 +1,11 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using client.Models.Data;
+
+#endregion
 
 namespace client.Models;
 
@@ -171,6 +175,9 @@ public class Logging
         // Turn on all console logs for debug
         if (Program.Settings.debug)
             logTo |= LogTo.console;
+        // Otherwise, disable debug logs
+        else if (logLevel < LogLevel.info)
+            logTo &= ~LogTo.console;
 
         // Format and save the log
         string log = format(
@@ -252,6 +259,12 @@ public class Logging
         // Continue the header if an operation is specified
         if (doing != "")
             log += $"{doing}> ";
+
+        // Replace any line breaks in the message with a line break and padding
+        message = message.Replace(
+                "\n",
+                "\n" + "".PadRight(preface.Length)
+            );
 
         // Finish the header with the message
         log += message + "\n";
