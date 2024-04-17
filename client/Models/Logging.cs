@@ -219,21 +219,21 @@ public class Logging
             foreach (LogLocation location in Enum.GetValues(typeof(LogLocation)))
                 // If the location was selected
             {
-                if (logLocation.HasFlag(location))
-                    // Lock the log file
-                {
-                    lock (this._logLocks[location])
-                    {
-                        // Recreate the log file if it was cleared
-                        if (!FileManagement.fileExists(this._logLocations[location]))
-                            FileManagement.createFile(this._logLocations[location]);
+                if (!logLocation.HasFlag(location)) continue;
+                if (location == LogLocation.all) continue;
 
-                        // Append the log to the file
-                        FileManagement.appendToFile(
-                                this._logLocations[location],
-                                log
-                            );
-                    }
+                // Lock the log file
+                lock (this._logLocks[location])
+                {
+                    // Recreate the log file if it was cleared
+                    if (!FileManagement.fileExists(this._logLocations[location]))
+                        FileManagement.createFile(this._logLocations[location]);
+
+                    // Append the log to the file
+                    FileManagement.appendToFile(
+                            this._logLocations[location],
+                            log
+                        );
                 }
             }
         }
