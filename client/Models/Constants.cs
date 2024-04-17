@@ -27,7 +27,7 @@ public static class Constants
 
     #region Data Paths
 
-    public readonly static string cachedMatchesFolder = data + "cachedMatches\\";
+    public readonly static string cachedMatchesFolder = data + "cached_matches\\";
     public readonly static string dataDragonFolder = data + "data_dragon\\";
     public readonly static string dataDragonChampionFolder =
         dataDragonFolder + "champions\\";
