@@ -1,10 +1,14 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using System.Text.Json;
 using Camille.Enums;
 using client.Models.Data.DataDragon;
 using Champion = client.Models.Data.DataDragon.Champion;
+
+#endregion
 
 namespace client.Models.Data;
 
@@ -19,6 +23,12 @@ public class ProgramAssets
     ///     Response Class from <see cref="client.Models.Data.DataDragon" />
     /// </typeparam>
     /// <returns>The URL response, formatted into the specified Response</returns>
+    /// <exception cref="ArgumentException">
+    ///     Any error from deserializing the API response
+    /// </exception>
+    /// <exception cref="HttpRequestException">
+    ///     Any error from calling the API
+    /// </exception>
     private static T getDataDragon<T>(string url)
     {
         // Ensure the type is from the DataDragon namespace
@@ -44,12 +54,20 @@ public class ProgramAssets
             // Call the API
             var client = new HttpClient();
             var response = client.GetAsync(url);
+
+            // If the first request fails, retry once
+            if (!response.Result.IsSuccessStatusCode)
+                response = client.GetAsync(url);
+
             // Read back the response
             var result = response.Result.Content.ReadAsStringAsync();
 
             // Return the response, deserialized into the given type, if not Simple
             if (!typeof(Simple).IsAssignableFrom(typeof(T)))
             {
+                // Verify the Type matches the response
+                validateDataDragonTypeAgainstResponse<T>(result.Result);
+
                 Program.log(
                         source: nameof(ProgramAssets),
                         method: "getDataDragon()",
@@ -95,12 +113,29 @@ public class ProgramAssets
             // Return the new instance of T
             return newT;
         }
-        // Handle un-parseable responses
+        // Handle double timeouts
+        catch (HttpRequestException)
+        {
+            throw new HttpRequestException("The request timed out: " + url);
+        }
+        catch (ArgumentException e)
+        {
+            throw new ArgumentException(
+                    "The response used in the DataDragon namespace does not match "
+                    + "the API response: \n"
+                    + url
+                    + " -> "
+                    + typeof(T)
+                    + "\n"
+                    + e.Message
+                );
+        }
+        // Handle unexpected errors
         catch (Exception e)
         {
             throw new ArgumentException(
-                    "The response used in the DataDragon namespace does not "
-                    + "match the API response: \n"
+                    "An unexpected error was encountered while parsing the "
+                    + "DataDragon API response: \n"
                     + url
                     + " -> "
                     + typeof(T)
@@ -109,6 +144,80 @@ public class ProgramAssets
                     + "\n"
                 );
         }
+    }
+
+    /// <summary>
+    ///     Validate that the DataDragon API response matches the given
+    ///     <see cref="DataDragon">DataDragon Type</see> in
+    ///     <see cref="getDataDragon{T}">getDataDragon()</see>.
+    /// </summary>
+    /// <param name="json">The API response</param>
+    /// <typeparam name="T">The given DataDragon type</typeparam>
+    /// <exception cref="ArgumentException">
+    ///     The results of data mismatch to repair the DataDragon type with
+    /// </exception>
+    private static void validateDataDragonTypeAgainstResponse<T>(string json)
+    {
+        // Parse the JSON into a JsonDocument
+        JsonDocument doc = JsonDocument.Parse(json);
+
+        // Check if the root element is a JSON object
+        if (doc.RootElement.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("The JSON does not represent an object.");
+        }
+
+        // Get the JsonObject representing the root object in the JSON
+        JsonElement.ObjectEnumerator rootObject = doc.RootElement.EnumerateObject();
+
+        // Get the PropertyInfo objects for the properties of the given Type
+        var properties = typeof(T).GetProperties();
+
+        // Check if each property is present in the JsonObject
+        var missingProperties = (from property in properties
+            where rootObject.Current.Value.ValueKind == JsonValueKind.Object
+                && rootObject.Current.Value.TryGetProperty(
+                        property.Name,
+                        out JsonElement _
+                    )
+            where !rootObject.Current.Value.TryGetProperty(
+                    property.Name,
+                    out _
+                )
+            select property.Name).ToList();
+
+        // Check if each key in the JsonObject corresponds to a property
+        var extraKeys = new List<string>();
+        while (rootObject.MoveNext())
+            if (properties.All(p => p.Name != rootObject.Current.Name))
+                extraKeys.Add(rootObject.Current.Name);
+
+        // TODO: Check the types of properties are correct as well
+
+        // If there are no missing properties or extra keys, return
+        if (missingProperties.Count == 0 && extraKeys.Count == 0)
+            return;
+
+        // If there are any missing properties or extra keys, throw an exception
+        string message = "";
+        if (missingProperties.Count != 0)
+            message += "\nExtraneous properties in DataDragon type:\n- "
+                + string.Join(
+                        "\n- ",
+                        missingProperties
+                    );
+
+        if (missingProperties.Count != 0 && extraKeys.Count != 0)
+            message += "\n";
+
+        if (extraKeys.Count != 0)
+            message += "\nResponse keys missing from DataDragon Type:\n- "
+                + string.Join(
+                        "\n- ",
+                        extraKeys
+                    );
+
+        throw new ArgumentException(message);
     }
 
     /// <summary>
@@ -151,6 +260,13 @@ public class ProgramAssets
                 "Item data"
             );
         getItems();
+        await Task.Delay(200);
+
+        updateStatus(
+                "Downloading...",
+                "Item images"
+            );
+        getItemImages();
         await Task.Delay(200);
 
         updateStatus(
@@ -226,12 +342,13 @@ public class ProgramAssets
                 [
                     $"files all available: {haveFiles}",
                     $"version up to date: {versionUp}",
+                    $"update necessary: {!haveFiles || !versionUp}",
                 ],
-                logLevel: LogLevel.debug,
+                logLevel: LogLevel.info,
                 logLocation: LogLocation.verbose
             );
 
-        // Check if all files are accessible and the version is up to date
+        // Check if all files are accessible and the version is up-to-date
         if (haveFiles && versionUp)
         {
             Program.log(
@@ -245,7 +362,7 @@ public class ProgramAssets
             return;
         }
 
-        // Re-download the data dragon files if no check bailed the process
+        // Re-download the data dragon files if not up to date
         Program.log(
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
@@ -255,8 +372,42 @@ public class ProgramAssets
             );
         FileManagement.emptyDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
+        FileManagement.emptyDirectory(Constants.imageCacheFolder);
+        FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
         FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
-        await setup(updateStatus);
+
+        // Try to update the files
+        try
+        {
+            await setup(updateStatus);
+        }
+        catch (HttpRequestException e)
+        {
+            // TODO: this should log to an LogTo.retryPopup, so that needs set up
+            Program.log(
+                    source: nameof(ProgramAssets),
+                    method: "checkForUpdates()",
+                    message: "Error updating, timeout encountered",
+                    debugSymbols: [e.Message],
+                    logLevel: LogLevel.error,
+                    logLocation: LogLocation.download
+                );
+            // TODO: This should not be here once a retry screen is added
+            throw new Exception();
+        }
+        catch (ArgumentException e)
+        {
+            // TODO: this should log to an LogTo.errorScreen, so that needs set up
+            Program.log(
+                    source: nameof(ProgramAssets),
+                    method: "checkForUpdates()",
+                    message: "Error updating\n" + e.Message,
+                    logLevel: LogLevel.fatal,
+                    logLocation: LogLocation.download
+                );
+            // TODO: This should be program.exit(), that needs to be setup
+            throw new Exception();
+        }
 
         // Succeed
         Program.log(
@@ -279,6 +430,9 @@ public class ProgramAssets
                     Constants.dataDragonFolder + "champions.json"
                 )
             && FileManagement.fileHasContent(
+                    Constants.dataDragonChampionFolder + "Aatrox.json"
+                )
+            && FileManagement.fileHasContent(
                     Constants.dataDragonFolder + "versions.json"
                 )
             && FileManagement.fileHasContent(
@@ -298,6 +452,9 @@ public class ProgramAssets
                 )
             && FileManagement.fileHasContent(
                     Constants.imageCacheDataDragonFolder + "rank.Emerald.png"
+                )
+            && FileManagement.fileHasContent(
+                    Constants.imageCacheFolder + "item.1001.png"
                 );
     }
 
@@ -411,6 +568,7 @@ public class ProgramAssets
         string folder = Constants.dataDragonChampionFolder;
 
         // Iterate over each champion from the champion list
+        var tasks = new List<Task>();
         foreach (string championName in this.Champions.data.Select(
                          champion => champion.Value.id
                      ))
@@ -430,7 +588,8 @@ public class ProgramAssets
             // Download and save the individual champion
             else
             {
-                Task.Run(
+                tasks.Add(
+                    Task.Run(
                         () =>
                         {
                             individualChampion = getDataDragon<IndividualChampion>(
@@ -446,9 +605,14 @@ public class ProgramAssets
                                 );
                             champions.Add(individualChampion);
                         }
+                        )
                     );
             }
         }
+
+        // Wait for all champions to complete
+        while (tasks.Any(t => !t.IsCompleted))
+            Thread.Sleep(50);
 
         this._champion = champions;
         return champions;
@@ -463,6 +627,7 @@ public class ProgramAssets
         string folder = Constants.imageCacheDataDragonFolder;
 
         // Iterate over each champion where the image does not already exist
+        var tasks = new List<Task>();
         foreach (Champion champion in this
                      .Champion
                      .Select(individualChampion => individualChampion.Champion)
@@ -473,11 +638,13 @@ public class ProgramAssets
                          ))
         {
             // Download the champion's image if not
-            Task.Run(
+            tasks.Add(
+                Task.Run(
                     () => FileManagement.downloadImage(
                             champion.image.imageURL,
                             folder + "champion." + champion.image.full
                         )
+                    )
                 );
 
             #region Abilities
@@ -489,7 +656,12 @@ public class ProgramAssets
                 // Download the ability's image
             {
                 int counterForTask = counter;
-                Task.Run(
+                // TODO: use some sort of templating to avoid this big block
+                // TODO: use some sort of templating to keep names consistent
+                // TODO: add a period after the champion name
+                // TODO: add things like "champion_ability" to constants
+                tasks.Add(
+                    Task.Run(
                         () => FileManagement.downloadImage(
                                 ability.image.imageURL,
                                 folder
@@ -499,12 +671,14 @@ public class ProgramAssets
                                 + ability.image.full[
                                     ability.image.full.LastIndexOf('.')..]
                             )
+                        )
                     );
                 counter++;
             }
 
             // Download the passive's image
-            Task.Run(
+            tasks.Add(
+                Task.Run(
                     () => FileManagement.downloadImage(
                             champion.passive.image.imageURL,
                             folder
@@ -514,10 +688,15 @@ public class ProgramAssets
                             + champion.passive.image.full[
                                 champion.passive.image.full.LastIndexOf('.')..]
                         )
+                    )
                 );
 
             #endregion
         }
+
+        // Wait for all images to complete
+        while (tasks.Any(t => !t.IsCompleted))
+            Thread.Sleep(50);
     }
 
     /// <summary>
@@ -529,7 +708,7 @@ public class ProgramAssets
         Items items;
         string file = Constants.dataDragonFolder + "items.json";
 
-        // Load the versions list if it exists
+        // Load the items list if it exists
         if (FileManagement.fileHasContent(file))
         {
             FileManagement.loadFromFile(
@@ -537,7 +716,7 @@ public class ProgramAssets
                     out items!
                 );
         }
-        // Download and save the versions list
+        // Download and save the items list
         else
         {
             items = getDataDragon<Items>(this.ItemDataURL);
@@ -550,6 +729,45 @@ public class ProgramAssets
 
         this._items = items;
         return items;
+    }
+
+    /// <summary>
+    ///     Get the images for each item from the Data Dragon API.
+    /// </summary>
+    private void getItemImages()
+    {
+        string folder = Constants.imageCacheFolder;
+
+        // Iterate over each item where the image does not already exist
+        var tasks = new List<Task>();
+        foreach (ItemData item in this.Items.data.Values.Where(
+                         item => !FileManagement.fileHasContent(
+                                 folder
+                                 + "item."
+                                 + item.image.full[
+                                     ..item.image.full.LastIndexOf('.')]
+                                 + ".png"
+                             )
+                     ))
+        {
+            // Download the item's image
+            tasks.Add(
+                    Task.Run(
+                            () => FileManagement.downloadImage(
+                                    item.image.imageURL,
+                                    folder
+                                    + "item."
+                                    + item.image.full[
+                                        ..item.image.full.LastIndexOf('.')]
+                                    + ".png"
+                                )
+                        )
+                );
+        }
+
+        // Wait for all images to complete
+        while (tasks.Any(t => !t.IsCompleted))
+            Thread.Sleep(50);
     }
 
     /// <summary>
@@ -592,6 +810,7 @@ public class ProgramAssets
         string folder = Constants.imageCacheDataDragonFolder;
 
         // Iterate over each rune where the image does not already exist
+        var tasks = new List<Task>();
         foreach (RuneTree runeTree in this.Runes.runetrees.Where(
                          rune => !FileManagement.fileHasContent(
                                  folder + "rune_tree." + rune.image.sprite
@@ -599,7 +818,8 @@ public class ProgramAssets
                      ))
         {
             // Download the tree's image
-            Task.Run(
+            tasks.Add(
+                Task.Run(
                     () => FileManagement.downloadImage(
                             runeTree.image.imageURL,
                             folder
@@ -609,13 +829,15 @@ public class ProgramAssets
                                 runeTree.image.full.LastIndexOf('.')..],
                             32
                         )
+                    )
                 );
 
             // Iterate over each rune in the tree
             foreach (Rune rune in runeTree.slots.SelectMany(slot => slot.runes))
             {
                 // Download the rune's image
-                Task.Run(
+                tasks.Add(
+                    Task.Run(
                         () => FileManagement.downloadImage(
                                 rune.image.imageURL,
                                 folder
@@ -625,9 +847,14 @@ public class ProgramAssets
                                     rune.image.full.LastIndexOf('.')..],
                                 32
                             )
+                        )
                     );
             }
         }
+
+        // Wait for all images to complete
+        while (tasks.Any(t => !t.IsCompleted))
+            Thread.Sleep(50);
     }
 
     /// <summary>
@@ -671,6 +898,7 @@ public class ProgramAssets
         string folder = Constants.imageCacheDataDragonFolder;
 
         // Iterate over each summoner spell where the image does not already exist
+        var tasks = new List<Task>();
         foreach (SummonerSpell summonerSpell in
                  this.SummonerSpells.data.Values.Where(
                          spell => !FileManagement.fileHasContent(
@@ -683,7 +911,8 @@ public class ProgramAssets
                      ))
         {
             // Download the spell's image
-            Task.Run(
+            tasks.Add(
+                Task.Run(
                     () => FileManagement.downloadImage(
                             summonerSpell.image.imageURL,
                             folder
@@ -692,6 +921,7 @@ public class ProgramAssets
                             + summonerSpell.image.full[
                                 summonerSpell.image.full.LastIndexOf('.')..]
                         )
+                    )
                 );
         }
     }
