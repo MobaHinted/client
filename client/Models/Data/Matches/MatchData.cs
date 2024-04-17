@@ -1,65 +1,21 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using Camille.RiotGames.MatchV5;
+
+#endregion
 
 namespace client.Models.Data.Matches;
 
+#region
+
 using CamilleMatch = Camille.RiotGames.MatchV5.Match;
+using CamilleTeam = Team;
+using TeamData = GameData.Team;
 
-/// <summary>
-///     A class to hold the data for each player in a
-///     <see cref="MatchData">Match</see>.
-/// </summary>
-public class PlayerData { }
-
-/// <summary>
-///     A class to hold the data for each <see cref="PlayerData">Player</see> for a
-///     team in a <see cref="MatchData">Match</see>, as well as the team's combined
-///     stats.
-/// </summary>
-public class TeamData
-{
-    /// <summary>
-    ///     A dictionary of the players on the team.
-    /// </summary>
-    /// <remarks>
-    ///     Key is converted to the player's role <see cref="Role">Role</see> on
-    ///     Summoner's Rift.
-    /// </remarks>
-    public Dictionary<byte, PlayerData> Players = new Dictionary<byte, PlayerData>();
-
-    /// <summary>
-    ///     Creates a new instance of <see cref="TeamData" />.
-    /// </summary>
-    /// <param name="team">
-    ///     A <see cref="Camille.RiotGames.MatchV5.Team" /> from a
-    ///     <see cref="Camille.RiotGames.MatchV5.Match.Info">Match's Info</see>.
-    /// </param>
-    /// <param name="players">
-    ///     A sub-array of
-    ///     <see cref="Camille.RiotGames.MatchV5.Participant">
-    ///         Players
-    ///     </see>
-    ///     from a
-    ///     <see cref="Camille.RiotGames.MatchV5.Match.Info">Match's Info</see>.
-    /// </param>
-    public TeamData(Team team, IReadOnlyCollection<Participant> players)
-    {
-        Program.log(
-                source: nameof(TeamData),
-                method: "TeamData()",
-                doing: "Parsing Team Data",
-                message: "Team: " + team.TeamId,
-                debugSymbols:
-                [
-                    "Players: " + players.Count,
-                ],
-                logLevel: LogLevel.debug,
-                logLocation: LogLocation.verbose
-            );
-    }
-}
+#endregion
 
 /// <summary>
 ///     The parsed data for a match.
@@ -100,9 +56,6 @@ public class MatchData
     /// </param>
     public MatchData(CamilleMatch match)
     {
-        this._match = match;
-        parseTeams();
-
         Program.log(
                 source: nameof(MatchData),
                 method: "MatchData()",
@@ -111,8 +64,12 @@ public class MatchData
                 + " in patch "
                 + match.Info.GameVersion,
                 logLevel: LogLevel.debug,
-                logLocation: LogLocation.verbose
+                logLocation: LogLocation.verbose,
+                logTo: LogTo.console
             );
+
+        this._match = match;
+        parseTeams();
     }
 
     /// <summary>
@@ -129,11 +86,11 @@ public class MatchData
     private void parseTeams()
     {
         // Parse each team, and their players
-        foreach (Team team in this._match.Info.Teams)
+        foreach (CamilleTeam team in this._match.Info.Teams)
         {
             // Add the team to the list
             this._teams.Add(
-                    team.TeamId, // The team, eg red or blue
+                    team.TeamId, // The team, e.g. red or blue
                     new TeamData(
                             team, // The team's data
                             this
