@@ -1,12 +1,16 @@
 // MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using client.Models;
 using client.ViewModels;
 using client.Views;
+
+#endregion
 
 namespace client;
 
@@ -48,5 +52,7 @@ public class App : Application
                 logLevel: LogLevel.info,
                 logLocation: LogLocation.all
             );
+
+        // TODO: Save a most-recent-run-only verbose log separately, and only keep 1 month worth of logs
     }
 }

@@ -6,19 +6,19 @@ namespace client.Models.Settings;
 /// <summary>
 ///     Data Pipeline to use for requests.
 /// </summary>
-/// <seealso cref="SettingsSettingseline" />
+/// <seealso cref="Settings" />
 public enum DataPipeline
 {
     /// <summary>
     ///     A private pipeline that is not proxied but does require a developer key.
     /// </summary>
-    Private = 0,
+    @private = 0,
 
     /// <summary>
     ///     The default: a proxied pipeline that does not require a developer key.
     ///     Requests are sent through the Mobahinted proxy.
     /// </summary>
-    Proxied = 1,
+    proxied = 1,
 }
 
 /// <summary>
@@ -50,7 +50,7 @@ public enum SettingType
     #region Group-Specific Types
 
     /// <summary>
-    ///     A checkbox control, but with a settings button if enable.
+    ///     A checkbox control, but with a settings button if enabled.
     /// </summary>
     overlay,
 
