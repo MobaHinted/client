@@ -48,6 +48,8 @@ public static class Constants
     public readonly static string imageCacheFolder = assets + "image_cache\\";
     public readonly static string imageCacheDataDragonFolder =
         imageCacheFolder + "data_dragon\\";
+    public readonly static string imageCacheProfileIconFolder =
+        imageCacheFolder + "profile_icons\\";
 
     #endregion
 

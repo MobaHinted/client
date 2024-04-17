@@ -166,6 +166,7 @@ public class ProgramAssets
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
         FileManagement.emptyDirectory(Constants.imageCacheFolder);
         FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
+        FileManagement.createDirectory(Constants.imageCacheProfileIconFolder);
         FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
 
         // Try to update the files
@@ -275,6 +276,8 @@ public class ProgramAssets
         // If the latest version is the same as the current version
         return versions.latestVersion == this.Version;
     }
+
+    // TODO: Move all of these methods to DataDragon.Calls.getAs where it checks the type or something
 
     /// <summary>
     ///     Get the current version of the game data for the user's region from the

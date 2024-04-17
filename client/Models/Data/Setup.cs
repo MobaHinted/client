@@ -31,6 +31,7 @@ public static class Setup
             && FileManagement.directoryExists(Constants.cachedMatchesFolder)
             && FileManagement.directoryExists(Constants.imageCacheFolder)
             && FileManagement.directoryExists(Constants.imageCacheDataDragonFolder)
+            && FileManagement.directoryExists(Constants.imageCacheProfileIconFolder)
             && FileManagement.directoryExists(Constants.dataDragonFolder)
             && FileManagement.directoryExists(Constants.dataDragonChampionFolder);
     }
@@ -81,6 +82,7 @@ public static class Setup
         FileManagement.createDirectory(Constants.cachedMatchesFolder);
         FileManagement.createDirectory(Constants.imageCacheFolder);
         FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
+        FileManagement.createDirectory(Constants.imageCacheProfileIconFolder);
         FileManagement.createDirectory(Constants.dataDragonFolder);
         FileManagement.createDirectory(Constants.dataDragonChampionFolder);
     }
