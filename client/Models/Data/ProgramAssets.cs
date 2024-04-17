@@ -3,8 +3,6 @@
 
 #region
 
-using System.Text.Json;
-using Camille.Enums;
 using client.Models.Data.DataDragon;
 using Champion = client.Models.Data.DataDragon.Champion;
 
@@ -14,212 +12,6 @@ namespace client.Models.Data;
 
 public class ProgramAssets
 {
-    /// <summary>
-    ///     Contacts the Data Dragon API and deserializes it into the given response
-    ///     type.
-    /// </summary>
-    /// <param name="url">DataDragon URL</param>
-    /// <typeparam name="T">
-    ///     Response Class from <see cref="client.Models.Data.DataDragon" />
-    /// </typeparam>
-    /// <returns>The URL response, formatted into the specified Response</returns>
-    /// <exception cref="ArgumentException">
-    ///     Any error from deserializing the API response
-    /// </exception>
-    /// <exception cref="HttpRequestException">
-    ///     Any error from calling the API
-    /// </exception>
-    private static T getDataDragon<T>(string url)
-    {
-        // Ensure the type is from the DataDragon namespace
-        if (!typeof(T).Namespace!.Contains("DataDragon"))
-        {
-            var error = new ArgumentException(
-                    "Type must be from the DataDragon namespace"
-                );
-            Program.log(
-                    source: nameof(ProgramAssets),
-                    method: "getDataDragon()",
-                    message: "Type must be from the DataDragon namespace\n" + error,
-                    debugSymbols: [typeof(T).Name],
-                    url: url,
-                    logLevel: LogLevel.fatal,
-                    logLocation: LogLocation.warningsPlus
-                );
-            throw error;
-        }
-
-        try
-        {
-            // Call the API
-            var client = new HttpClient();
-            var response = client.GetAsync(url);
-
-            // If the first request fails, retry once
-            if (!response.Result.IsSuccessStatusCode)
-                response = client.GetAsync(url);
-
-            // Read back the response
-            var result = response.Result.Content.ReadAsStringAsync();
-
-            // Return the response, deserialized into the given type, if not Simple
-            if (!typeof(Simple).IsAssignableFrom(typeof(T)))
-            {
-                // Verify the Type matches the response
-                validateDataDragonTypeAgainstResponse<T>(result.Result);
-
-                Program.log(
-                        source: nameof(ProgramAssets),
-                        method: "getDataDragon()",
-                        doing: "Downloading",
-                        message: typeof(T).Name + " (complex)",
-                        url: url,
-                        logLevel: LogLevel.debug,
-                        logLocation: LogLocation.download
-                    );
-                return JsonSerializer.Deserialize<T>(result.Result)!;
-            }
-
-            Program.log(
-                    source: nameof(ProgramAssets),
-                    method: "getDataDragon()",
-                    doing: "Downloading",
-                    message: typeof(T).Name + " (simple)",
-                    url: url,
-                    logLevel: LogLevel.debug,
-                    logLocation: LogLocation.download
-                );
-
-            // Get the type of the first variable in T, and save the variable
-            // name
-            Type type = typeof(T).GetProperties()[0].PropertyType;
-            string variable = typeof(T).GetProperties()[0].Name;
-
-            // Deserialize the response into the type of the first variable in T
-            object deserialized = JsonSerializer.Deserialize(
-                    result.Result,
-                    type
-                )!;
-
-            // Create a new instance of T
-            var newT = (T)Activator.CreateInstance(typeof(T))!;
-
-            // Set the first variable in T to the deserialized response
-            newT.GetType().GetProperty(variable)!.SetValue(
-                    newT,
-                    deserialized
-                );
-
-            // Return the new instance of T
-            return newT;
-        }
-        // Handle double timeouts
-        catch (HttpRequestException)
-        {
-            throw new HttpRequestException("The request timed out: " + url);
-        }
-        catch (ArgumentException e)
-        {
-            throw new ArgumentException(
-                    "The response used in the DataDragon namespace does not match "
-                    + "the API response: \n"
-                    + url
-                    + " -> "
-                    + typeof(T)
-                    + "\n"
-                    + e.Message
-                );
-        }
-        // Handle unexpected errors
-        catch (Exception e)
-        {
-            throw new ArgumentException(
-                    "An unexpected error was encountered while parsing the "
-                    + "DataDragon API response: \n"
-                    + url
-                    + " -> "
-                    + typeof(T)
-                    + "\n"
-                    + e
-                    + "\n"
-                );
-        }
-    }
-
-    /// <summary>
-    ///     Validate that the DataDragon API response matches the given
-    ///     <see cref="DataDragon">DataDragon Type</see> in
-    ///     <see cref="getDataDragon{T}">getDataDragon()</see>.
-    /// </summary>
-    /// <param name="json">The API response</param>
-    /// <typeparam name="T">The given DataDragon type</typeparam>
-    /// <exception cref="ArgumentException">
-    ///     The results of data mismatch to repair the DataDragon type with
-    /// </exception>
-    private static void validateDataDragonTypeAgainstResponse<T>(string json)
-    {
-        // Parse the JSON into a JsonDocument
-        JsonDocument doc = JsonDocument.Parse(json);
-
-        // Check if the root element is a JSON object
-        if (doc.RootElement.ValueKind != JsonValueKind.Object)
-        {
-            throw new ArgumentException("The JSON does not represent an object.");
-        }
-
-        // Get the JsonObject representing the root object in the JSON
-        JsonElement.ObjectEnumerator rootObject = doc.RootElement.EnumerateObject();
-
-        // Get the PropertyInfo objects for the properties of the given Type
-        var properties = typeof(T).GetProperties();
-
-        // Check if each property is present in the JsonObject
-        var missingProperties = (from property in properties
-            where rootObject.Current.Value.ValueKind == JsonValueKind.Object
-                && rootObject.Current.Value.TryGetProperty(
-                        property.Name,
-                        out JsonElement _
-                    )
-            where !rootObject.Current.Value.TryGetProperty(
-                    property.Name,
-                    out _
-                )
-            select property.Name).ToList();
-
-        // Check if each key in the JsonObject corresponds to a property
-        var extraKeys = new List<string>();
-        while (rootObject.MoveNext())
-            if (properties.All(p => p.Name != rootObject.Current.Name))
-                extraKeys.Add(rootObject.Current.Name);
-
-        // TODO: Check the types of properties are correct as well
-
-        // If there are no missing properties or extra keys, return
-        if (missingProperties.Count == 0 && extraKeys.Count == 0)
-            return;
-
-        // If there are any missing properties or extra keys, throw an exception
-        string message = "";
-        if (missingProperties.Count != 0)
-            message += "\nExtraneous properties in DataDragon type:\n- "
-                + string.Join(
-                        "\n- ",
-                        missingProperties
-                    );
-
-        if (missingProperties.Count != 0 && extraKeys.Count != 0)
-            message += "\n";
-
-        if (extraKeys.Count != 0)
-            message += "\nResponse keys missing from DataDragon Type:\n- "
-                + string.Join(
-                        "\n- ",
-                        extraKeys
-                    );
-
-        throw new ArgumentException(message);
-    }
-
     /// <summary>
     ///     Run the download of all current game data, and some images.
     /// </summary>
@@ -379,6 +171,10 @@ public class ProgramAssets
         // Try to update the files
         try
         {
+            this._dataDragonURLs = new DataDragonURLs(
+                    this.Version,
+                    this._locale
+                );
             await setup(updateStatus);
         }
         catch (HttpRequestException e)
@@ -487,7 +283,8 @@ public class ProgramAssets
     /// <returns>A League Version</returns>
     private string getVersion()
     {
-        var response = getDataDragon<RegionVersion>(this.RegionVersionURL);
+        var response =
+            DataDragonCall.getAs<RegionVersion>(DataDragonURLs.RegionVersionURL);
         string version = response.Version;
 
         this._version = version;
@@ -514,7 +311,7 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            versions = getDataDragon<Versions>(versionsURL);
+            versions = DataDragonCall.getAs<Versions>(DataDragonURLs.VERSIONS_URL);
 
             FileManagement.saveToFile(
                     file,
@@ -546,7 +343,10 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            champions = getDataDragon<Champions>(this.ChampionsDataURL);
+            champions =
+                DataDragonCall.getAs<Champions>(
+                        this._dataDragonURLs.ChampionsDataURL
+                    );
 
             FileManagement.saveToFile(
                     file,
@@ -589,23 +389,25 @@ public class ProgramAssets
             else
             {
                 tasks.Add(
-                    Task.Run(
-                        () =>
-                        {
-                            individualChampion = getDataDragon<IndividualChampion>(
-                                    string.Format(
-                                            this.ChampionDataURL,
-                                            championName
-                                        )
-                                );
+                        Task.Run(
+                                () =>
+                                {
+                                    individualChampion =
+                                        DataDragonCall.getAs<IndividualChampion>(
+                                                string.Format(
+                                                        this._dataDragonURLs
+                                                            .ChampionDataURL,
+                                                        championName
+                                                    )
+                                            );
 
-                            FileManagement.saveToFile(
-                                    file,
-                                    individualChampion
-                                );
-                            champions.Add(individualChampion);
-                        }
-                        )
+                                    FileManagement.saveToFile(
+                                            file,
+                                            individualChampion
+                                        );
+                                    champions.Add(individualChampion);
+                                }
+                            )
                     );
             }
         }
@@ -639,12 +441,12 @@ public class ProgramAssets
         {
             // Download the champion's image if not
             tasks.Add(
-                Task.Run(
-                    () => FileManagement.downloadImage(
-                            champion.image.imageURL,
-                            folder + "champion." + champion.image.full
+                    Task.Run(
+                            () => FileManagement.downloadImage(
+                                    champion.image.imageURL,
+                                    folder + "champion." + champion.image.full
+                                )
                         )
-                    )
                 );
 
             #region Abilities
@@ -661,34 +463,35 @@ public class ProgramAssets
                 // TODO: add a period after the champion name
                 // TODO: add things like "champion_ability" to constants
                 tasks.Add(
-                    Task.Run(
-                        () => FileManagement.downloadImage(
-                                ability.image.imageURL,
-                                folder
-                                + "champion_ability."
-                                + champion.id
-                                + abilityLabels[counterForTask]
-                                + ability.image.full[
-                                    ability.image.full.LastIndexOf('.')..]
+                        Task.Run(
+                                () => FileManagement.downloadImage(
+                                        ability.image.imageURL,
+                                        folder
+                                        + "champion_ability."
+                                        + champion.id
+                                        + abilityLabels[counterForTask]
+                                        + ability.image.full[
+                                            ability.image.full.LastIndexOf('.')..]
+                                    )
                             )
-                        )
                     );
                 counter++;
             }
 
             // Download the passive's image
             tasks.Add(
-                Task.Run(
-                    () => FileManagement.downloadImage(
-                            champion.passive.image.imageURL,
-                            folder
-                            + "champion_ability."
-                            + champion.id
-                            + "P"
-                            + champion.passive.image.full[
-                                champion.passive.image.full.LastIndexOf('.')..]
+                    Task.Run(
+                            () => FileManagement.downloadImage(
+                                    champion.passive.image.imageURL,
+                                    folder
+                                    + "champion_ability."
+                                    + champion.id
+                                    + "P"
+                                    + champion.passive.image.full[
+                                        champion.passive.image.full
+                                            .LastIndexOf('.')..]
+                                )
                         )
-                    )
                 );
 
             #endregion
@@ -719,7 +522,7 @@ public class ProgramAssets
         // Download and save the items list
         else
         {
-            items = getDataDragon<Items>(this.ItemDataURL);
+            items = DataDragonCall.getAs<Items>(this._dataDragonURLs.ItemDataURL);
 
             FileManagement.saveToFile(
                     file,
@@ -790,7 +593,7 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            runes = getDataDragon<Runes>(this.RuneDataURL);
+            runes = DataDragonCall.getAs<Runes>(this._dataDragonURLs.RuneDataURL);
 
             FileManagement.saveToFile(
                     file,
@@ -819,17 +622,17 @@ public class ProgramAssets
         {
             // Download the tree's image
             tasks.Add(
-                Task.Run(
-                    () => FileManagement.downloadImage(
-                            runeTree.image.imageURL,
-                            folder
-                            + "rune_tree."
-                            + runeTree.image.sprite
-                            + runeTree.image.full[
-                                runeTree.image.full.LastIndexOf('.')..],
-                            32
+                    Task.Run(
+                            () => FileManagement.downloadImage(
+                                    runeTree.image.imageURL,
+                                    folder
+                                    + "rune_tree."
+                                    + runeTree.image.sprite
+                                    + runeTree.image.full[
+                                        runeTree.image.full.LastIndexOf('.')..],
+                                    32
+                                )
                         )
-                    )
                 );
 
             // Iterate over each rune in the tree
@@ -837,17 +640,17 @@ public class ProgramAssets
             {
                 // Download the rune's image
                 tasks.Add(
-                    Task.Run(
-                        () => FileManagement.downloadImage(
-                                rune.image.imageURL,
-                                folder
-                                + "rune."
-                                + rune.image.sprite
-                                + rune.image.full[
-                                    rune.image.full.LastIndexOf('.')..],
-                                32
+                        Task.Run(
+                                () => FileManagement.downloadImage(
+                                        rune.image.imageURL,
+                                        folder
+                                        + "rune."
+                                        + rune.image.sprite
+                                        + rune.image.full[
+                                            rune.image.full.LastIndexOf('.')..],
+                                        32
+                                    )
                             )
-                        )
                     );
             }
         }
@@ -878,7 +681,9 @@ public class ProgramAssets
         else
         {
             summonerSpells =
-                getDataDragon<SummonerSpells>(this.SummonerSpellDataURL);
+                DataDragonCall.getAs<SummonerSpells>(
+                        this._dataDragonURLs.SummonerSpellDataURL
+                    );
 
             FileManagement.saveToFile(
                     file,
@@ -912,16 +717,16 @@ public class ProgramAssets
         {
             // Download the spell's image
             tasks.Add(
-                Task.Run(
-                    () => FileManagement.downloadImage(
-                            summonerSpell.image.imageURL,
-                            folder
-                            + "spell."
-                            + summonerSpell.name
-                            + summonerSpell.image.full[
-                                summonerSpell.image.full.LastIndexOf('.')..]
+                    Task.Run(
+                            () => FileManagement.downloadImage(
+                                    summonerSpell.image.imageURL,
+                                    folder
+                                    + "spell."
+                                    + summonerSpell.name
+                                    + summonerSpell.image.full[
+                                        summonerSpell.image.full.LastIndexOf('.')..]
+                                )
                         )
-                    )
                 );
         }
 
@@ -951,7 +756,9 @@ public class ProgramAssets
         else
         {
             profilePictures =
-                getDataDragon<ProfileIcons>(this.ProfilePictureDataURL);
+                DataDragonCall.getAs<ProfileIcons>(
+                        this._dataDragonURLs.ProfilePictureDataURL
+                    );
 
             FileManagement.saveToFile(
                     file,
@@ -1036,13 +843,29 @@ public class ProgramAssets
         FileManagement.deleteDirectory(tempFolder);
     }
 
-    #region Variables and their Backers
+    #region URLs
 
     /// <summary>
-    ///     Convert the user's <see cref="PlatformRoute">Platform</see> to a string.
+    ///     The URLs for the Data Dragon API.
     /// </summary>
-    private readonly static string regionString =
-        Program.Account.Region.AsRegionString().ToLower();
+    private DataDragonURLs _dataDragonURLs = null!;
+
+    /// <summary>
+    ///     The URL to get ranked emblems.
+    /// </summary>
+    // ReSharper disable once MemberCanBeMadeStatic.Local
+#pragma warning disable CA1822
+    private string RankedEmblemsURL
+    {
+        get =>
+            "https://static.developer.riotgames.com/docs/lol/"
+            + "ranked-emblems-latest.zip";
+    }
+#pragma warning restore CA1822
+
+    #endregion
+
+    #region Variables and their Backers
 
     /// <summary>
     ///     The locale used for the game data downloads.
@@ -1050,14 +873,7 @@ public class ProgramAssets
     /// <!--TODO: This should be an option on Login and in settings once app is
     ///     localized.-->
     // ReSharper disable once ConvertToConstant.Local
-    private readonly static string locale = "en_US";
-
-    /// <summary>
-    ///     The URL to get all versions available in game data.
-    /// </summary>
-    // ReSharper disable once ConvertToConstant.Local
-    private readonly static string versionsURL =
-        "https://ddragon.leagueoflegends.com/api/versions.json";
+    private readonly string _locale = "en_US";
 
     /// <summary>
     ///     Each champion from the Data Dragon API.
@@ -1162,95 +978,6 @@ public class ProgramAssets
     {
         get => this._profilePictures ?? getProfilePictures();
     }
-
-    #endregion
-
-    #region URLs
-
-    /// <summary>
-    ///     The URL to get the current version of the game data given the user's
-    ///     region.
-    /// </summary>
-    // ReSharper disable once MemberCanBeMadeStatic.Local
-#pragma warning disable CA1822
-    private string RegionVersionURL
-    {
-        get => $"https://ddragon.leagueoflegends.com/realms/{regionString}.json";
-    }
-#pragma warning restore CA1822
-
-    /// <summary>
-    ///     The URL to get the current champion list data.
-    /// </summary>
-    private string ChampionsDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/champion.json";
-    }
-
-    /// <summary>
-    ///     The URL to get a specific champion's data.
-    /// </summary>
-    private string ChampionDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/champion/{{0}}.json";
-    }
-
-    /// <summary>
-    ///     The URL to get the current item list data.
-    /// </summary>
-    private string ItemDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/item.json";
-    }
-
-    /// <summary>
-    ///     The URL to get the current summoner spell list data.
-    /// </summary>
-    private string SummonerSpellDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/summoner.json";
-    }
-
-    /// <summary>
-    ///     The URL to get the current rune list data.
-    /// </summary>
-    private string RuneDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/runesReforged.json";
-    }
-
-    /// <summary>
-    ///     The URL to get profile picture list data.
-    /// </summary>
-    private string ProfilePictureDataURL
-    {
-        get =>
-            "http://ddragon.leagueoflegends.com/cdn/"
-            + $"{this.Version}/data/{locale}/profileicon.json";
-    }
-
-    /// <summary>
-    ///     The URL to get ranked emblems.
-    /// </summary>
-    // ReSharper disable once MemberCanBeMadeStatic.Local
-#pragma warning disable CA1822
-    private string RankedEmblemsURL
-    {
-        get =>
-            "https://static.developer.riotgames.com/docs/lol/"
-            + "ranked-emblems-latest.zip";
-    }
-#pragma warning restore CA1822
 
     #endregion
 }
