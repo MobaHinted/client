@@ -1,12 +1,16 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using client.Models.Accounts;
 using client.Models.Data;
+
+#endregion
 
 namespace client.Models.Settings;
 
@@ -66,7 +70,6 @@ public class Settings : INotifyPropertyChanged
     /// <param name="storage">The backing field for the given Setting</param>
     /// <param name="value">The 'new' value</param>
     /// <param name="propertyName">The name of the property to update</param>
-    /// <returns>Whether the setting actually changed with the 'new' value</returns>
     private void SetProperty<T>(
         ref T storage,
         T value,
@@ -822,9 +825,9 @@ public class Settings : INotifyPropertyChanged
     /// </summary>
     /// <remarks>
     ///     This controls how many matches are downloaded in the background (when not in
-    ///     a game and not actively using the app), an th maximum to keep downloaded.
+    ///     a game and not actively using the app), and the maximum to keep downloaded.
     ///     These games won't be shown in Match History, but they will be cached for if
-    ///     you navigate to them in another way (eg, a less-active friend has your 31st
+    ///     you navigate to them in another way (e.g., a less-active friend has your 31st
     ///     game as their most recent), and the data from these matches will also be used
     ///     for Players Played With statistics and similar.
     /// </remarks>
@@ -926,7 +929,7 @@ public class Settings : INotifyPropertyChanged
 
     /// <summary>
     ///     Similar to <see cref="thresholdInARowForPlayerFriend" />, but for the total
-    ///     games in history, included background history, to count a plyer as a friend.
+    ///     games in history, included background history, to count a player as a friend.
     /// </summary>
     /// <default>7</default>
     [SettingDisplay(
@@ -1333,13 +1336,13 @@ public class Settings : INotifyPropertyChanged
 
     #region DataPipeline
 
-    private int _dataPipeline = (int)DataPipeline.Proxied;
+    private int _dataPipeline = (int)DataPipeline.proxied;
 
     /// <summary>
     ///     Which pipeline to use for data.
     /// </summary>
     /// <default>
-    ///     <see cref="DataPipeline.Proxied" />
+    ///     <see cref="DataPipeline.proxied" />
     /// </default>
     /// <seealso cref="DataPipeline" />
     [SettingDisplay(
