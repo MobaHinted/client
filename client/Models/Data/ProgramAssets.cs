@@ -924,6 +924,10 @@ public class ProgramAssets
                     )
                 );
         }
+
+        // Wait for all images to complete
+        while (tasks.Any(t => !t.IsCompleted))
+            Thread.Sleep(50);
     }
 
     /// <summary>
