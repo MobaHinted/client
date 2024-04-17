@@ -1,6 +1,8 @@
 ﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+// TODO: These classes need to be generated from the Data Dragon API
+
 #region Header
 
 // ReSharper disable InconsistentNaming
@@ -9,6 +11,13 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+
+#region
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+#endregion
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace client.Models.Data.DataDragon;
@@ -230,7 +239,9 @@ public class Items
     public string type { get; set; }
     public string version { get; set; }
     public ItemBasic basic { get; set; }
-    public Dictionary<string, ItemData> Data { get; set; }
+    public Dictionary<string, ItemData> data { get; set; }
+    public List<Groups> groups { get; set; }
+    public List<Tree> tree { get; set; }
 }
 
 public class ItemBasic
@@ -260,71 +271,71 @@ public class ItemBasic
 
 public class ItemStats
 {
-    public double flathppoolmod { get; set; }
-    public double rFlatHPModPerLevel { get; set; }
-    public double flatmppoolmod { get; set; }
-    public double rFlatMPModPerLevel { get; set; }
-    public double percenthppoolmod { get; set; }
-    public double percentmppoolmod { get; set; }
-    public double flathpregenmod { get; set; }
-    public double rFlatHPRegenModPerLevel { get; set; }
-    public double percenthpregenmod { get; set; }
-    public double flatmpregenmod { get; set; }
-    public double rFlatMPRegenModPerLevel { get; set; }
-    public double percentmpregenmod { get; set; }
-    public double flatarmormod { get; set; }
-    public double rFlatArmorModPerLevel { get; set; }
-    public double percentarmormod { get; set; }
-    public double rFlatArmorPenetrationMod { get; set; }
-    public double rFlatArmorPenetrationModPerLevel { get; set; }
-    public double rPercentArmorPenetrationMod { get; set; }
-    public double rPercentArmorPenetrationModPerLevel { get; set; }
-    public double flatphysicaldamagemod { get; set; }
-    public double rFlatPhysicalDamageModPerLevel { get; set; }
-    public double percentphysicaldamagemod { get; set; }
-    public double flatmagicdamagemod { get; set; }
-    public double rFlatMagicDamageModPerLevel { get; set; }
-    public double percentmagicdamagemod { get; set; }
-    public double flatmovementspeedmod { get; set; }
-    public double rFlatMovementSpeedModPerLevel { get; set; }
-    public double percentmovementspeedmod { get; set; }
-    public double rPercentMovementSpeedModPerLevel { get; set; }
-    public double flatattackspeedmod { get; set; }
-    public double percentattackspeedmod { get; set; }
-    public double rPercentAttackSpeedModPerLevel { get; set; }
-    public double rFlatDodgeMod { get; set; }
-    public double rFlatDodgeModPerLevel { get; set; }
-    public double percentdodgemod { get; set; }
-    public double flatcritchancemod { get; set; }
-    public double rFlatCritChanceModPerLevel { get; set; }
-    public double percentcritchancemod { get; set; }
-    public double flatcritdamagemod { get; set; }
-    public double rFlatCritDamageModPerLevel { get; set; }
-    public double percentcritdamagemod { get; set; }
-    public double flatblockmod { get; set; }
-    public double percentblockmod { get; set; }
-    public double flatspellblockmod { get; set; }
-    public double rFlatSpellBlockModPerLevel { get; set; }
-    public double percentspellblockmod { get; set; }
-    public double flatexpbonus { get; set; }
-    public double percentexpbonus { get; set; }
-    public double rPercentCooldownMod { get; set; }
-    public double rPercentCooldownModPerLevel { get; set; }
-    public double rFlatTimeDeadMod { get; set; }
-    public double rFlatTimeDeadModPerLevel { get; set; }
-    public double rPercentTimeDeadMod { get; set; }
-    public double rPercentTimeDeadModPerLevel { get; set; }
-    public double rFlatGoldPer10Mod { get; set; }
-    public double rFlatMagicPenetrationMod { get; set; }
-    public double rFlatMagicPenetrationModPerLevel { get; set; }
-    public double rPercentMagicPenetrationMod { get; set; }
-    public double rPercentMagicPenetrationModPerLevel { get; set; }
-    public double flatenergyregenmod { get; set; }
-    public double rFlatEnergyRegenModPerLevel { get; set; }
-    public double flatenergypoolmod { get; set; }
-    public double rFlatEnergyModPerLevel { get; set; }
-    public double percentlifestealmod { get; set; }
-    public double percentspellvampmod { get; set; }
+    public double? flathppoolmod { get; set; }
+    public double? rFlatHPModPerLevel { get; set; }
+    public double? flatmppoolmod { get; set; }
+    public double? rFlatMPModPerLevel { get; set; }
+    public double? percenthppoolmod { get; set; }
+    public double? percentmppoolmod { get; set; }
+    public double? flathpregenmod { get; set; }
+    public double? rFlatHPRegenModPerLevel { get; set; }
+    public double? percenthpregenmod { get; set; }
+    public double? flatmpregenmod { get; set; }
+    public double? rFlatMPRegenModPerLevel { get; set; }
+    public double? percentmpregenmod { get; set; }
+    public double? flatarmormod { get; set; }
+    public double? rFlatArmorModPerLevel { get; set; }
+    public double? percentarmormod { get; set; }
+    public double? rFlatArmorPenetrationMod { get; set; }
+    public double? rFlatArmorPenetrationModPerLevel { get; set; }
+    public double? rPercentArmorPenetrationMod { get; set; }
+    public double? rPercentArmorPenetrationModPerLevel { get; set; }
+    public double? flatphysicaldamagemod { get; set; }
+    public double? rFlatPhysicalDamageModPerLevel { get; set; }
+    public double? percentphysicaldamagemod { get; set; }
+    public double? flatmagicdamagemod { get; set; }
+    public double? rFlatMagicDamageModPerLevel { get; set; }
+    public double? percentmagicdamagemod { get; set; }
+    public double? flatmovementspeedmod { get; set; }
+    public double? rFlatMovementSpeedModPerLevel { get; set; }
+    public double? percentmovementspeedmod { get; set; }
+    public double? rPercentMovementSpeedModPerLevel { get; set; }
+    public double? flatattackspeedmod { get; set; }
+    public double? percentattackspeedmod { get; set; }
+    public double? rPercentAttackSpeedModPerLevel { get; set; }
+    public double? rFlatDodgeMod { get; set; }
+    public double? rFlatDodgeModPerLevel { get; set; }
+    public double? percentdodgemod { get; set; }
+    public double? flatcritchancemod { get; set; }
+    public double? rFlatCritChanceModPerLevel { get; set; }
+    public double? percentcritchancemod { get; set; }
+    public double? flatcritdamagemod { get; set; }
+    public double? rFlatCritDamageModPerLevel { get; set; }
+    public double? percentcritdamagemod { get; set; }
+    public double? flatblockmod { get; set; }
+    public double? percentblockmod { get; set; }
+    public double? flatspellblockmod { get; set; }
+    public double? rFlatSpellBlockModPerLevel { get; set; }
+    public double? percentspellblockmod { get; set; }
+    public double? flatexpbonus { get; set; }
+    public double? percentexpbonus { get; set; }
+    public double? rPercentCooldownMod { get; set; }
+    public double? rPercentCooldownModPerLevel { get; set; }
+    public double? rFlatTimeDeadMod { get; set; }
+    public double? rFlatTimeDeadModPerLevel { get; set; }
+    public double? rPercentTimeDeadMod { get; set; }
+    public double? rPercentTimeDeadModPerLevel { get; set; }
+    public double? rFlatGoldPer10Mod { get; set; }
+    public double? rFlatMagicPenetrationMod { get; set; }
+    public double? rFlatMagicPenetrationModPerLevel { get; set; }
+    public double? rPercentMagicPenetrationMod { get; set; }
+    public double? rPercentMagicPenetrationModPerLevel { get; set; }
+    public double? flatenergyregenmod { get; set; }
+    public double? rFlatEnergyRegenModPerLevel { get; set; }
+    public double? flatenergypoolmod { get; set; }
+    public double? rFlatEnergyModPerLevel { get; set; }
+    public double? percentlifestealmod { get; set; }
+    public double? percentspellvampmod { get; set; }
 }
 
 public class ItemRune
@@ -388,6 +399,23 @@ public class ItemData
     public List<string> tags { get; set; }
     public ItemMaps maps { get; set; }
     public ItemStats stats { get; set; }
+}
+
+public class Groups
+{
+    public string id { get; set; }
+    public string MaxGroupOwnable { get; set; }
+}
+
+public class Tree
+{
+    public List<Header> tree { get; set; }
+}
+
+public class Header
+{
+    public string header { get; set; }
+    public List<string> tags { get; set; }
 }
 
 #endregion
@@ -504,12 +532,42 @@ public class ProfileIcons
 {
     public string type { get; set; }
     public string version { get; set; }
-    public Dictionary<string, ProfileIcon> Data { get; set; }
+    public Dictionary<string, ProfileIcon> data { get; set; }
 }
 
 public class ProfileIcon
 {
-    public int id { get; set; }
+    private JsonElement _idElement;
+
+    [JsonIgnore]
+    public int id
+    {
+        get
+        {
+            return this._idElement.ValueKind switch
+            {
+                JsonValueKind.String => int.Parse(this._idElement.GetString()!),
+                JsonValueKind.Number => this._idElement.GetInt32(),
+                _ => throw new InvalidOperationException("'id' must be a number"),
+            };
+        }
+    }
+
+    [JsonPropertyName("id")]
+    public object idForSerialization
+    {
+        get
+        {
+            return this._idElement.ValueKind switch
+            {
+                JsonValueKind.String => this._idElement.GetString()!,
+                JsonValueKind.Number => this._idElement.GetInt32(),
+                _ => throw new InvalidOperationException("'id' must be a number"),
+            };
+        }
+        set => this._idElement = (JsonElement)value;
+    }
+
     public Image image { get; set; }
 }
 
