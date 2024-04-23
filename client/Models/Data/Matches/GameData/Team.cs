@@ -54,7 +54,7 @@ public class Team
                 ],
                 logLevel: LogLevel.debug,
                 logLocation: LogLocation.verbose,
-                logTo: LogTo.console
+                logTo: LogTo.file
             );
 
         byte counter = 0;
@@ -81,7 +81,7 @@ public class Team
 
             // Add the player to the dictionary
             this.Players.Add(
-                    //role,
+                    //role, // TODO: Switch to using this once role checking is implemented
                     counter,
                     playerData
                 );

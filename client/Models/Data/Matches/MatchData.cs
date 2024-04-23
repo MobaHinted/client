@@ -65,7 +65,7 @@ public class MatchData
                 + match.Info.GameVersion,
                 logLevel: LogLevel.debug,
                 logLocation: LogLocation.verbose,
-                logTo: LogTo.console
+                logTo: LogTo.file
             );
 
         this._match = match;

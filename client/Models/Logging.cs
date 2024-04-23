@@ -172,11 +172,8 @@ public class Logging
         LogLocation logLocation
     )
     {
-        // Turn on all console logs for debug
-        if (Program.Settings.debug)
-            logTo |= LogTo.console;
-        // Otherwise, disable debug logs
-        else if (logLevel < LogLevel.info)
+        // Otherwise, disable debug logs when debugging is not enabled
+        if (logLevel < LogLevel.info && !Program.Settings.debug)
             logTo &= ~LogTo.console;
 
         // Format and save the log
