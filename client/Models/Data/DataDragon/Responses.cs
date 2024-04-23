@@ -240,8 +240,8 @@ public class Items
     public string version { get; set; }
     public ItemBasic basic { get; set; }
     public Dictionary<string, ItemData> data { get; set; }
-    public List<Groups> groups { get; set; }
-    public List<Tree> tree { get; set; }
+    public List<Groups>? groups { get; set; }
+    public List<Tree>? tree { get; set; }
 }
 
 public class ItemBasic
