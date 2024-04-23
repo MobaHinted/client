@@ -533,6 +533,26 @@ public class ProgramAssets
                 );
         }
 
+        // Make a placeholder item
+        items.data.Add(
+                "0",
+                new ItemData
+                {
+                    name = "No Item",
+                    description = "No Item",
+                    image = new Image
+                    {
+                        full = "filler.png",
+                        sprite = "filler.png",
+                        group = "item",
+                        x = 0,
+                        y = 0,
+                        w = 64,
+                        h = 64,
+                    },
+                }
+            );
+
         this._items = items;
         return items;
     }
