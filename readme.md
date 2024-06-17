@@ -34,6 +34,18 @@ Current Status:
 This is roughly in the order they will be developed.
 
 - [ ] Match History
+- [ ] Pre-Game
+  - [ ] Summoner Rift
+  - [ ] ARAM
+    - [ ] Option to donate rerolls
+    - [ ] Winrate of bench champions
+    - [ ] Winrate of selected chamions
+  - [ ] Arena
+    - [ ] Duo winrates
+    - [ ] Solo winrates
+    - [ ] Highlighting of champpions from your pool
+  - [ ] URF
+    - [ ] Winrates with highlighting from your pool
 - [ ] Post-Game Breakdown
   - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
 - [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
