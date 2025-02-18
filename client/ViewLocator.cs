@@ -1,11 +1,15 @@
-// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+#region
 
 using System.Data;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using client.Models;
 using ReactiveUI;
+
+#endregion
 
 namespace client;
 

@@ -1,11 +1,15 @@
-﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+#region
 
 using client.Models;
 using client.Models.Data.Matches;
 using client.Views;
 using client.Views.MatchHistory;
 using ReactiveUI;
+
+#endregion
 
 namespace client.ViewModels;
 

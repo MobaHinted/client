@@ -1,5 +1,7 @@
-﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+#region
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -9,10 +11,12 @@ using Camille.Enums;
 using Camille.RiotGames;
 using client.Models.UIHelpers;
 
+#endregion
+
 namespace client.Models.Accounts;
 
 /// <summary>
-///     Turn a ValidRiotIDStatus into a DataValidationErrorz
+///     Turn a ValidRiotIDStatus into a DataValidationError
 /// </summary>
 public class RiotIDValidationError : DataValidationError
 {

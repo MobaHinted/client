@@ -1,9 +1,13 @@
-﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+#region
 
 using System.Text.Json;
 using Camille.RiotGames;
 using CamilleMatch = Camille.RiotGames.MatchV5.Match;
+
+#endregion
 
 namespace client.Models.Data.Matches;
 

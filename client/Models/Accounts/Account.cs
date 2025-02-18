@@ -1,10 +1,14 @@
-﻿// MobaHinted Copyright (C) 2024 Ethan Henderson <ethan@zbee.codes>
+﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
+
+#region
 
 using System.Text.Json;
 using Camille.Enums;
 using client.Models.Data;
 using client.Models.UIHelpers;
+
+#endregion
 
 namespace client.Models.Accounts;
 
@@ -76,6 +80,8 @@ public struct Account
     /// </exception>
     public Account(Guid id)
     {
+        // todo: try/catch because this will fail if the camille return for a user
+        //  changes
         // Open the user file and load its data
         FileManagement.loadFromFile(
                 Constants.usersFile,
