@@ -12,6 +12,7 @@
         <RepositoryUrl>https://github.com/MobaHinted/client/</RepositoryUrl>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,10 +22,10 @@
     <!-- Most NuGets -->
     <ItemGroup>
         <PackageReference Include="MingweiSamuel.TokenBucket" Version="1.0.2.0"/>
-        <PackageReference Include="Semi.Avalonia" Version="11.0.7"/>
-        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.0.1"/>
-        <PackageReference Include="ReactiveUI.Validation" Version="3.1.7"/>
-        <PackageReference Include="System.Drawing.Common" Version="8.0.2"/>
+        <PackageReference Include="Semi.Avalonia" Version="11.2.1.4"/>
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.0"/>
+        <PackageReference Include="ReactiveUI.Validation" Version="4.1.1"/>
+        <PackageReference Include="System.Drawing.Common" Version="9.0.2"/>
     </ItemGroup>
 
     <!-- Local Camille fork -->
@@ -34,14 +35,16 @@
     </ItemGroup>
     <!-- Standard Camille -->
     <ItemGroup Condition="'$(Configuration)'!='Debug'">
-        <PackageReference Include="Camille.Enums" Version="3.0.0-nightly-2024-04-04-7db4a5e27d"/>
-        <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2024-04-04-7db4a5e27d"/>
+        <PackageReference Include="Camille.Enums"
+                          Version="3.0.0-nightly-2025-02-01-a17f385bca"/>
+        <PackageReference Include="Camille.RiotGames"
+                          Version="3.0.0-nightly-2025-02-01-a17f385bca"/>
     </ItemGroup>
 
     <!-- Avalonia -->
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.9"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.9"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.9"/>
+        <PackageReference Include="Avalonia" Version="11.2.4"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.4"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.4"/>
     </ItemGroup>
 </Project>

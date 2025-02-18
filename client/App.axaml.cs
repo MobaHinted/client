@@ -36,7 +36,7 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
+    private void OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         // TODO: Save settings like window size here
 
