@@ -36,9 +36,9 @@
     <!-- Standard Camille -->
     <ItemGroup Condition="'$(Configuration)'!='Debug'">
         <PackageReference Include="Camille.Enums"
-                          Version="3.0.0-nightly-2025-02-01-a17f385bca"/>
+                          Version="3.0.0-nightly-2025-02-19-d2b94715b7"/>
         <PackageReference Include="Camille.RiotGames"
-                          Version="3.0.0-nightly-2025-02-01-a17f385bca"/>
+                          Version="3.0.0-nightly-2025-02-19-d2b94715b7"/>
     </ItemGroup>
 
     <!-- Avalonia -->
