@@ -1,6 +1,8 @@
 ﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Camille.RiotGames;
@@ -13,6 +15,8 @@ using client.Views;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using ReactiveUI;
+
+#endregion
 
 namespace client;
 
@@ -39,9 +43,9 @@ internal static class Program
             {
                 MaxConcurrentRequests = 300,
                 Retries = 5,
-                ApiUrl = "proxy.mobahinted.app",
-                ApiCallRegionConfig = RegionConfig.InUrlAsRegionQueryParameter,
-                RegionKey = "region",
+                ApiUrl = "https://proxy.mobahinted.app",
+                ApiRouteConfig = RouteConfig.InQueryParam,
+                RouteKey = "region",
             }.Build()
         );
 
@@ -71,7 +75,7 @@ internal static class Program
     /// <summary>
     ///     The router for the application, which handles navigation between views.
     /// </summary>
-    public static RoutingState Router { get; set; }
+    public static RoutingState Router { get; set; } = null!;
 
     /// <summary>
     ///     The active user account.
@@ -129,7 +133,7 @@ internal static class Program
                 method,
                 doing,
                 message,
-                debugSymbols ?? Array.Empty<string>(),
+                debugSymbols ?? [],
                 url,
                 logLevel,
                 logLocation
@@ -146,6 +150,7 @@ internal static class Program
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
+    // ReSharper disable once InconsistentNaming, MemberCanBePrivate.Global
     public static AppBuilder BuildAvaloniaApp()
     {
         IconProvider.Current.Register<FontAwesomeIconProvider>();
