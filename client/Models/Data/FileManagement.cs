@@ -158,6 +158,9 @@ public static class FileManagement
         )]
     public static void downloadImage(string url, string path, int size = 128)
     {
+        string debugPath = path.Split("mobahinted").Length > 1
+            ? path.Split("mobahinted")[1]
+            : path;
         Program.log(
                 source: nameof(FileManagement),
                 method: "downloadImage()",
@@ -165,7 +168,7 @@ public static class FileManagement
                 message: "Image",
                 debugSymbols:
                 [
-                    $"path: {path}",
+                    $"path: {debugPath}",
                     $"size: {size}",
                 ],
                 url: url,
