@@ -396,9 +396,9 @@ public class ItemData
     public List<string> into { get; set; }
     public Image image { get; set; }
     public ItemGold gold { get; set; }
-    public List<string> tags { get; set; }
-    public ItemMaps maps { get; set; }
-    public ItemStats stats { get; set; }
+    public List<string>? tags { get; set; }
+    public ItemMaps? maps { get; set; }
+    public ItemStats? stats { get; set; }
 }
 
 public class Groups

@@ -25,10 +25,10 @@ public class Player(Participant player)
         new Item(player.Item5),
         new Item(player.Item6),
     ];
+    public readonly Runes Runes = new Runes(player.Perks);
 
     public readonly Spells Spells = new Spells(
             player.Summoner1Id,
             player.Summoner2Id
         );
-    public readonly Runes Runes = new Runes(player.Perks);
 }
