@@ -28,14 +28,6 @@ internal static class Program
     public static LaunchView? Window;
 
     /// <summary>
-    ///     The settings manager for the application, which saves updated settings to disk.
-    /// </summary>
-#pragma warning disable CS0169 // Field is never used
-    // ReSharper disable once NotAccessedField.Local, InconsistentNaming
-    private static SettingsManager _settingsManager_DoNotUse;
-#pragma warning restore CS0169 // Field is never used
-
-    /// <summary>
     ///     The configuration for the Riot Games API to use throughout the application.
     /// </summary>
     public readonly static RiotGamesApi riotAPI = RiotGamesApi.NewInstance(
@@ -51,7 +43,7 @@ internal static class Program
 
     static Program()
     {
-        _settingsManager_DoNotUse = new SettingsManager();
+        SettingsManager.startWatching();
     }
 
     /// <summary>

@@ -12,12 +12,12 @@ namespace client.Models.Settings;
 
 public class SettingsManager
 {
-    public SettingsManager()
+    public static void startWatching()
     {
         Program.Settings.PropertyChanged += settingChanged!;
     }
 
-    private void settingChanged(object sender, PropertyChangedEventArgs e)
+    private static void settingChanged(object sender, PropertyChangedEventArgs e)
     {
         // Just ensuring the value is being passed along correctly
         if (e is not PropertyChangedEventArgsWithValue args)
