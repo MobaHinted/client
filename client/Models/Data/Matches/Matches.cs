@@ -68,73 +68,104 @@ public class Matches
     private async void getMatches(int startIndex, int count = 25)
     {
         string[]? matchList = null;
-        await Program
-            .riotAPI.MatchV5()
-            .GetMatchIdsByPUUIDAsync(
-                    Program.Account.Continent,
-                    Program.Account.PUUID,
-                    count,
-                    start: startIndex
-                )
-            .ContinueWith(
-                    task =>
-                    {
-                        #region Task Error
 
-                        if (task.IsFaulted)
+        try
+        {
+            await Program
+                .riotAPI.MatchV5()
+                .GetMatchIdsByPUUIDAsync(
+                        Program.Account.Continent,
+                        Program.Account.PUUID,
+                        count,
+                        start: startIndex
+                    )
+                .ContinueWith(
+                        task =>
                         {
-                            Program.log(
-                                    source: nameof(Matches),
-                                    method: "getMatches()",
-                                    doing: "Loading Matches",
-                                    message: "Task to retrieve match faulted \n"
-                                    + task.Exception.Message,
-                                    debugSymbols:
-                                    [
-                                        JsonSerializer.Serialize(task.Result),
-                                    ],
-                                    logLevel: LogLevel.error,
-                                    logTo: LogTo.file
-                                    | LogTo.console
-                                    | LogTo.errorScreen,
-                                    logLocation: LogLocation.download
-                                );
-                            return;
+                            #region Task Error
+
+                            if (task.IsFaulted)
+                            {
+                                Program.log(
+                                        source: nameof(Matches),
+                                        method: "getMatches()",
+                                        doing: "Loading Matches",
+                                        message: "Task to retrieve match faulted \n"
+                                        + task.Exception.Message,
+                                        debugSymbols:
+                                        [
+                                            JsonSerializer.Serialize(task.Result),
+                                        ],
+                                        logLevel: LogLevel.error,
+                                        logTo: LogTo.file
+                                        | LogTo.console
+                                        | LogTo.errorScreen,
+                                        logLocation: LogLocation.download
+                                    );
+                                return;
+                            }
+
+                            #endregion
+
+                            try
+                            {
+                                matchList = task.Result;
+                            }
+
+                            #region Result Error
+
+                            catch (Exception e)
+                            {
+                                Program.log(
+                                        source: nameof(Matches),
+                                        method: "getMatches()",
+                                        doing: "Loading Matches",
+                                        message:
+                                        "Received no string[] data from Riot;"
+                                        + "API error status\n"
+                                        + e.Message,
+                                        debugSymbols:
+                                        [
+                                            JsonSerializer.Serialize(task.Result),
+                                        ],
+                                        logLevel: LogLevel.error,
+                                        logTo: LogTo.file
+                                        | LogTo.console
+                                        | LogTo.errorScreen,
+                                        logLocation: LogLocation.download
+                                    );
+                            }
+
+                            #endregion
                         }
-
-                        #endregion
-
-                        try
-                        {
-                            matchList = task.Result;
-                        }
-
-                        #region Result Error
-
-                        catch (Exception e)
-                        {
-                            Program.log(
-                                    source: nameof(Matches),
-                                    method: "getMatches()",
-                                    doing: "Loading Matches",
-                                    message: "Received no string[] data from Riot;"
-                                    + "API error status\n"
-                                    + e.Message,
-                                    debugSymbols:
-                                    [
-                                        JsonSerializer.Serialize(task.Result),
-                                    ],
-                                    logLevel: LogLevel.error,
-                                    logTo: LogTo.file
-                                    | LogTo.console
-                                    | LogTo.errorScreen,
-                                    logLocation: LogLocation.download
-                                );
-                        }
-
-                        #endregion
-                    }
+                    );
+        }
+        catch (AggregateException e)
+        {
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Task to retrieve match faulted. Likely URI issue.\n"
+                    + e.Message,
+                    logLevel: LogLevel.fatal,
+                    logTo: LogTo.file | LogTo.console | LogTo.errorScreen,
+                    logLocation: LogLocation.download
                 );
+        }
+        catch (Exception e)
+        {
+            Program.log(
+                    source: nameof(Matches),
+                    method: "getMatches()",
+                    doing: "Loading Matches",
+                    message: "Task to retrieve match faulted. Unknown issue.\n"
+                    + e.Message,
+                    logLevel: LogLevel.fatal,
+                    logTo: LogTo.file | LogTo.console | LogTo.errorScreen,
+                    logLocation: LogLocation.download
+                );
+        }
 
         #region API Error
 

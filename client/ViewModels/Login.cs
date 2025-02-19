@@ -1,6 +1,8 @@
 ﻿// MobaHinted Copyright (C) 2025 Ethan Henderson <ethan@zbee.codes>
 // Licensed under GPLv3 - Refer to the LICENSE file for the complete text
 
+#region
+
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
@@ -11,6 +13,8 @@ using client.Models.Data;
 using client.Models.UIHelpers;
 using ReactiveUI;
 using static System.Enum;
+
+#endregion
 
 namespace client.ViewModels;
 
@@ -265,8 +269,10 @@ public class Login : ReactiveObject, IRoutableViewModel
                     return description == this.Platforms[this.Region];
                 }
                 );
-
         RegionalRoute continent = platform.ToRegional();
+
+        string puuid = string.Empty;
+        bool error = false;
 
         // Search for the account
         Program.log(
@@ -281,15 +287,62 @@ public class Login : ReactiveObject, IRoutableViewModel
                 logLevel: LogLevel.debug,
                 logLocation: LogLocation.verbose
             );
-        ValidateRiotID.search(
-                this.GameName,
-                this.TagLine,
-                continent,
-                out string puuid
-            );
+        try
+        {
+            ValidateRiotID.search(
+                    this.GameName,
+                    this.TagLine,
+                    continent,
+                    out puuid
+                );
+        }
+        catch (AggregateException e)
+        {
+            error = true;
+            Program.log(
+                    source: nameof(Login),
+                    method: "searchAndAddAccount()",
+                    doing: "Login",
+                    message: "Search failed",
+                    debugSymbols:
+                    [
+                        "likely a URI issue",
+                        e.GetType().FullName!,
+                        e.Message,
+                        e.StackTrace!,
+                    ],
+                    logLevel: LogLevel.fatal,
+                    logLocation: LogLocation.main
+                );
+        }
+        catch (Exception e)
+        {
+            error = true;
+            Program.log(
+                    source: nameof(Login),
+                    method: "searchAndAddAccount()",
+                    doing: "Login",
+                    message: "Search failed",
+                    debugSymbols:
+                    [
+                        "Unknown Issue",
+                        e.GetType().FullName!,
+                        e.Message,
+                    ],
+                    logLevel: LogLevel.error,
+                    logLocation: LogLocation.main
+                );
+        }
 
-        // If the search failed, set the error message and disable the button
-        if (!ValidateRiotID.exists(puuid))
+        // If the search failed outright, set an error message
+        if (error)
+        {
+            this.ErrorResult = "Search failed";
+            this.CanAdd = "false";
+            this.IsLoading = "false";
+        }
+        // If the search did not return a result, set the error message
+        else if (!ValidateRiotID.exists(puuid))
         {
             Program.log(
                     source: nameof(Login),
@@ -300,7 +353,7 @@ public class Login : ReactiveObject, IRoutableViewModel
                     [
                         $"{this.GameName}#{this.TagLine}@{continent}",
                     ],
-                    logLevel: LogLevel.debug,
+                    logLevel: LogLevel.info,
                     logLocation: LogLocation.warningsPlus
                 );
             this.ErrorResult = "Account not found on Riot";
