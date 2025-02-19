@@ -260,16 +260,28 @@ public class Matches
         {
             string cacheFile = $"{Constants.cachedMatchesFolder}{matchID}.json";
             CamilleMatch? match;
+            MatchData? matchData;
 
             // If the match is already cached, use that instead
             if (FileManagement.fileExists(cacheFile))
             {
-                // TODO: Load MatchData instead of CamilleMatch
-                // Load the match from the cache
-                FileManagement.loadFromFile(
-                        cacheFile,
-                        out match
-                    );
+                // Load the match data from the cache
+                try
+                {
+                    FileManagement.loadFromFile(
+                            cacheFile,
+                            out matchData
+                        );
+                }
+                // Load the raw match data from the cache
+                catch (InvalidOperationException)
+                {
+                    FileManagement.loadFromFile(
+                            cacheFile,
+                            out match
+                        );
+                    matchData = new MatchData(match!);
+                }
 
                 // Log the success
                 Program.log(
@@ -300,12 +312,12 @@ public class Matches
                             Program.Account.Continent,
                             matchID
                         );
+                matchData = new MatchData(match!);
 
-                // TODO: Save MatchData instead of CamilleMatch
                 // Cache the match data
                 FileManagement.saveToFile(
                         cacheFile,
-                        match
+                        matchData
                     );
 
                 // Log the success
@@ -330,7 +342,7 @@ public class Matches
             // Add the match data to the dictionary
             this._matchData.Add(
                     matchID,
-                    new MatchData(match!)
+                    matchData!
                 );
 
             // Handle a retry
@@ -356,6 +368,7 @@ public class Matches
                     message: "Failed to load Match\n" + e.Message,
                     debugSymbols:
                     [
+                        e.GetType().FullName!,
                         matchID,
                     ],
                     logLevel: LogLevel.warning,
