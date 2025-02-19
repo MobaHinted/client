@@ -35,41 +35,41 @@ This is roughly in the order they will be developed.
 
 - [ ] Match History
 - [ ] Pre-Game
-  - [ ] Summoner Rift
-  - [ ] ARAM
-    - [ ] Option to donate rerolls
-    - [ ] Winrate of bench champions
-    - [ ] Winrate of selected chamions
-  - [ ] Arena
-    - [ ] Duo winrates
-    - [ ] Solo winrates
-    - [ ] Highlighting of champpions from your pool
-  - [ ] URF
-    - [ ] Winrates with highlighting from your pool
+    - [ ] Summoner Rift
+    - [ ] ARAM
+        - [ ] Option to donate rerolls
+        - [ ] Winrate of bench champions
+        - [ ] Winrate of selected chamions
+    - [ ] Arena
+        - [ ] Duo winrates
+        - [ ] Solo winrates
+        - [ ] Highlighting of champpions from your pool
+    - [ ] URF
+        - [ ] Winrates with highlighting from your pool
 - [ ] Post-Game Breakdown
-  - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
+    - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
 - [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
-  - [ ] Drill down into this: show your best champion with them, etc
+    - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Match History with friend
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
 - [ ] Overlays
-  - [ ] Milestone Notifications
-  - [ ] Objective Reminders
-  - [ ] Enemy Spell Tracker
-  - [ ] Jungle Timers
-  - [ ] Map Check Reminder
-  - [ ] Gold Diff Tracker
-  - [ ] Scoreboard Duos
-  - [ ] Counter Item Suggestions
-  - [ ] ARAM Health Timers
-  - [ ] Back Reminder
-  - [ ] Use Trinket Reminder
-  - [ ] CS Tracker and Stats Window
+    - [ ] Milestone Notifications
+    - [ ] Objective Reminders
+    - [ ] Enemy Spell Tracker
+    - [ ] Jungle Timers
+    - [ ] Map Check Reminder
+    - [ ] Gold Diff Tracker
+    - [ ] Scoreboard Duos
+    - [ ] Counter Item Suggestions
+    - [ ] ARAM Health Timers
+    - [ ] Back Reminder
+    - [ ] Use Trinket Reminder
+    - [ ] CS Tracker and Stats Window
 - [ ] Current-play-session window
 - [ ] Champion Suggestion (based on your pool, and performance with teammates)
 - [ ] Ban Suggestion (based on your lane WRs, and performance with teammates)
 - [ ] Item / Rune / Spell suggestions and importing (2 of the most popular, then try to have a variety - like some tools
-      don't offer AP twitch anymore but if that's what you want ..., etc.)
+  don't offer AP twitch anymore but if that's what you want ..., etc.)
 - [ ] Riot API Caching/Proxying with Kernel
 
 ## Setup
@@ -77,12 +77,33 @@ This is roughly in the order they will be developed.
 When this is at a usable point (e.g. Rito accepts my app, and there are enough features to make it even vaguely
 competitive), I'll release a binary for Windows, and all you will have to do is download and run that.
 
-To spin it up in the mean-time or for development purposes you should just need .NET Core 8.0 
-and C# 12.0, and the following steps should get you there.
+To spin it up in the mean-time or for development purposes you should just need .NET
+Core 8.0
+and C# 13.0, and the following steps should get you there.
 
-1. Open up the solution in Rider, and run the `client` project.
+1. Clone the repository
 
-<!-- TODO: Add commandline dotnet instructions to build in debug mode -->
+```
+git clone https://github.com/MobaHinted/client.git
+```
+
+2. Pull in the Camille submodule
+
+```
+git submodule update --init --recursive
+```
+
+3. Generate the Camille code
+
+```
+dotnet build Camille/Camille.sln --configuration Release --no-restore --target:BuildTemplates
+```
+
+4. Build the project
+
+```
+dotnet build client/mobahinted-client.sln --configuration Release
+```
 
 ## What's the catch?
 
@@ -97,8 +118,8 @@ or if you include it in the feedback form.
 The exact data included is up to you to select.
 
 Your API requests are proxied through my server for caching and better rate
-limiting, I just log accesses for rate-limiting purposes, but CloudFlare and
-Vultr will have access to your data as well.
+limiting, I store nothing about such requests, but CloudFlare will have access to
+your data as well.
 
 If you prefer, you can set up an environment variable as described in the Setup
 section above, and then your API requests won't be proxied, and only Riot will
@@ -111,7 +132,10 @@ find one. You can include a screenshot, if applicable, a description of what you
 were doing when it happened, and `verbose.log` from `%AppData%\mobahinted\logs`.
 
 If you want to code on this, try fixing an issue, or implementing something from
-the ToDo list or `TODO`s in the code, and opening a pull request.
+the [ToDo list](https://github.com/orgs/MobaHinted/projects/1) or `TODO`s in the
+code, and opening a pull request.
+Make sure to check the [Setup instructions](#setup) above, use the `.editorconfig`
+file, and check out the [Contributing Guidelines and Quickstart](./CONTRIBUTING.md).
 
 If you want to thank me, then email me (see below), star this repository, or
 simply share the program with your friends; there are also Sponsor options on the
@@ -148,11 +172,11 @@ trademarks of Riot Games, Inc.
 ---
 
 [Camille](https://github.com/MingweiSamuel/Camille),
-Copyright 2020 Mingwei Samuel and contributors - 
+Copyright 2020 Mingwei Samuel and contributors -
 Licensed under the MIT and Apache Licenses
 
 [GlassLCU](https://github.com/pipe01/GlassLCU),
-Copyright (c) 2021 Felipe Martínez - 
+Copyright (c) 2021 Felipe Martínez -
 Licensed under the MIT License
 
 [Avalonia UI](https://github.com/AvaloniaUI/Avalonia),
@@ -160,15 +184,15 @@ Copyright 2013 (c) The AvaloniaUI Project -
 Licensed under the MIT License
 
 [Semi.Avalonia](https://github.com/irihitech/Semi.Avalonia),
-Copyright (c) 2022 iriHi Technologya - 
+Copyright (c) 2022 iriHi Technologya -
 Licensed under the MIT License
 
 [Avalonia.ReactiveUI](https://github.com/AvaloniaUI/Avalonia),
 Copyright 2013 (c) The AvaloniaUI Project -
 Licensed under the MIT License
 
-[Fira Code](https://github.com/tonsky/FiraCode), 
-Copyright (c) 2014 The Fira Code Project Authors - 
+[Fira Code](https://github.com/tonsky/FiraCode),
+Copyright (c) 2014 The Fira Code Project Authors -
 Licensed under the OFL License
 
 [Velopack](https://github.com/velopack/velopack)
