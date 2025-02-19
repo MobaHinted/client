@@ -65,6 +65,7 @@ public class Team
             // Parse the player data
             var playerData = new Player(player);
             // TODO: Only parse the role in summoner's rift
+            // TODO: Parse the team together
             // Parse the player's role
             byte role = (byte)Roles.determine(
                     player.ChampionId,
