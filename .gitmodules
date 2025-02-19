@@ -1,0 +1,4 @@
+[submodule "Camille"]
+	path = Camille
+	url = https://github.com/MobaHinted/Camille.git
+	branch = stable

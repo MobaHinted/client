@@ -2,6 +2,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client", "client.csproj", "{58F239F1-0E21-44CB-A996-7111205E78AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camille.Core", "..\Camille\src\Camille.Core\Camille.Core.csproj", "{28BA019F-8FD0-43F6-98D6-493B3854AA96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camille.RiotGames", "..\Camille\src\Camille.RiotGames\Camille.RiotGames.csproj", "{B2446D79-92A0-4837-8CF8-BAA0AB317E1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camille.LolGame", "..\Camille\src\Camille.LolGame\Camille.LolGame.csproj", "{356E0FD0-50DF-4D54-B6C4-AAD1700DA4E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camille.Enums", "..\Camille\src\Camille.Enums\Camille.Enums.csproj", "{74660612-CF04-4266-A2AC-2E14493376E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +20,21 @@ Global
 		{58F239F1-0E21-44CB-A996-7111205E78AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58F239F1-0E21-44CB-A996-7111205E78AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58F239F1-0E21-44CB-A996-7111205E78AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2446D79-92A0-4837-8CF8-BAA0AB317E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2446D79-92A0-4837-8CF8-BAA0AB317E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2446D79-92A0-4837-8CF8-BAA0AB317E1E}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{B2446D79-92A0-4837-8CF8-BAA0AB317E1E}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{356E0FD0-50DF-4D54-B6C4-AAD1700DA4E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{356E0FD0-50DF-4D54-B6C4-AAD1700DA4E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{356E0FD0-50DF-4D54-B6C4-AAD1700DA4E6}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{356E0FD0-50DF-4D54-B6C4-AAD1700DA4E6}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{74660612-CF04-4266-A2AC-2E14493376E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74660612-CF04-4266-A2AC-2E14493376E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74660612-CF04-4266-A2AC-2E14493376E5}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{74660612-CF04-4266-A2AC-2E14493376E5}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{28BA019F-8FD0-43F6-98D6-493B3854AA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28BA019F-8FD0-43F6-98D6-493B3854AA96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28BA019F-8FD0-43F6-98D6-493B3854AA96}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{28BA019F-8FD0-43F6-98D6-493B3854AA96}.Debug|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

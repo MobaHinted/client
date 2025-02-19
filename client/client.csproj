@@ -28,17 +28,12 @@
         <PackageReference Include="System.Drawing.Common" Version="9.0.2"/>
     </ItemGroup>
 
-    <!-- Local Camille fork -->
-    <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <ProjectReference Include="../../Camille/src/Camille.Enums/Camille.Enums.csproj"/>
-        <ProjectReference Include="../../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj"/>
-    </ItemGroup>
-    <!-- Standard Camille -->
-    <ItemGroup Condition="'$(Configuration)'!='Debug'">
-        <PackageReference Include="Camille.Enums"
-                          Version="3.0.0-nightly-2025-02-19-d2b94715b7"/>
-        <PackageReference Include="Camille.RiotGames"
-                          Version="3.0.0-nightly-2025-02-19-d2b94715b7"/>
+    <!-- Camille (Submodule) -->
+    <ItemGroup>
+        <ProjectReference
+            Include="$(SolutionDir)../Camille/src/Camille.Enums/Camille.Enums.csproj"/>
+        <ProjectReference
+            Include="$(SolutionDir)../Camille/src/Camille.RiotGames/Camille.RiotGames.csproj"/>
     </ItemGroup>
 
     <!-- Avalonia -->
@@ -46,5 +41,10 @@
         <PackageReference Include="Avalonia" Version="11.2.4"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.2.4"/>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.4"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="LICENSE-MIT.txt"/>
+        <None Remove="LICENSE-APACHE.txt"/>
+        <None Remove="Camille.png"/>
     </ItemGroup>
 </Project>
