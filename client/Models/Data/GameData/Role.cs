@@ -7,7 +7,7 @@ using Camille.Enums;
 
 #endregion
 
-namespace client.Models.Data.Matches.GameData;
+namespace client.Models.Data.GameData;
 
 public enum Role
 {

@@ -7,7 +7,7 @@ using client.Models.Data.DataDragon;
 
 #endregion
 
-namespace client.Models.Data.Matches.GameData;
+namespace client.Models.Data.GameData;
 
 public class Item
 {

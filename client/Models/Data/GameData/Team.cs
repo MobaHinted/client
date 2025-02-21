@@ -8,7 +8,7 @@ using CamilleTeam = Camille.RiotGames.MatchV5.Team;
 
 #endregion
 
-namespace client.Models.Data.Matches.GameData;
+namespace client.Models.Data.GameData;
 
 /// <summary>
 ///     A class to hold the data for each <see cref="Player">Player</see> for a
@@ -26,6 +26,8 @@ public class Team
     /// </remarks>
     public Dictionary<byte, Player> Players = new Dictionary<byte, Player>();
 
+    public short Kills { get; set; }
+
     /// <summary>
     ///     Creates a new instance of <see cref="Team" />.
     /// </summary>
@@ -41,7 +43,12 @@ public class Team
     ///     from a
     ///     <see cref="Camille.RiotGames.MatchV5.Match.Info">Match's Info</see>.
     /// </param>
-    public Team(CamilleTeam team, IReadOnlyCollection<Participant> players)
+    /// <param name="duration">The number of minutes the game went on for.</param>
+    public Team(
+        CamilleTeam team,
+        IReadOnlyCollection<Participant> players,
+        short duration
+    )
     {
         Program.log(
                 source: nameof(Team),
@@ -63,9 +70,13 @@ public class Team
         {
             counter++;
             // Parse the player data
-            var playerData = new Player(player);
+            var playerData = new Player(
+                    player,
+                    duration
+                );
             // TODO: Only parse the role in summoner's rift
             // TODO: Parse the team together
+
             // Parse the player's role
             byte role = (byte)Roles.determine(
                     player.ChampionId,

@@ -7,14 +7,9 @@ using Camille.RiotGames.MatchV5;
 
 #endregion
 
-namespace client.Models.Data.Matches.GameData;
+namespace client.Models.Data.GameData;
 
-public class Runes
+public class Runes(Perks perks)
 {
-    private readonly Perks _perks;
-
-    public Runes(Perks perks)
-    {
-        this._perks = perks;
-    }
+    private readonly Perks _perks = perks;
 }
