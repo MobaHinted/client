@@ -11,29 +11,23 @@ namespace client.Models.Data.GameData;
 
 public class Item
 {
+    public string Description;
+
     public short ID;
-    private readonly ItemData _rawItem;
 
-    public string Name
-    {
-        get => this._rawItem.name;
-    }
+    public Image Image;
 
-    public string Description
-    {
-        get => this._rawItem.description;
-    }
-
-    public Image Image
-    {
-        get => this._rawItem.image;
-    }
+    public string Name;
 
     public Item(int id)
     {
         this.ID = (short)id;
 
-        this._rawItem = Program.Assets.Items.data[id.ToString()];
+        ItemData item = Program.Assets.Items.data[id.ToString()];
+
+        this.Name = item.name;
+        this.Description = item.description;
+        this.Image = item.image;
 
         Program.log(
                 source: nameof(Item),
