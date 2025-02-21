@@ -9,7 +9,7 @@ using client.Models.Data.DataDragon;
 
 namespace client.Models.Data.GameData.Helpers;
 
-public class RuneHelper
+public static class RuneHelper
 {
     public static bool isKeystone(short runeId)
     {
