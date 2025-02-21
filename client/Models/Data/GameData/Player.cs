@@ -16,7 +16,7 @@ namespace client.Models.Data.GameData;
 /// </summary>
 public class Player(Participant player, short duration)
 {
-    public readonly Champion Champion =
+    public readonly ChampionData Champion =
         ChampionHelper.getByName(player.ChampionName);
 
     public readonly Item[] Items =
