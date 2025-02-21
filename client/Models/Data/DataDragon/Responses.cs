@@ -94,10 +94,10 @@ public class Champions
     public string type { get; set; }
     public string format { get; set; }
     public string version { get; set; }
-    public Dictionary<string, ChampionsData> data { get; set; }
+    public Dictionary<string, ChampionData> data { get; set; }
 }
 
-public class ChampionsData
+public class ChampionData
 {
     public string version { get; set; }
     public string id { get; set; }
@@ -105,14 +105,14 @@ public class ChampionsData
     public string name { get; set; }
     public string title { get; set; }
     public string blurb { get; set; }
-    public ChampionsInfo info { get; set; }
+    public ChampionInfo info { get; set; }
     public Image image { get; set; }
     public List<string> tags { get; set; }
     public string partype { get; set; }
-    public ChampionsStats stats { get; set; }
+    public ChampionStats stats { get; set; }
 }
 
-public class ChampionsInfo
+public class ChampionInfo
 {
     public int dttack { get; set; }
     public int defense { get; set; }
@@ -120,7 +120,7 @@ public class ChampionsInfo
     public int difficulty { get; set; }
 }
 
-public class ChampionsStats
+public class ChampionStats
 {
     public double hp { get; set; }
     public double hpperlevel { get; set; }
