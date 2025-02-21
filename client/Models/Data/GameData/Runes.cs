@@ -14,15 +14,15 @@ namespace client.Models.Data.GameData;
 
 public class Runes
 {
-    public Rune? Keystone;
+    public Rune Keystone;
 
     public List<Rune> PrimaryRunes = [];
 
-    public RuneTree? PrimaryTree;
+    public RuneTree PrimaryTree;
 
     public List<Rune> SecondaryRunes = [];
 
-    public RuneTree? SecondaryTree;
+    public RuneTree SecondaryTree;
 
     public Runes(Perks perks)
     {
@@ -44,11 +44,13 @@ public class Runes
                                     id,
                                     out Rune? rune
                                 ))
-                            return;
+                            throw new ArgumentException(
+                                    "Rune with ID " + id + " not found."
+                                );
 
                         // Set Keystone
                         if (RuneHelper.isKeystone(rune!))
-                            this.Keystone = rune;
+                            this.Keystone = rune!;
 
                         // Set Trees
                         RuneTree tree = RuneHelper.getTreeByRuneId(id);
