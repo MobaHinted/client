@@ -7,7 +7,7 @@ using Camille.Enums;
 
 #endregion
 
-namespace client.Models.Data;
+namespace client.Models.Data.GameData.Helpers;
 
 public static class ChampionHelper
 {
