@@ -3,8 +3,9 @@
 
 #region
 
-using Camille.Enums;
 using Camille.RiotGames.MatchV5;
+using client.Models.Data.DataDragon;
+using client.Models.Data.GameData.Helpers;
 
 #endregion
 
@@ -56,16 +57,20 @@ public class Player(Participant player, short duration)
 
     public readonly short LargestKillingSpree = (short)player.LargestKillingSpree;
 
+    public readonly short Triplekills = (short)player.TripleKills;
+
+    public readonly short Quadrakills = (short)player.QuadraKills;
+
     public readonly short Pentakills = (short)player.PentaKills;
 
     public readonly short Assists = (short)player.Assists;
 
     public readonly short Deaths = (short)player.Deaths;
 
-    public readonly float KDA = (float)(player.Kills + player.Assists)
-        / player.Deaths;
+    public readonly float KillAndAssistToDeathRatio =
+        (float)(player.Kills + player.Assists) / player.Deaths;
 
-    public readonly float KD = (float)player.Kills / player.Deaths;
+    public readonly float KillToDeathRatio = (float)player.Kills / player.Deaths;
 
     #endregion
 
@@ -73,8 +78,18 @@ public class Player(Participant player, short duration)
 
     public readonly int TotalDamageDealt = player.TotalDamageDealt;
 
+    public readonly float DamagePerMinute = (float)Math.Round(
+            (float)player.TotalDamageDealt / duration,
+            2
+        );
+
     public readonly int TotalDamageDealtToChampions = player
         .TotalDamageDealtToChampions;
+
+    public readonly float DamageToChampionsPerMinute = (float)Math.Round(
+            (float)player.TotalDamageDealtToChampions / duration,
+            2
+        );
 
     public readonly int PhysicalDamageDealt = player.PhysicalDamageDealt;
 
@@ -105,9 +120,9 @@ public class Player(Participant player, short duration)
 
     public readonly short ControlWardsBought = (short)player.VisionWardsBoughtInGame;
 
-    public readonly short VS = (short)player.VisionScore;
+    public readonly short VisionScore = (short)player.VisionScore;
 
-    public readonly float VSPM = (float)Math.Round(
+    public readonly float VisionScorePerMinute = (float)Math.Round(
             (float)player.VisionScore / duration,
             2
         );
@@ -120,16 +135,20 @@ public class Player(Participant player, short duration)
 
     public readonly short JungleMinionsKilled = (short)player.NeutralMinionsKilled;
 
-    public readonly short CS =
+    public readonly short CreepScore =
         (short)(player.TotalMinionsKilled + player.NeutralMinionsKilled);
 
-    public readonly float CSPM = (float)Math.Round(
+    public readonly float CreepScorePerMinute = (float)Math.Round(
             (float)(player.TotalMinionsKilled + player.NeutralMinionsKilled)
             / duration,
             2
         );
 
     #endregion
+
+    // TODO: Heal/Shield data
+
+    // TODO: CC data
 
     #region Misc
 
@@ -142,6 +161,18 @@ public class Player(Participant player, short duration)
         + (player.EnemyVisionPings ?? 0)
         + (player.OnMyWayPings ?? 0)
         + (player.AllInPings ?? 0));
+
+    public readonly float HelpfulPingsPerMinute = (float)Math.Round(
+            (float)((player.RetreatPings ?? 0)
+                + (player.AssistMePings ?? 0)
+                + (player.EnemyVisionPings ?? 0)
+                + (player.OnMyWayPings ?? 0)
+                + (player.AllInPings ?? 0))
+            / duration,
+            2
+        );
+
+    public readonly short TurretTakedowns = (short)(player.TurretTakedowns ?? 0);
 
     #endregion
 }
