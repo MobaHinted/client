@@ -98,7 +98,8 @@ public class MatchData
                                 .Where(
                                         p => p.TeamId == team.TeamId
                                     ) // Filtered to the same team
-                                .ToArray() // Converted to an array
+                                .ToArray(), // Converted to an array
+                            Duration // The duration of the match
                         )
                 );
         }
@@ -153,10 +154,10 @@ public class MatchData
     /// <summary>
     ///     How many minutes the match lasted.
     /// </summary>
-    public int Duration
+    public short Duration
     {
         // ReSharper disable once PossibleLossOfFraction
-        get => (int)Math.Round((double)(this._match.Info.GameDuration / 60));
+        get => (short)Math.Round((double)(this._match.Info.GameDuration / 60));
     }
 
     /// <summary>
