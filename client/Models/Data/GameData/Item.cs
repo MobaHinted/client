@@ -13,7 +13,7 @@ public class Item
 {
     public string Description;
 
-    public short ID;
+    public short Id;
 
     public Image Image;
 
@@ -21,9 +21,9 @@ public class Item
 
     public Item(int id)
     {
-        this.ID = (short)id;
+        this.Id = (short)id;
 
-        ItemData item = Program.Assets.Items.data[id.ToString()];
+        ItemData item = Program.Assets.Items.data[this.Id.ToString()];
 
         this.Name = item.name;
         this.Description = item.description;
@@ -32,8 +32,8 @@ public class Item
         Program.log(
                 source: nameof(Item),
                 method: "Item()",
-                doing: "Parsing Item Data",
-                message: "ID: " + this.ID,
+                doing: "Parsed Item Data",
+                message: "ID: " + this.Id,
                 logLevel: LogLevel.debug,
                 logLocation: LogLocation.verbose,
                 logTo: LogTo.file
