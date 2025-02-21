@@ -4,18 +4,20 @@ Blitz / Mobalytics primarily, with the exclusion of ads, paid features, and the
 inclusion of it just actually working while having everything you need.
 It's faster, lighter, more reliable, more customizable, and with more overlays.
 
-Made out of grief from both Mobalytics and Blitz commonly just not even having correct builds or
-stats on matchups or even failing to import at critical moments, and completely
-missing features like suggesting counter picks from your champion pool - not to mention all the ads.
+Made out of grief from both Mobalytics and Blitz commonly just not even having
+correct builds or stats on matchups or even failing to import at critical moments,
+and completely missing features like suggesting counter picks from your champion
+pool - not to mention all the ads.
 
-It doesn't have crazy in-depth stats like Mobalytics, super nice visuals of Blitz, or the
-particularly in-depth player tags or data-syncing of Porofessor, but it does have easy to
-understand information of every type you could want in a clean and concise format, as well
-as all the overlays those other clients have AND more that they don't.
-Additionally, big focuses of this project are the addition of features we haven't seen in league
-clients before: champion pool data being used in pre-game, and performance with friends - both
-in depth data about this and using that data alongside your champion pool to give better matchup
-data.
+It doesn't have crazy in-depth stats like Mobalytics, super nice visuals of Blitz,
+or the particularly in-depth player tags or data-syncing of Porofessor, but it does
+have easy to understand information of every type you could want in a clean and
+concise format, as well as all the overlays those other clients have AND more that
+they don't.\
+Additionally, big focuses of this project are the addition of features we haven't
+seen in league clients before: champion pool data being used in pre-game, and
+performance with friends - both in depth data about this and using that data
+alongside your champion pool to give better match-up data.
 
 ## Status
 
@@ -43,12 +45,13 @@ This is roughly in the order they will be developed.
     - [ ] Arena
         - [ ] Duo winrates
         - [ ] Solo winrates
-        - [ ] Highlighting of champpions from your pool
+      - [ ] Highlighting of champions from your pool
     - [ ] URF
         - [ ] Winrates with highlighting from your pool
 - [ ] Post-Game Breakdown
     - [ ] Drill down into this: gold graph, baron kills, tower kills, etc
-- [ ] Teammate Performance (like op.gg has, telling you your win-rate with specific friends)
+- [ ] Performance with Friends\
+  (like op.gg has, telling you your win-rate with specific friends)
     - [ ] Drill down into this: show your best champion with them, etc
 - [ ] Match History with friend
 - [ ] Champion Pool Tracking (graph your WR changes per-champ over chunks of time)
