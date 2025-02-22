@@ -40,8 +40,10 @@ public class Player(Participant player, short duration)
 
     #region Name
 
-    public readonly string DisplayName = player.RiotIdGameName
-        ?? player.SummonerName + "#" + player.RiotIdTagline ?? "";
+    public readonly string DisplayName =
+        (player.RiotIdGameName ?? player.SummonerName)
+        + "#"
+        + (player.RiotIdTagline ?? "");
 
     public readonly string Name = player.RiotIdGameName ?? player.SummonerName;
 
@@ -76,14 +78,14 @@ public class Player(Participant player, short duration)
 
     #region Damage
 
-    public readonly int TotalDamageDealt = player.TotalDamageDealt;
+    public readonly int Damage = player.TotalDamageDealt;
 
     public readonly float DamagePerMinute = (float)Math.Round(
             (float)player.TotalDamageDealt / duration,
             2
         );
 
-    public readonly int TotalDamageDealtToChampions = player
+    public readonly int DamageToChampions = player
         .TotalDamageDealtToChampions;
 
     public readonly float DamageToChampionsPerMinute = (float)Math.Round(
@@ -91,19 +93,19 @@ public class Player(Participant player, short duration)
             2
         );
 
-    public readonly int PhysicalDamageDealt = player.PhysicalDamageDealt;
+    public readonly int PhysicalDamage = player.PhysicalDamageDealt;
 
-    public readonly int PhysicalDamageDealtToChampions =
+    public readonly int PhysicalDamageToChampions =
         player.PhysicalDamageDealtToChampions;
 
-    public readonly int MagicDamageDealt = player.MagicDamageDealt;
+    public readonly int MagicDamage = player.MagicDamageDealt;
 
-    public readonly int MagicDamageDealtToChampions =
+    public readonly int MagicDamageToChampions =
         player.MagicDamageDealtToChampions;
 
-    public readonly int TrueDamageDealt = player.TrueDamageDealt;
+    public readonly int TrueDamage = player.TrueDamageDealt;
 
-    public readonly int TrueDamageDealtToChampions =
+    public readonly int TrueDamageToChampions =
         player.TrueDamageDealtToChampions;
 
     public readonly int TurretDamage = player.DamageDealtToTurrets;
@@ -120,7 +122,8 @@ public class Player(Participant player, short duration)
 
     public readonly short WardsDestroyed = (short)player.WardsKilled;
 
-    public readonly short ControlWardsBought = (short)player.VisionWardsBoughtInGame;
+    public readonly short ControlWardsPurchased =
+        (short)player.VisionWardsBoughtInGame;
 
     public readonly short VisionScore = (short)player.VisionScore;
 
