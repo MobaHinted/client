@@ -13,7 +13,7 @@ public class Item
 {
     public string Description;
 
-    public short Id;
+    public int Id;
 
     public Image Image;
 
@@ -21,9 +21,13 @@ public class Item
 
     public Item(int id)
     {
-        this.Id = (short)id;
+        this.Id = id;
 
-        ItemData item = Program.Assets.Items.data[this.Id.ToString()];
+        if (!Program.Assets.Items.data.TryGetValue(
+                    id.ToString(),
+                    out ItemData? item
+                ))
+            throw new ArgumentException("Item not found with ID " + id);
 
         this.Name = item.name;
         this.Description = item.description;

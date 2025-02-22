@@ -34,19 +34,17 @@ public static class RuneHelper
         return IsKeystone((short)rune.id);
     }
 
-    public static bool TryGetById(short runeId, out Rune? rune)
+    public static Rune GetById(short runeId)
     {
-        Rune? foundRune = null;
-        Program.Assets.Runes.runetrees.ForEach(
-                tree =>
-                {
-                    var treeRunes = tree.slots.SelectMany(slot => slot.runes);
-                    foundRune = treeRunes.First(x => x.id == runeId);
-                }
-            );
+        Rune? rune = Program
+            .Assets.Runes.runetrees.SelectMany(tree => tree.slots)
+            .SelectMany(slot => slot.runes)
+            .FirstOrDefault(rune => (short)rune.id == runeId);
 
-        rune = foundRune;
-        return foundRune != null;
+        if (rune is null)
+            throw new ArgumentException("Rune not found with ID " + runeId);
+
+        return rune;
     }
 
     public static RuneTree GetTreeByRuneId(short runeId)
@@ -56,7 +54,7 @@ public static class RuneHelper
                 tree =>
                 {
                     var treeRunes = tree.slots.SelectMany(slot => slot.runes);
-                    if (treeRunes.Any(rune => rune.id == runeId))
+                    if (treeRunes.Any(rune => (short)rune.id == runeId))
                         foundTree = tree;
                 }
             );

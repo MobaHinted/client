@@ -74,7 +74,6 @@ internal static class Program
     /// </summary>
     public static Account Account { get; set; }
 
-
     /// <summary>
     ///     The global logging functionality for the application.
     /// </summary>
@@ -94,7 +93,7 @@ internal static class Program
     ///     How the log should be given, see: <see cref="LogTo" />
     /// </param>
     /// <param name="source">
-    ///     The class giving the log <code>nameof( [this class] )</code>
+    ///     The class giving the log <c>nameof( [this class] )</c>
     /// </param>
     /// <param name="method">The method giving the log</param>
     /// <param name="doing">What is being done - used to group logs together</param>

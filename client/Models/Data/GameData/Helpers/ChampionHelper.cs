@@ -30,12 +30,19 @@ public static class ChampionHelper
     /// </remarks>
     public static ChampionData GetByName(string championName)
     {
-        if (Program.Assets.Champions.data.TryGetValue(
-                    championName,
-                    out ChampionData? championData
-                ))
-            return championData;
+        ChampionData? championData = Program.Assets.Champions.data.FirstOrDefault(
+                    kvp => kvp.Key.Equals(
+                            championName,
+                            StringComparison.CurrentCultureIgnoreCase
+                        )
+                )
+            .Value;
 
-        throw new ArgumentException("No champion found with that name.");
+        if (championData is null)
+            throw new ArgumentException(
+                    "Champion not found with name " + championName
+                );
+
+        return championData;
     }
 }
