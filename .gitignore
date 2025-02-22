@@ -1,18 +1,25 @@
+# Old Python output
 /venv/
 /data/
-/.idea/
-*/.idea/
 /.run/
 /dist/
 /build/
 /__pycache__/
+*.pyc
+.env
+
+# Jetbrains IDEs
+/.idea/
+*/.idea/
+*.user
+
+# Build output
 /client/bin/
 /bin/
 /client/obj/
 /obj/
-sample*
-.env
-*.spec
 *.exe
+
+# Testing artifacts
+sample*
 *.zip
-*.pyc
