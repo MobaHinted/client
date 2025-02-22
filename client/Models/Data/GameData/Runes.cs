@@ -18,11 +18,11 @@ public class Runes
 
     public List<Rune> PrimaryRunes = [];
 
-    public RuneTree PrimaryTree = null!;
+    public RuneTree? PrimaryTree;
 
     public List<Rune> SecondaryRunes = [];
 
-    public RuneTree SecondaryTree = null!;
+    public RuneTree? SecondaryTree;
 
     public Runes(Perks perks)
     {
@@ -42,17 +42,11 @@ public class Runes
                         short id = (short)x.Perk;
 
                         // Load Rune
-                        if (!RuneHelper.TryGetById(
-                                    id,
-                                    out Rune? rune
-                                ))
-                            throw new ArgumentException(
-                                    "Rune with ID " + id + " not found."
-                                );
+                        Rune rune = RuneHelper.GetById(id);
 
                         // Set Keystone
-                        if (RuneHelper.IsKeystone(rune!))
-                            this.Keystone = rune!;
+                        if (RuneHelper.IsKeystone(rune))
+                            this.Keystone = rune;
 
                         // Set Trees
                         RuneTree tree = RuneHelper.GetTreeByRuneId(id);
