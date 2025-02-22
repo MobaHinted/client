@@ -26,6 +26,8 @@ public class Runes
 
     public Runes(Perks perks)
     {
+        // TODO: implement `perks.StatPerks`: it's the three minor buffs you choose
+
         var runes = perks.Styles;
 
         var primaryRunes = runes[0].Selections;

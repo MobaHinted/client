@@ -110,6 +110,8 @@ public class Player(Participant player, short duration)
 
     public readonly int ObjectiveDamage = player.DamageDealtToObjectives;
 
+    public readonly int DamageTaken = player.TotalDamageTaken;
+
     #endregion
 
     #region Vision
@@ -146,9 +148,34 @@ public class Player(Participant player, short duration)
 
     #endregion
 
-    // TODO: Heal/Shield data
+    #region Heal/Shield
 
-    // TODO: CC data
+    public readonly int SelfHealing =
+        player.TotalHeal - player.TotalHealsOnTeammates;
+
+    public readonly int HealingDone = player.TotalHealsOnTeammates;
+
+    public readonly int ShieldingDone = player.TotalDamageShieldedOnTeammates;
+
+    public readonly float HealingPerMinute = (float)Math.Round(
+            (float)(player.TotalHeal - player.TotalHealsOnTeammates) / duration,
+            2
+        );
+
+    public readonly float ShieldingPerMinute = (float)Math.Round(
+            (float)player.TotalDamageShieldedOnTeammates / duration,
+            2
+        );
+
+    public readonly float HealAndShieldPerMinute = (float)Math.Round(
+            (float)(player.TotalHeal
+                - player.TotalHealsOnTeammates
+                + player.TotalDamageShieldedOnTeammates)
+            / duration,
+            2
+        );
+
+    #endregion
 
     #region Misc
 
@@ -172,7 +199,19 @@ public class Player(Participant player, short duration)
             2
         );
 
+    public readonly short CrowdControlScore = (short)player.TimeCCingOthers;
+
     public readonly short TurretTakedowns = (short)(player.TurretTakedowns ?? 0);
+
+    /// <summary>
+    ///     This is the role that is most likely to be correct.
+    /// </summary>
+    public readonly string RiotDetectedRole = player.IndividualPosition;
+
+    /// <summary>
+    ///     This is the probable role given that each team needs one of each role.
+    /// </summary>
+    public readonly string RiotDetectedRoleInTeam = player.TeamPosition;
 
     #endregion
 }
