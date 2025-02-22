@@ -4,6 +4,7 @@
 #region
 
 using Camille.RiotGames.MatchV5;
+using client.Models.Data.Matches;
 using CamilleTeam = Camille.RiotGames.MatchV5.Team;
 
 #endregion
@@ -17,6 +18,22 @@ namespace client.Models.Data.GameData;
 /// </summary>
 public class Team
 {
+    public short Assists;
+
+    public short Deaths;
+
+    public short Kills;
+
+    public int DamageDealt;
+
+    public int DamageDealtToChampions;
+
+    public int DamageTaken;
+
+    public short WardsPlaced;
+
+    public short ControlWardsPurchased;
+
     /// <summary>
     ///     A dictionary of the players on the team.
     /// </summary>
@@ -25,8 +42,6 @@ public class Team
     ///     Summoner's Rift.
     /// </remarks>
     public Dictionary<byte, Player> Players = new Dictionary<byte, Player>();
-
-    public short Kills { get; set; }
 
     /// <summary>
     ///     Creates a new instance of <see cref="Team" />.
@@ -74,9 +89,19 @@ public class Team
                     player,
                     duration
                 );
+
+            // Build some Team data out of parsed Player data
+            this.Kills += playerData.Kills;
+            this.Assists += playerData.Assists;
+            this.Deaths += playerData.Deaths;
+            this.DamageDealt += playerData.Damage;
+            this.DamageDealtToChampions += playerData.DamageToChampions;
+            this.DamageTaken += playerData.DamageTaken;
+            this.WardsPlaced += playerData.WardsPlaced;
+            this.ControlWardsPurchased += playerData.ControlWardsPurchased;
+
             // TODO: Only parse the role in summoner's rift
             // TODO: Parse the team together
-
             // Parse the player's role
             byte role = (byte)Roles.Determine(
                     player.ChampionId,
