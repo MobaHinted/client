@@ -265,23 +265,11 @@ public class Matches
             // If the match is already cached, use that instead
             if (FileManagement.FileExists(cacheFile))
             {
-                // Load the match data from the cache
-                try
-                {
-                    FileManagement.LoadFromFile(
-                            cacheFile,
-                            out matchData
-                        );
-                }
-                // Load the raw match data from the cache
-                catch (InvalidOperationException)
-                {
-                    FileManagement.LoadFromFile(
-                            cacheFile,
-                            out match
-                        );
-                    matchData = new MatchData(match!);
-                }
+                FileManagement.LoadFromFile(
+                        cacheFile,
+                        out match
+                    );
+                matchData = new MatchData(match!);
 
                 // Log the success
                 Program.Log(
@@ -317,7 +305,7 @@ public class Matches
                 // Cache the match data
                 FileManagement.SaveToFile(
                         cacheFile,
-                        matchData
+                        match!
                     );
 
                 // Log the success
