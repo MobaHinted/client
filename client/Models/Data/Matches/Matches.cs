@@ -75,7 +75,7 @@ public class Matches
                 .riotAPI.MatchV5()
                 .GetMatchIdsByPUUIDAsync(
                         Program.Account.Continent,
-                        Program.Account.Puuid,
+                        Program.Account.PUUID,
                         count,
                         start: startIndex
                     )
@@ -147,7 +147,9 @@ public class Matches
                     method: "getMatches()",
                     doing: "Loading Matches",
                     message: "Task to retrieve match faulted. Likely URI issue.\n"
-                    + e.Message,
+                    + (e.InnerException?.Message ?? "")
+                    + "\n"
+                    + (e.InnerException?.StackTrace ?? ""),
                     logLevel: LogLevel.fatal,
                     logTo: LogTo.file | LogTo.console | LogTo.errorScreen,
                     logLocation: LogLocation.download
@@ -209,24 +211,18 @@ public class Matches
         // For each match string in matchList
         foreach (string matchID in matchList)
             // Get the match data, and update the list
-        {
             Task.Run(() => { GetMatchData(matchID); });
-        }
 
         // Retry any matches that failed to load
         var matchesToRetryCopy = new List<string>(this._matchesToRetry);
         foreach (string matchID in matchesToRetryCopy)
-        {
             Task.Run(
-                    () =>
-                    {
-                        GetMatchData(
-                                matchID,
-                                true
-                            );
-                    }
+                    () => GetMatchData(
+                            matchID,
+                            true
+                        )
                 );
-        }
+
 #pragma warning restore CS4014
 
         if (this._missedMatches != 0)
@@ -353,7 +349,10 @@ public class Matches
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
-                    message: "Failed to load Match\n" + e.Message,
+                    message: "Failed to load Match\n"
+                    + e.Message
+                    + "\n"
+                    + e.StackTrace,
                     debugSymbols:
                     [
                         e.GetType().FullName!,

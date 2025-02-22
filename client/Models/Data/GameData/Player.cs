@@ -6,6 +6,7 @@
 using Camille.RiotGames.MatchV5;
 using client.Models.Data.DataDragon;
 using client.Models.Data.GameData.Helpers;
+using client.Models.Data.Matches;
 
 #endregion
 
