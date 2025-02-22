@@ -59,11 +59,11 @@ public class Player(Participant player, short duration)
 
     public readonly short LargestKillingSpree = (short)player.LargestKillingSpree;
 
-    public readonly short Triplekills = (short)player.TripleKills;
+    public readonly short TripleKills = (short)player.TripleKills;
 
-    public readonly short Quadrakills = (short)player.QuadraKills;
+    public readonly short QuadraKills = (short)player.QuadraKills;
 
-    public readonly short Pentakills = (short)player.PentaKills;
+    public readonly short PentaKills = (short)player.PentaKills;
 
     public readonly short Assists = (short)player.Assists;
 
