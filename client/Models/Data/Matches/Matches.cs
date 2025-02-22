@@ -26,8 +26,7 @@ public class Matches
     /// <summary>
     ///     The match data that has been loaded successfully.
     /// </summary>
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    private Dictionary<string, MatchData> _matchData =
+    public Dictionary<string, MatchData> MatchData =
         new Dictionary<string, MatchData>();
 
     /// <summary>
@@ -60,7 +59,7 @@ public class Matches
             // If on the last step, but we are missing matches, get more
             if (i == steps - 1
                 && (this._missedMatches != 0
-                    || this._matchData.Count < Program.Settings.matchHistoryCount))
+                    || this.MatchData.Count < Program.Settings.matchHistoryCount))
                 await Task.Run(() => { GetMatches((i + 1) * 25); });
         }
     }
@@ -276,7 +275,7 @@ public class Matches
                         debugSymbols:
                         [
                             matchID,
-                            this._matchData.Count
+                            this.MatchData.Count
                             + "/"
                             + Program.Settings.matchHistoryCount,
                         ],
@@ -313,7 +312,7 @@ public class Matches
                         debugSymbols:
                         [
                             matchID,
-                            this._matchData.Count
+                            this.MatchData.Count
                             + "/"
                             + Program.Settings.matchHistoryCount,
                         ],
@@ -324,7 +323,7 @@ public class Matches
             }
 
             // Add the match data to the dictionary
-            this._matchData.Add(
+            this.MatchData.Add(
                     matchID,
                     matchData!
                 );

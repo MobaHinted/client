@@ -15,23 +15,6 @@ namespace client.ViewModels;
 
 public class MatchHistory : ReactiveObject, IRoutableViewModel
 {
-    /// <summary>
-    ///     The match that was most recently loaded.
-    /// </summary>
-    /// <remarks>
-    ///     Used to get the next set of matches, if there are more than the limit.
-    /// </remarks>
-    private int _currentProgressMatch;
-
-    /// <summary>
-    ///     The current view that is being displayed within Match History.
-    /// </summary>
-    /// <remarks>
-    ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
-    ///     <see cref="client.Views.MatchHistory.HistorySubView" />
-    /// </remarks>
-    private ISubView _currentView = new LoadingSubView();
-
     public MatchHistory(IScreen? screen = null)
     {
         Program.Log(
@@ -55,8 +38,51 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
         Program.Window.Height = Program.Settings.windowHeight;
 
         // Load the matches
+        this.CurrentView = new LoadingSubView();
         LoadMatches();
+
+        // Display the matches
+        this.CurrentView = new HistorySubView();
     }
+
+    private async void LoadMatches()
+    {
+        var matches = new Matches(loadingPercentageUpdater);
+
+        while (!this.DoneLoading)
+        {
+            await Task.Delay(100);
+        }
+
+        await Task.Delay(100);
+
+        this._matchData = matches.MatchData;
+        return;
+
+        void loadingPercentageUpdater(int currentPercentage)
+        {
+            this.RaiseAndSetIfChanged(
+                    ref this._currentProgressMatch,
+                    currentPercentage,
+                    nameof(this.CurrentMatch)
+                );
+
+            // Navigate back to the loading screen
+            if (currentPercentage == 100)
+                this.DoneLoading = true;
+        }
+    }
+
+    #region Current View
+
+    /// <summary>
+    ///     The current view that is being displayed within Match History.
+    /// </summary>
+    /// <remarks>
+    ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
+    ///     <see cref="client.Views.MatchHistory.HistorySubView" />
+    /// </remarks>
+    private ISubView _currentView = null!;
 
     /// <summary>
     ///     The current view that is being displayed within Match History.
@@ -75,6 +101,29 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
                 );
     }
 
+    #endregion
+
+    #region Boilerplate Screen Variables
+
+    /// <summary>
+    ///     The URL path segment for the view.
+    /// </summary>
+    public string? UrlPathSegment
+    {
+        get => "MatchHistory";
+    }
+
+    /// <summary>
+    ///     The screen that is hosting the view.
+    /// </summary>
+    public IScreen HostScreen { get; }
+
+    #endregion
+
+    #region Variables for sub-views
+
+    #region Loading
+
     /// <summary>
     ///     How many matches to load.
     /// </summary>
@@ -82,6 +131,14 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     {
         get => Program.Settings.matchHistoryCount;
     }
+
+    /// <summary>
+    ///     The match that was most recently loaded.
+    /// </summary>
+    /// <remarks>
+    ///     Used to get the next set of matches, if there are more than the limit.
+    /// </remarks>
+    private int _currentProgressMatch;
 
     /// <summary>
     ///     The match that was most recently loaded.
@@ -100,26 +157,21 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     }
 
     /// <summary>
-    ///     The URL path segment for the view.
+    ///     Flag indicating loading has finished.
     /// </summary>
-    public string? UrlPathSegment
-    {
-        get => "MatchHistory";
-    }
+    private bool DoneLoading { get; set; }
+
+    #endregion
+
+    #region Display
 
     /// <summary>
-    ///     The screen that is hosting the view.
+    ///     The match data that was loaded, from
+    ///     <see cref="client.Models.Data.Matches.Matches" />.
     /// </summary>
-    public IScreen HostScreen { get; }
+    private Dictionary<string, MatchData>? _matchData;
 
-    private void LoadMatches()
-    {
-        var matches = new Matches(
-                current => this.RaiseAndSetIfChanged(
-                        ref this._currentProgressMatch,
-                        current,
-                        nameof(this.CurrentMatch)
-                    )
-            );
-    }
+    #endregion
+
+    #endregion
 }
