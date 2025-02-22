@@ -18,7 +18,7 @@ public struct Account
     public string GameName { get; set; }
     public string TagLine { get; set; }
     public string RiotID { get; set; }
-    public string Puuid { get; set; }
+    public string PUUID { get; set; }
 
     public PlatformRoute Region { get; set; }
     public RegionalRoute Continent { get; set; }
@@ -64,7 +64,7 @@ public struct Account
         this.GameName = gameName;
         this.TagLine = tagLine;
         this.RiotID = $"{this.GameName}#{this.TagLine}";
-        this.Puuid = puuid;
+        this.PUUID = puuid;
 
         this.Region = region;
         this.Continent = region.ToRegional();
