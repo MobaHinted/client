@@ -24,7 +24,7 @@ public class Loading : ReactiveObject, IRoutableViewModel
 
     public Loading(IScreen? screen = null)
     {
-        Program.log(
+        Program.Log(
                 source: nameof(Loading),
                 method: "ctor()",
                 doing: "Loading",
@@ -37,7 +37,7 @@ public class Loading : ReactiveObject, IRoutableViewModel
         this.HostScreen = screen!;
 
         // Check for updates to static data
-        loadData();
+        LoadData();
     }
 
     /// <summary>
@@ -73,10 +73,10 @@ public class Loading : ReactiveObject, IRoutableViewModel
 
     public IScreen HostScreen { get; }
 
-    private async void loadData()
+    private async void LoadData()
     {
         await Task.Run(
-                () => Program.Assets.checkForUpdates(
+                () => Program.Assets.CheckForUpdates(
                         (status, subStatus) =>
                         {
                             this.RaiseAndSetIfChanged(
@@ -95,10 +95,10 @@ public class Loading : ReactiveObject, IRoutableViewModel
             );
 
         // Load into Match History
-        loadIn();
+        LoadIn();
     }
 
-    private void loadIn()
+    private void LoadIn()
     {
         // Clear the status
         this.Status = string.Empty;

@@ -30,11 +30,11 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
     ///     <see cref="client.Views.MatchHistory.HistorySubView" />
     /// </remarks>
-    private IsubView _currentView = new LoadingSubView();
+    private ISubView _currentView = new LoadingSubView();
 
     public MatchHistory(IScreen? screen = null)
     {
-        Program.log(
+        Program.Log(
                 source: nameof(MatchHistory),
                 method: "ctor()",
                 doing: "Loading",
@@ -55,7 +55,7 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
         Program.Window.Height = Program.Settings.windowHeight;
 
         // Load the matches
-        loadMatches();
+        LoadMatches();
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     ///     First, <see cref="client.Views.MatchHistory.LoadingSubView" /> then
     ///     <see cref="client.Views.MatchHistory.HistorySubView" />
     /// </remarks>
-    public IsubView CurrentView
+    public ISubView CurrentView
     {
         get => this._currentView;
         set =>
@@ -112,7 +112,7 @@ public class MatchHistory : ReactiveObject, IRoutableViewModel
     /// </summary>
     public IScreen HostScreen { get; }
 
-    private void loadMatches()
+    private void LoadMatches()
     {
         var matches = new Matches(
                 current => this.RaiseAndSetIfChanged(

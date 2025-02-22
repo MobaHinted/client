@@ -15,7 +15,7 @@ public class Launch : ReactiveObject, IScreen
 {
     public Launch()
     {
-        Program.log(
+        Program.Log(
                 source: nameof(Launch),
                 method: "ctor()",
                 doing: "Loading",
@@ -31,8 +31,8 @@ public class Launch : ReactiveObject, IScreen
         Program.Settings.load();
 
         // Create all the necessary files and directories
-        if (!Setup.allContentExists())
-            Setup.createAllContent();
+        if (!Setup.AllContentExists())
+            Setup.CreateAllContent();
 
         // Check if the user is logged in
         if (Program.Settings.activeAccount == null)

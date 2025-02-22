@@ -11,7 +11,7 @@ using ReactiveUI;
 namespace client.Views.Match;
 
 public partial class
-    EventsTimelineElement : ReactiveUserControl<ViewModels.MatchHistory>, Ielement
+    EventsTimelineElement : ReactiveUserControl<ViewModels.MatchHistory>, IElement
 {
     public EventsTimelineElement()
     {

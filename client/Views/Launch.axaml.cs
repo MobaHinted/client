@@ -9,7 +9,7 @@ using Avalonia.Controls;
 
 namespace client.Views;
 
-public partial class LaunchView : Window, Iview
+public partial class LaunchView : Window, IView
 {
     public LaunchView()
     {

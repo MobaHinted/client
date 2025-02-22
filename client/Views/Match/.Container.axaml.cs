@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace client.Views.Match;
 
-public partial class Container : ReactiveUserControl<ViewModels.MatchHistory>, Iview
+public partial class Container : ReactiveUserControl<ViewModels.MatchHistory>, IView
 {
     public Container()
     {

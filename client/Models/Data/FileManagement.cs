@@ -18,7 +18,7 @@ public static class FileManagement
 {
     #region Writing
 
-    public static void saveToFile<T>(string path, T data)
+    public static void SaveToFile<T>(string path, T data)
     {
         string jsonString = JsonSerializer.Serialize(data);
         File.WriteAllText(
@@ -27,7 +27,7 @@ public static class FileManagement
             );
     }
 
-    public static void appendToFile(string path, string data)
+    public static void AppendToFile(string path, string data)
     {
         File.AppendAllText(
                 path,
@@ -39,9 +39,9 @@ public static class FileManagement
 
     #region Reading
 
-    public static void loadFromFile<T>(string path, out T? data)
+    public static void LoadFromFile<T>(string path, out T? data)
     {
-        if (!fileHasContent(path))
+        if (!FileHasContent(path))
         {
             data = default;
             return;
@@ -55,7 +55,7 @@ public static class FileManagement
 
     #region Compressed File Manipulation
 
-    public static void unpackFile(string path, string destination)
+    public static void UnpackFile(string path, string destination)
     {
         ZipFile.ExtractToDirectory(
                 path,
@@ -67,31 +67,31 @@ public static class FileManagement
 
     #region Validation
 
-    public static bool fileExists(string path)
+    public static bool FileExists(string path)
     {
         return File.Exists(path);
     }
 
-    public static bool directoryExists(string path)
+    public static bool DirectoryExists(string path)
     {
         return Directory.Exists(path);
     }
 
-    public static bool fileHasContent(string path)
+    public static bool FileHasContent(string path)
     {
-        return fileExists(path) && new FileInfo(path).Length > 5;
+        return FileExists(path) && new FileInfo(path).Length > 5;
     }
 
     #endregion
 
     #region Creating
 
-    public static void createDirectory(string path)
+    public static void CreateDirectory(string path)
     {
         Directory.CreateDirectory(path);
     }
 
-    public static void createFile(string path)
+    public static void CreateFile(string path)
     {
         File.Create(path).Close();
     }
@@ -100,12 +100,12 @@ public static class FileManagement
 
     #region Deleting
 
-    public static void deleteFile(string path)
+    public static void DeleteFile(string path)
     {
         File.Delete(path);
     }
 
-    public static void deleteDirectory(string path)
+    public static void DeleteDirectory(string path)
     {
         Directory.Delete(
                 path,
@@ -113,7 +113,7 @@ public static class FileManagement
             );
     }
 
-    public static void emptyDirectory(string path)
+    public static void EmptyDirectory(string path)
     {
         var directory = new DirectoryInfo(path);
 
@@ -132,7 +132,7 @@ public static class FileManagement
 
     #region Downloading
 
-    public static void downloadFile(string url, string path)
+    public static void DownloadFile(string url, string path)
     {
         var client = new HttpClient();
         byte[] file = client.GetByteArrayAsync(url).Result;
@@ -156,12 +156,12 @@ public static class FileManagement
             "Interoperability",
             "CA1416:Validate platform compatibility"
         )]
-    public static void downloadImage(string url, string path, int size = 128)
+    public static void DownloadImage(string url, string path, int size = 128)
     {
         string debugPath = path.Split("mobahinted").Length > 1
             ? path.Split("mobahinted")[1]
             : path;
-        Program.log(
+        Program.Log(
                 source: nameof(FileManagement),
                 method: "downloadImage()",
                 doing: "Downloading",
@@ -186,7 +186,7 @@ public static class FileManagement
         // If the image dimensions are over 128x128 (or the specified size), resize it
         if (originalImage.Width > size || originalImage.Height > size)
         {
-            resizeImage(
+            ResizeImage(
                     ms,
                     path,
                     size
@@ -209,7 +209,7 @@ public static class FileManagement
             "Interoperability",
             "CA1416:Validate platform compatibility"
         )]
-    private static Bitmap actualResize(Image image, int size)
+    private static Bitmap ActualResize(Image image, int size)
     {
         var resizedImage = new Bitmap(
                 size,
@@ -233,13 +233,13 @@ public static class FileManagement
             "Interoperability",
             "CA1416:Validate platform compatibility"
         )]
-    public static void resizeImage(string path, int size = 128)
+    public static void ResizeImage(string path, int size = 128)
     {
         // Read filepath image into a MemoryStream
         var ms = new MemoryStream(File.ReadAllBytes(path));
 
         // Resize the image
-        resizeImage(
+        ResizeImage(
                 ms,
                 path,
                 size
@@ -250,12 +250,12 @@ public static class FileManagement
             "Interoperability",
             "CA1416:Validate platform compatibility"
         )]
-    public static void resizeImage(MemoryStream stream, string path, int size = 128)
+    public static void ResizeImage(MemoryStream stream, string path, int size = 128)
     {
         // Load the Stream into a Bitmap
         using var originalImage = new Bitmap(stream);
         // Resize the image
-        Bitmap resizedImage = actualResize(
+        Bitmap resizedImage = ActualResize(
                 originalImage,
                 size
             );

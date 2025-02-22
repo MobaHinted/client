@@ -40,7 +40,7 @@ public class App : Application
     {
         // TODO: Save settings like window size here
 
-        Program.log(
+        Program.Log(
                 source: nameof(App),
                 method: "OnExit()",
                 doing: "Exiting",

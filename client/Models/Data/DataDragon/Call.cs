@@ -26,7 +26,7 @@ public static class DataDragonCall
     /// <exception cref="HttpRequestException">
     ///     Any error from calling the API
     /// </exception>
-    public static T getAs<T>(string url)
+    public static T GetAs<T>(string url)
     {
         // Ensure the type is from the DataDragon namespace
         if (!typeof(T).Namespace!.Contains("DataDragon"))
@@ -34,7 +34,7 @@ public static class DataDragonCall
             var error = new ArgumentException(
                     "Type must be from the DataDragon namespace"
                 );
-            Program.log(
+            Program.Log(
                     source: nameof(ProgramAssets),
                     method: "getDataDragon()",
                     message: "Type must be from the DataDragon namespace\n" + error,
@@ -63,9 +63,9 @@ public static class DataDragonCall
             if (!typeof(Simple).IsAssignableFrom(typeof(T)))
             {
                 // Verify the Type matches the response
-                validateTypeAgainstResponse<T>(result.Result);
+                ValidateTypeAgainstResponse<T>(result.Result);
 
-                Program.log(
+                Program.Log(
                         source: nameof(ProgramAssets),
                         method: "getDataDragon()",
                         doing: "Downloading",
@@ -77,7 +77,7 @@ public static class DataDragonCall
                 return JsonSerializer.Deserialize<T>(result.Result)!;
             }
 
-            Program.log(
+            Program.Log(
                     source: nameof(ProgramAssets),
                     method: "getDataDragon()",
                     doing: "Downloading",
@@ -146,14 +146,14 @@ public static class DataDragonCall
     /// <summary>
     ///     Validate that the DataDragon API response matches the given
     ///     <see cref="DataDragon">DataDragon Type</see> in
-    ///     <see cref="getAs{T}">Call.getAs()</see>.
+    ///     <see cref="GetAs{T}">Call.getAs()</see>.
     /// </summary>
     /// <param name="json">The API response</param>
     /// <typeparam name="T">The given DataDragon type</typeparam>
     /// <exception cref="ArgumentException">
     ///     The results of data mismatch to repair the DataDragon type with
     /// </exception>
-    private static void validateTypeAgainstResponse<T>(string json)
+    private static void ValidateTypeAgainstResponse<T>(string json)
     {
         JsonDocument doc = JsonDocument.Parse(json);
 

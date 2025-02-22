@@ -35,7 +35,7 @@ public class ViewLocator : IDataTemplate, IViewLocator
         if (type == null)
         {
             name = "client.Views." + data.GetType().Name + ".Container";
-            Program.log(
+            Program.Log(
                     source: nameof(ViewLocator),
                     method: "Build()",
                     doing: "Found no view",
@@ -53,7 +53,7 @@ public class ViewLocator : IDataTemplate, IViewLocator
         {
             var error = new EvaluateException("View not found: " + name);
 
-            Program.log(
+            Program.Log(
                     source: nameof(ViewLocator),
                     method: "Build()",
                     message: "Building View" + error.Message,
@@ -67,7 +67,7 @@ public class ViewLocator : IDataTemplate, IViewLocator
         }
 
         // Success
-        Program.log(
+        Program.Log(
                 source: nameof(ViewLocator),
                 method: "Build()",
                 message: "Building View",

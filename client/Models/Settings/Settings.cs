@@ -44,7 +44,7 @@ public class Settings : INotifyPropertyChanged
     ///     Setting changed event.
     /// </summary>
     /// <seealso cref="OnPropertyChanged" />
-    /// <seealso cref="SettingsManager.settingChanged" />
+    /// <seealso cref="SettingsManager.SettingChanged" />
     public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
@@ -92,18 +92,18 @@ public class Settings : INotifyPropertyChanged
     public void load()
     {
         // Verify the file has any content
-        if (!FileManagement.fileHasContent(Constants.settingsFile))
+        if (!FileManagement.FileHasContent(Constants.settingsFile))
             return;
 
         // Verify the file can be loaded
-        FileManagement.loadFromFile(
+        FileManagement.LoadFromFile(
                 Constants.settingsFile,
                 out Dictionary<string, string>? settings
             );
         if (settings is null)
             return;
 
-        Program.log(
+        Program.Log(
                 source: nameof(Settings),
                 method: "load()",
                 doing: "Loading",
@@ -139,7 +139,7 @@ public class Settings : INotifyPropertyChanged
                     );
             }
 
-            Program.log(
+            Program.Log(
                     source: nameof(Settings),
                     method: "load()",
                     message: "Loaded Setting",

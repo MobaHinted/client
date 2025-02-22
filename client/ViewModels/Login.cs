@@ -50,7 +50,7 @@ public class Login : ReactiveObject, IRoutableViewModel
     /// </summary>
     public Login(IScreen screen)
     {
-        Program.log(
+        Program.Log(
                 source: nameof(Login),
                 method: "ctor()",
                 doing: "Loading",
@@ -63,7 +63,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         this.HostScreen = screen;
 
         // Fill the Platforms list with the names of the platforms.
-        this.Platforms = getPlatformRoutes();
+        this.Platforms = GetPlatformRoutes();
         // We list platforms instead of continents/"regions", despite the latter being
         // what is used to look up accounts, because we can extrapolate the continent
         // from the platform, and the platform is used for the majority of calls
@@ -73,7 +73,8 @@ public class Login : ReactiveObject, IRoutableViewModel
             this.Platforms.FindIndex(platform => platform == "North America");
 
         // Set up a command to handle the button click
-        this.SearchAndAddAccount = ReactiveCommand.Create(searchAndAddAccount);
+        this.SearchAndAddAccountCommand =
+            ReactiveCommand.Create(SearchAndAddAccount);
     }
 
     /// <summary>
@@ -126,7 +127,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         set
         {
             // Check if game name is valid
-            ValidRiotIDStatus validity = ValidateRiotID.gameName(value);
+            ValidRiotIDStatus validity = ValidateRiotID.GameName(value);
             if (validity != ValidRiotIDStatus.valid)
             {
                 this.CanAdd = "false";
@@ -140,7 +141,7 @@ public class Login : ReactiveObject, IRoutableViewModel
                 );
 
             // Check if the other half of the Riot ID is valid as well, to enable the button
-            if (ValidateRiotID.wholeID(
+            if (ValidateRiotID.WholeID(
                         this._gameName,
                         this._tagLine
                     ))
@@ -160,7 +161,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         set
         {
             // Check if game name is valid
-            ValidRiotIDStatus validity = ValidateRiotID.tagLine(value);
+            ValidRiotIDStatus validity = ValidateRiotID.TagLine(value);
             if (validity != ValidRiotIDStatus.valid)
             {
                 this.CanAdd = "false";
@@ -175,7 +176,7 @@ public class Login : ReactiveObject, IRoutableViewModel
                 );
 
             // Check if the other half of the Riot ID is valid as well, to enable the button
-            if (ValidateRiotID.wholeID(
+            if (ValidateRiotID.WholeID(
                         this._gameName,
                         this._tagLine
                     ))
@@ -191,7 +192,7 @@ public class Login : ReactiveObject, IRoutableViewModel
     /// </summary>
     public int Region { get; set; }
 
-    public ReactiveCommand<Unit, Unit> SearchAndAddAccount { get; }
+    public ReactiveCommand<Unit, Unit> SearchAndAddAccountCommand { get; }
 
     public string UrlPathSegment
     {
@@ -207,7 +208,7 @@ public class Login : ReactiveObject, IRoutableViewModel
     ///     The proper name of each platform - what users and the API identify as
     ///     regions
     /// </returns>
-    private static List<string> getPlatformRoutes()
+    private static List<string> GetPlatformRoutes()
     {
         return GetValues<PlatformRoute>()
             .Where(value => value != PlatformRoute.PBE1)
@@ -241,7 +242,7 @@ public class Login : ReactiveObject, IRoutableViewModel
             "Performance",
             "CA1806:Do not ignore method results"
         )]
-    private void searchAndAddAccount()
+    private void SearchAndAddAccount()
     {
         // Disable the button until the search is complete
         this.CanAdd = "false";
@@ -275,7 +276,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         bool error = false;
 
         // Search for the account
-        Program.log(
+        Program.Log(
                 source: nameof(Login),
                 method: "searchAndAddAccount()",
                 doing: "Login",
@@ -289,7 +290,7 @@ public class Login : ReactiveObject, IRoutableViewModel
             );
         try
         {
-            ValidateRiotID.search(
+            ValidateRiotID.Search(
                     this.GameName,
                     this.TagLine,
                     continent,
@@ -299,7 +300,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         catch (AggregateException e)
         {
             error = true;
-            Program.log(
+            Program.Log(
                     source: nameof(Login),
                     method: "searchAndAddAccount()",
                     doing: "Login",
@@ -318,7 +319,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         catch (Exception e)
         {
             error = true;
-            Program.log(
+            Program.Log(
                     source: nameof(Login),
                     method: "searchAndAddAccount()",
                     doing: "Login",
@@ -342,9 +343,9 @@ public class Login : ReactiveObject, IRoutableViewModel
             this.IsLoading = "false";
         }
         // If the search did not return a result, set the error message
-        else if (!ValidateRiotID.exists(puuid))
+        else if (!ValidateRiotID.Exists(puuid))
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Login),
                     method: "searchAndAddAccount()",
                     doing: "Login",
@@ -362,7 +363,7 @@ public class Login : ReactiveObject, IRoutableViewModel
         }
         else
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Login),
                     method: "searchAndAddAccount()",
                     doing: "Login",
@@ -386,9 +387,9 @@ public class Login : ReactiveObject, IRoutableViewModel
                         puuid
                     );
                 // Save the account
-                account.save();
+                account.Save();
 
-                Program.log(
+                Program.Log(
                         source: nameof(Login),
                         method: "searchAndAddAccount()",
                         doing: "Login",
@@ -409,7 +410,7 @@ public class Login : ReactiveObject, IRoutableViewModel
             // account
             catch (DataValidationError)
             {
-                Program.log(
+                Program.Log(
                         source: nameof(Launch),
                         method: "ctor()",
                         doing: "Login",
@@ -423,7 +424,7 @@ public class Login : ReactiveObject, IRoutableViewModel
                     );
 
                 // Load the accounts from disk
-                FileManagement.loadFromFile(
+                FileManagement.LoadFromFile(
                         Constants.usersFile,
                         out List<Account>? accounts
                     );

@@ -11,8 +11,7 @@ using ReactiveUI;
 namespace client.Views.MatchHistory;
 
 public partial class ChampionPoolElement :
-    ReactiveUserControl<ViewModels.MatchHistory>,
-    Ielement
+    ReactiveUserControl<ViewModels.MatchHistory>, IElement
 {
     public ChampionPoolElement()
     {

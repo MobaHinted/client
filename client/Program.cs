@@ -43,7 +43,7 @@ internal static class Program
 
     static Program()
     {
-        SettingsManager.startWatching();
+        SettingsManager.StartWatching();
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ internal static class Program
     ///     Global logging for the application, but not for direct usage.
     /// </summary>
     /// <seealso cref="Models.Logging" />
-    /// <seealso cref="Models.Logging.log" />
-    /// <seealso cref="log" />
+    /// <seealso cref="Models.Logging.Log" />
+    /// <seealso cref="Log" />
     private static Logging Logging { get; } = new Logging();
 
     /// <summary>
@@ -89,7 +89,7 @@ internal static class Program
     ///     );
     ///     </code>
     /// </example>
-    /// <seealso cref="Models.Logging.log" />
+    /// <seealso cref="Models.Logging.Log" />
     /// <param name="logTo">
     ///     How the log should be given, see: <see cref="LogTo" />
     /// </param>
@@ -107,7 +107,7 @@ internal static class Program
     /// <param name="logLocation">
     ///     The log file this log should appear in, see: <see cref="LogLocation" />
     /// </param>
-    public static void log(
+    public static void Log(
         LogTo logTo = LogTo.file | LogTo.console,
         string source = "",
         string method = "",
@@ -119,7 +119,7 @@ internal static class Program
         LogLocation logLocation = LogLocation.verbose
     )
     {
-        Logging.log(
+        Logging.Log(
                 logTo,
                 source,
                 method,

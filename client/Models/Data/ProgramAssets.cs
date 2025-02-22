@@ -16,22 +16,22 @@ public class ProgramAssets
     ///     Run the download of all current game data, and some images.
     /// </summary>
     /// <param name="updateStatus">The action to update the status text</param>
-    private async Task setup(Action<string, string> updateStatus)
+    private async Task Setup(Action<string, string> updateStatus)
     {
         updateStatus(
                 "Downloading...",
                 "Version data"
             );
-        getVersion();
-        getVersions();
+        GetVersion();
+        GetVersions();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Champion data"
             );
-        getChampions();
-        getEachChampion();
+        GetChampions();
+        GetEachChampion();
         await Task.Delay(200);
 
         // Wait until is champion is downloaded
@@ -44,63 +44,63 @@ public class ProgramAssets
                 "Downloading...",
                 "Champion images"
             );
-        getChampionImages();
+        GetChampionImages();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Item data"
             );
-        getItems();
+        GetItems();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Item images"
             );
-        getItemImages();
+        GetItemImages();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Runes data"
             );
-        getRunes();
+        GetRunes();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Runes images"
             );
-        getRuneImages();
+        GetRuneImages();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Summoner Spell data"
             );
-        getSummonerSpells();
+        GetSummonerSpells();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Summoner Spell images"
             );
-        getSummonerSpellImages();
+        GetSummonerSpellImages();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Rank images"
             );
-        getRankImages();
+        GetRankImages();
         await Task.Delay(200);
 
         updateStatus(
                 "Downloading...",
                 "Profile Picture data"
             );
-        getProfilePictures();
+        GetProfilePictures();
         await Task.Delay(200);
 
         updateStatus(
@@ -115,18 +115,18 @@ public class ProgramAssets
     ///     data should be re-downloaded.
     /// </summary>
     /// <param name="updateStatus">The action to update the status text</param>
-    /// <seealso cref="setup" />
-    public async Task checkForUpdates(Action<string, string> updateStatus)
+    /// <seealso cref="Setup" />
+    public async Task CheckForUpdates(Action<string, string> updateStatus)
     {
         updateStatus(
                 "Checking for updates...",
                 ""
             );
 
-        bool haveFiles = noMissingFiles();
-        bool versionUp = versionUpToDate();
+        bool haveFiles = NoMissingFiles();
+        bool versionUp = VersionUpToDate();
 
-        Program.log(
+        Program.Log(
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
                 message: "Checking if update is necessary...",
@@ -143,7 +143,7 @@ public class ProgramAssets
         // Check if all files are accessible and the version is up-to-date
         if (haveFiles && versionUp)
         {
-            Program.log(
+            Program.Log(
                     source: nameof(ProgramAssets),
                     method: "checkForUpdates()",
                     message: $"Already on {this.Version}",
@@ -155,19 +155,19 @@ public class ProgramAssets
         }
 
         // Re-download the data dragon files if not up to date
-        Program.log(
+        Program.Log(
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
                 message: $"Updating to {this.Version}...",
                 logLevel: LogLevel.info,
                 logLocation: LogLocation.download | LogLocation.main
             );
-        FileManagement.emptyDirectory(Constants.dataDragonFolder);
-        FileManagement.createDirectory(Constants.dataDragonChampionFolder);
-        FileManagement.emptyDirectory(Constants.imageCacheFolder);
-        FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
-        FileManagement.createDirectory(Constants.imageCacheProfileIconFolder);
-        FileManagement.emptyDirectory(Constants.imageCacheDataDragonFolder);
+        FileManagement.EmptyDirectory(Constants.dataDragonFolder);
+        FileManagement.CreateDirectory(Constants.dataDragonChampionFolder);
+        FileManagement.EmptyDirectory(Constants.imageCacheFolder);
+        FileManagement.CreateDirectory(Constants.imageCacheDataDragonFolder);
+        FileManagement.CreateDirectory(Constants.imageCacheProfileIconFolder);
+        FileManagement.EmptyDirectory(Constants.imageCacheDataDragonFolder);
 
         // Try to update the files
         try
@@ -176,12 +176,12 @@ public class ProgramAssets
                     this.Version,
                     this._locale
                 );
-            await setup(updateStatus);
+            await Setup(updateStatus);
         }
         catch (HttpRequestException e)
         {
             // TODO: this should log to an LogTo.retryPopup, so that needs set up
-            Program.log(
+            Program.Log(
                     source: nameof(ProgramAssets),
                     method: "checkForUpdates()",
                     message: "Error updating, timeout encountered",
@@ -195,7 +195,7 @@ public class ProgramAssets
         catch (ArgumentException e)
         {
             // TODO: this should log to an LogTo.errorScreen, so that needs set up
-            Program.log(
+            Program.Log(
                     source: nameof(ProgramAssets),
                     method: "checkForUpdates()",
                     message: "Error updating\n" + e.Message,
@@ -207,7 +207,7 @@ public class ProgramAssets
         }
 
         // Succeed
-        Program.log(
+        Program.Log(
                 source: nameof(ProgramAssets),
                 method: "checkForUpdates()",
                 message: "Updated",
@@ -220,37 +220,36 @@ public class ProgramAssets
     ///     Check if the game data is missing from the user's computer.
     /// </summary>
     /// <returns>If all downloaded files are present</returns>
-    private static bool noMissingFiles()
+    private static bool NoMissingFiles()
     {
-        return
-            FileManagement.fileHasContent(
+        return FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "champions.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonChampionFolder + "Aatrox.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "versions.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "items.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "summonerSpells.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "runes.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.dataDragonFolder + "profilePictures.json"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.imageCacheDataDragonFolder + "spell.Flash.png"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.imageCacheDataDragonFolder + "rank.Emerald.png"
                 )
-            && FileManagement.fileHasContent(
+            && FileManagement.FileHasContent(
                     Constants.imageCacheFolder + "item.1001.png"
                 );
     }
@@ -261,10 +260,10 @@ public class ProgramAssets
     /// <returns>
     ///     If the latest downloaded version matches the latest game version
     /// </returns>
-    private bool versionUpToDate()
+    private bool VersionUpToDate()
     {
         // If the versions file does exist, check it
-        FileManagement.loadFromFile(
+        FileManagement.LoadFromFile(
                 Constants.dataDragonFolder + "versions.json",
                 out Versions? versions
             );
@@ -284,10 +283,10 @@ public class ProgramAssets
     ///     Data Dragon API.
     /// </summary>
     /// <returns>A League Version</returns>
-    private string getVersion()
+    private string GetVersion()
     {
         var response =
-            DataDragonCall.getAs<RegionVersion>(DataDragonURLs.RegionVersionURL);
+            DataDragonCall.GetAs<RegionVersion>(DataDragonURLs.RegionVersionURL);
         string version = response.Version;
 
         this._version = version;
@@ -298,15 +297,15 @@ public class ProgramAssets
     ///     Get the versions list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Versions</returns>
-    private Versions getVersions()
+    private Versions GetVersions()
     {
         Versions versions;
         string file = Constants.dataDragonFolder + "versions.json";
 
         // Load the versions list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out versions!
                 );
@@ -314,9 +313,9 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            versions = DataDragonCall.getAs<Versions>(DataDragonURLs.VERSIONS_URL);
+            versions = DataDragonCall.GetAs<Versions>(DataDragonURLs.VERSIONS_URL);
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     versions
                 );
@@ -330,15 +329,15 @@ public class ProgramAssets
     ///     Get the champion list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Champions</returns>
-    private Champions getChampions()
+    private Champions GetChampions()
     {
         Champions champions;
         string file = Constants.dataDragonFolder + "champions.json";
 
         // Load the versions list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out champions!
                 );
@@ -346,12 +345,11 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            champions =
-                DataDragonCall.getAs<Champions>(
+            champions = DataDragonCall.GetAs<Champions>(
                         this._dataDragonURLs.ChampionsDataURL
                     );
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     champions
                 );
@@ -365,7 +363,7 @@ public class ProgramAssets
     ///     Get the individual champion data from the Data Dragon API.
     /// </summary>
     /// <returns>A League Champion</returns>
-    private List<IndividualChampion> getEachChampion()
+    private List<IndividualChampion> GetEachChampion()
     {
         List<IndividualChampion> champions = [];
         string folder = Constants.dataDragonChampionFolder;
@@ -380,9 +378,9 @@ public class ProgramAssets
             string file = folder + championName + ".json";
 
             // Load the individual champion if it exists
-            if (FileManagement.fileHasContent(file))
+            if (FileManagement.FileHasContent(file))
             {
-                FileManagement.loadFromFile(
+                FileManagement.LoadFromFile(
                         file,
                         out individualChampion!
                     );
@@ -395,8 +393,8 @@ public class ProgramAssets
                         Task.Run(
                                 () =>
                                 {
-                                    individualChampion =
-                                        DataDragonCall.getAs<IndividualChampion>(
+                                    individualChampion = DataDragonCall
+                                        .GetAs<IndividualChampion>(
                                                 string.Format(
                                                         this._dataDragonURLs
                                                             .ChampionDataURL,
@@ -404,7 +402,7 @@ public class ProgramAssets
                                                     )
                                             );
 
-                                    FileManagement.saveToFile(
+                                    FileManagement.SaveToFile(
                                             file,
                                             individualChampion
                                         );
@@ -427,7 +425,7 @@ public class ProgramAssets
     ///     Get the images for each champion and their abilities from the Data Dragon
     ///     API.
     /// </summary>
-    private void getChampionImages()
+    private void GetChampionImages()
     {
         string folder = Constants.imageCacheDataDragonFolder;
 
@@ -437,7 +435,7 @@ public class ProgramAssets
                      .Champion
                      .Select(individualChampion => individualChampion.Champion)
                      .Where(
-                             champion => !FileManagement.fileHasContent(
+                             champion => !FileManagement.FileHasContent(
                                      folder + "champion." + champion.image.full
                                  )
                          ))
@@ -445,7 +443,7 @@ public class ProgramAssets
             // Download the champion's image if not
             tasks.Add(
                     Task.Run(
-                            () => FileManagement.downloadImage(
+                            () => FileManagement.DownloadImage(
                                     champion.image.imageURL,
                                     folder + "champion." + champion.image.full
                                 )
@@ -467,7 +465,7 @@ public class ProgramAssets
                 // TODO: add things like "champion_ability" to constants
                 tasks.Add(
                         Task.Run(
-                                () => FileManagement.downloadImage(
+                                () => FileManagement.DownloadImage(
                                         ability.image.imageURL,
                                         folder
                                         + "champion_ability."
@@ -484,7 +482,7 @@ public class ProgramAssets
             // Download the passive's image
             tasks.Add(
                     Task.Run(
-                            () => FileManagement.downloadImage(
+                            () => FileManagement.DownloadImage(
                                     champion.passive.image.imageURL,
                                     folder
                                     + "champion_ability."
@@ -509,15 +507,15 @@ public class ProgramAssets
     ///     Get the item list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Items</returns>
-    private Items getItems()
+    private Items GetItems()
     {
         Items items;
         string file = Constants.dataDragonFolder + "items.json";
 
         // Load the items list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out items!
                 );
@@ -525,9 +523,9 @@ public class ProgramAssets
         // Download and save the items list
         else
         {
-            items = DataDragonCall.getAs<Items>(this._dataDragonURLs.ItemDataURL);
+            items = DataDragonCall.GetAs<Items>(this._dataDragonURLs.ItemDataURL);
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     items
                 );
@@ -560,14 +558,14 @@ public class ProgramAssets
     /// <summary>
     ///     Get the images for each item from the Data Dragon API.
     /// </summary>
-    private void getItemImages()
+    private void GetItemImages()
     {
         string folder = Constants.imageCacheFolder;
 
         // Iterate over each item where the image does not already exist
         var tasks = new List<Task>();
         foreach (ItemData item in this.Items.data.Values.Where(
-                         item => !FileManagement.fileHasContent(
+                         item => !FileManagement.FileHasContent(
                                  folder
                                  + "item."
                                  + item.image.full[
@@ -579,7 +577,7 @@ public class ProgramAssets
             // Download the item's image
             tasks.Add(
                     Task.Run(
-                            () => FileManagement.downloadImage(
+                            () => FileManagement.DownloadImage(
                                     item.image.imageURL,
                                     folder
                                     + "item."
@@ -600,15 +598,15 @@ public class ProgramAssets
     ///     Get the rune list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Runes</returns>
-    private Runes getRunes()
+    private Runes GetRunes()
     {
         Runes runes;
         string file = Constants.dataDragonFolder + "runes.json";
 
         // Load the versions list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out runes!
                 );
@@ -616,9 +614,9 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            runes = DataDragonCall.getAs<Runes>(this._dataDragonURLs.RuneDataURL);
+            runes = DataDragonCall.GetAs<Runes>(this._dataDragonURLs.RuneDataURL);
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     runes
                 );
@@ -631,14 +629,14 @@ public class ProgramAssets
     /// <summary>
     ///     Get the images for each rune and keystone from the Data Dragon API.
     /// </summary>
-    private void getRuneImages()
+    private void GetRuneImages()
     {
         string folder = Constants.imageCacheDataDragonFolder;
 
         // Iterate over each rune where the image does not already exist
         var tasks = new List<Task>();
         foreach (RuneTree runeTree in this.Runes.runetrees.Where(
-                         rune => !FileManagement.fileHasContent(
+                         rune => !FileManagement.FileHasContent(
                                  folder + "rune_tree." + rune.image.sprite
                              )
                      ))
@@ -646,7 +644,7 @@ public class ProgramAssets
             // Download the tree's image
             tasks.Add(
                     Task.Run(
-                            () => FileManagement.downloadImage(
+                            () => FileManagement.DownloadImage(
                                     runeTree.image.imageURL,
                                     folder
                                     + "rune_tree."
@@ -664,7 +662,7 @@ public class ProgramAssets
                 // Download the rune's image
                 tasks.Add(
                         Task.Run(
-                                () => FileManagement.downloadImage(
+                                () => FileManagement.DownloadImage(
                                         rune.image.imageURL,
                                         folder
                                         + "rune."
@@ -687,15 +685,15 @@ public class ProgramAssets
     ///     Get the summoner spell list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Summoner Spells</returns>
-    private SummonerSpells getSummonerSpells()
+    private SummonerSpells GetSummonerSpells()
     {
         SummonerSpells summonerSpells;
         string file = Constants.dataDragonFolder + "summonerSpells.json";
 
         // Load the versions list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out summonerSpells!
                 );
@@ -703,12 +701,11 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            summonerSpells =
-                DataDragonCall.getAs<SummonerSpells>(
+            summonerSpells = DataDragonCall.GetAs<SummonerSpells>(
                         this._dataDragonURLs.SummonerSpellDataURL
                     );
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     summonerSpells
                 );
@@ -721,7 +718,7 @@ public class ProgramAssets
     /// <summary>
     ///     Get the images for each summoner spell from the Data Dragon API.
     /// </summary>
-    private void getSummonerSpellImages()
+    private void GetSummonerSpellImages()
     {
         string folder = Constants.imageCacheDataDragonFolder;
 
@@ -729,7 +726,7 @@ public class ProgramAssets
         var tasks = new List<Task>();
         foreach (SummonerSpell summonerSpell in
                  this.SummonerSpells.data.Values.Where(
-                         spell => !FileManagement.fileHasContent(
+                         spell => !FileManagement.FileHasContent(
                                  folder
                                  + "spell."
                                  + spell.name
@@ -741,7 +738,7 @@ public class ProgramAssets
             // Download the spell's image
             tasks.Add(
                     Task.Run(
-                            () => FileManagement.downloadImage(
+                            () => FileManagement.DownloadImage(
                                     summonerSpell.image.imageURL,
                                     folder
                                     + "spell."
@@ -762,15 +759,15 @@ public class ProgramAssets
     ///     Get the profile picture list from the Data Dragon API.
     /// </summary>
     /// <returns>A list of League Profile Pictures</returns>
-    private ProfileIcons getProfilePictures()
+    private ProfileIcons GetProfilePictures()
     {
         ProfileIcons profilePictures;
         string file = Constants.dataDragonFolder + "profilePictures.json";
 
         // Load the versions list if it exists
-        if (FileManagement.fileHasContent(file))
+        if (FileManagement.FileHasContent(file))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     file,
                     out profilePictures!
                 );
@@ -778,12 +775,11 @@ public class ProgramAssets
         // Download and save the versions list
         else
         {
-            profilePictures =
-                DataDragonCall.getAs<ProfileIcons>(
+            profilePictures = DataDragonCall.GetAs<ProfileIcons>(
                         this._dataDragonURLs.ProfilePictureDataURL
                     );
 
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     file,
                     profilePictures
                 );
@@ -796,11 +792,11 @@ public class ProgramAssets
     /// <summary>
     ///     Get the Ranked Images from a Data Dragon bundle.
     /// </summary>
-    private void getRankImages()
+    private void GetRankImages()
     {
         string folder = Constants.imageCacheDataDragonFolder;
 
-        Program.log(
+        Program.Log(
                 source: nameof(ProgramAssets),
                 method: "getRankImages()",
                 doing: "Downloading",
@@ -816,28 +812,28 @@ public class ProgramAssets
             );
 
         // Skip downloading if the images already exist
-        if (FileManagement.fileHasContent(folder + "rank.Emerald.png"))
+        if (FileManagement.FileHasContent(folder + "rank.Emerald.png"))
             return;
 
         // Download the ranked emblems and unpack them
-        FileManagement.downloadFile(
+        FileManagement.DownloadFile(
                 this.RankedEmblemsURL,
                 folder + "ranked_emblems.zip"
             );
-        FileManagement.unpackFile(
+        FileManagement.UnpackFile(
                 folder + "ranked_emblems.zip",
                 folder
             );
 
         // Delete the zip file
-        FileManagement.deleteFile(folder + "ranked_emblems.zip");
+        FileManagement.DeleteFile(folder + "ranked_emblems.zip");
 
         // Go into the folder
         string tempFolder = folder + "Ranked Emblems Latest\\";
 
         // Delete the folders we don't need
-        FileManagement.deleteDirectory(tempFolder + "Wings\\");
-        FileManagement.deleteDirectory(tempFolder + "Tier Wings\\");
+        FileManagement.DeleteDirectory(tempFolder + "Wings\\");
+        FileManagement.DeleteDirectory(tempFolder + "Tier Wings\\");
 
         // Iterate over each file in the folder and move them up a directory
         foreach (string file in Directory.GetFiles(tempFolder))
@@ -850,7 +846,7 @@ public class ProgramAssets
             string destination = folder + newFileName;
 
             // Resize the crazy-big images
-            FileManagement.resizeImage(
+            FileManagement.ResizeImage(
                     oldDestination,
                     256
                 );
@@ -863,7 +859,7 @@ public class ProgramAssets
         }
 
         // Delete the temporary folder
-        FileManagement.deleteDirectory(tempFolder);
+        FileManagement.DeleteDirectory(tempFolder);
     }
 
     #region URLs
@@ -943,7 +939,7 @@ public class ProgramAssets
     /// </summary>
     public string Version
     {
-        get => this._version ?? getVersion();
+        get => this._version ?? GetVersion();
     }
 
     /// <summary>
@@ -951,7 +947,7 @@ public class ProgramAssets
     /// </summary>
     public Versions Versions
     {
-        get => this._versions ?? getVersions();
+        get => this._versions ?? GetVersions();
     }
 
     /// <summary>
@@ -959,7 +955,7 @@ public class ProgramAssets
     /// </summary>
     public Champions Champions
     {
-        get => this._champions ?? getChampions();
+        get => this._champions ?? GetChampions();
     }
 
     /// <summary>
@@ -967,7 +963,7 @@ public class ProgramAssets
     /// </summary>
     public IEnumerable<IndividualChampion> Champion
     {
-        get => this._champion ?? getEachChampion();
+        get => this._champion ?? GetEachChampion();
     }
 
     /// <summary>
@@ -975,7 +971,7 @@ public class ProgramAssets
     /// </summary>
     public Items Items
     {
-        get => this._items ?? getItems();
+        get => this._items ?? GetItems();
     }
 
     /// <summary>
@@ -983,7 +979,7 @@ public class ProgramAssets
     /// </summary>
     public SummonerSpells SummonerSpells
     {
-        get => this._summonerSpells ?? getSummonerSpells();
+        get => this._summonerSpells ?? GetSummonerSpells();
     }
 
     /// <summary>
@@ -991,7 +987,7 @@ public class ProgramAssets
     /// </summary>
     public Runes Runes
     {
-        get => this._runes ?? getRunes();
+        get => this._runes ?? GetRunes();
     }
 
     /// <summary>
@@ -999,7 +995,7 @@ public class ProgramAssets
     /// </summary>
     public ProfileIcons ProfilePictures
     {
-        get => this._profilePictures ?? getProfilePictures();
+        get => this._profilePictures ?? GetProfilePictures();
     }
 
     #endregion

@@ -50,7 +50,7 @@ public class Team
         short duration
     )
     {
-        Program.log(
+        Program.Log(
                 source: nameof(Team),
                 method: "TeamData()",
                 doing: "Parsing Team Data",
@@ -78,7 +78,7 @@ public class Team
             // TODO: Parse the team together
 
             // Parse the player's role
-            byte role = (byte)Roles.determine(
+            byte role = (byte)Roles.Determine(
                     player.ChampionId,
                     playerData.Items,
                     playerData.Spells,

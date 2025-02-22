@@ -56,7 +56,7 @@ public class MatchData
     /// </param>
     public MatchData(CamilleMatch match)
     {
-        Program.log(
+        Program.Log(
                 source: nameof(MatchData),
                 method: "MatchData()",
                 doing: "Parsing Match Data",
@@ -69,7 +69,7 @@ public class MatchData
             );
 
         this._match = match;
-        parseTeams();
+        ParseTeams();
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class MatchData
     /// <summary>
     ///     Parsing of the teams and their players in the match.
     /// </summary>
-    private void parseTeams()
+    private void ParseTeams()
     {
         // Parse each team, and their players
         foreach (CamilleTeam team in this._match.Info.Teams)

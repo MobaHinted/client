@@ -11,7 +11,7 @@ using ReactiveUI;
 namespace client.Views.Match;
 
 public partial class GameStatsElement : ReactiveUserControl<ViewModels.MatchHistory>,
-    Ielement
+    IElement
 {
     public GameStatsElement()
     {

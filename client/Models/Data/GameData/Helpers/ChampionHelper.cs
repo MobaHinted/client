@@ -28,7 +28,7 @@ public static class ChampionHelper
     ///     This is considered safer than handling the Champion ID, as the field was
     ///     unreliable before season 11.
     /// </remarks>
-    public static ChampionData getByName(string championName)
+    public static ChampionData GetByName(string championName)
     {
         if (Program.Assets.Champions.data.TryGetValue(
                     championName,

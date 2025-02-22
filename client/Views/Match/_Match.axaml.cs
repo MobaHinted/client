@@ -11,7 +11,7 @@ using ReactiveUI;
 namespace client.Views.Match;
 
 public partial class MatchSubView : ReactiveUserControl<ViewModels.MatchHistory>,
-    IsubView
+    ISubView
 {
     public MatchSubView()
     {

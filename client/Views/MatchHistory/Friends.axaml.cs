@@ -11,7 +11,7 @@ using ReactiveUI;
 namespace client.Views.MatchHistory;
 
 public partial class FriendsElement : ReactiveUserControl<ViewModels.MatchHistory>,
-    Ielement
+    IElement
 {
     public FriendsElement()
     {

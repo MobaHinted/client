@@ -12,12 +12,12 @@ namespace client.Models.Settings;
 
 public class SettingsManager
 {
-    public static void startWatching()
+    public static void StartWatching()
     {
-        Program.Settings.PropertyChanged += settingChanged!;
+        Program.Settings.PropertyChanged += SettingChanged!;
     }
 
-    private static void settingChanged(object sender, PropertyChangedEventArgs e)
+    private static void SettingChanged(object sender, PropertyChangedEventArgs e)
     {
         // Just ensuring the value is being passed along correctly
         if (e is not PropertyChangedEventArgsWithValue args)
@@ -34,9 +34,9 @@ public class SettingsManager
         Dictionary<string, string>? settings;
 
         // Load the settings dictionary from the disk
-        if (FileManagement.fileHasContent(Constants.settingsFile))
+        if (FileManagement.FileHasContent(Constants.settingsFile))
         {
-            FileManagement.loadFromFile(
+            FileManagement.LoadFromFile(
                     Constants.settingsFile,
                     out settings
                 );
@@ -51,7 +51,7 @@ public class SettingsManager
         settings![setting] = value.ToString()!;
 
         // Save the dictionary to the disk
-        FileManagement.saveToFile(
+        FileManagement.SaveToFile(
                 Constants.settingsFile,
                 settings
             );

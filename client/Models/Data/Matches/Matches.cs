@@ -44,10 +44,10 @@ public class Matches
     public Matches(Action<int> updateProgress)
     {
         this._update = updateProgress;
-        load();
+        Load();
     }
 
-    private async void load()
+    private async void Load()
     {
         // Calculate how many steps to take, rounded up
         int steps = (int)Math.Ceiling(Program.Settings.matchHistoryCount / 25.0);
@@ -55,17 +55,17 @@ public class Matches
         // Get steps of 25 games
         for (int i = 0; i < steps; i++)
         {
-            await Task.Run(() => { getMatches(i * 25); });
+            await Task.Run(() => { GetMatches(i * 25); });
 
             // If on the last step, but we are missing matches, get more
             if (i == steps - 1
                 && (this._missedMatches != 0
                     || this._matchData.Count < Program.Settings.matchHistoryCount))
-                await Task.Run(() => { getMatches((i + 1) * 25); });
+                await Task.Run(() => { GetMatches((i + 1) * 25); });
         }
     }
 
-    private async void getMatches(int startIndex, int count = 25)
+    private async void GetMatches(int startIndex, int count = 25)
     {
         string[]? matchList = null;
 
@@ -75,7 +75,7 @@ public class Matches
                 .riotAPI.MatchV5()
                 .GetMatchIdsByPUUIDAsync(
                         Program.Account.Continent,
-                        Program.Account.PUUID,
+                        Program.Account.Puuid,
                         count,
                         start: startIndex
                     )
@@ -86,7 +86,7 @@ public class Matches
 
                             if (task.IsFaulted)
                             {
-                                Program.log(
+                                Program.Log(
                                         source: nameof(Matches),
                                         method: "getMatches()",
                                         doing: "Loading Matches",
@@ -116,7 +116,7 @@ public class Matches
 
                             catch (Exception e)
                             {
-                                Program.log(
+                                Program.Log(
                                         source: nameof(Matches),
                                         method: "getMatches()",
                                         doing: "Loading Matches",
@@ -142,7 +142,7 @@ public class Matches
         }
         catch (AggregateException e)
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
@@ -155,7 +155,7 @@ public class Matches
         }
         catch (Exception e)
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
@@ -172,7 +172,7 @@ public class Matches
         if (matchList == null)
         {
             // TODO: inspect the exception here, probably direct to error screen
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
@@ -190,7 +190,7 @@ public class Matches
 
         if (matchList.Contains("400-series"))
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
@@ -210,7 +210,7 @@ public class Matches
         foreach (string matchID in matchList)
             // Get the match data, and update the list
         {
-            Task.Run(() => { getMatchData(matchID); });
+            Task.Run(() => { GetMatchData(matchID); });
         }
 
         // Retry any matches that failed to load
@@ -220,7 +220,7 @@ public class Matches
             Task.Run(
                     () =>
                     {
-                        getMatchData(
+                        GetMatchData(
                                 matchID,
                                 true
                             );
@@ -231,7 +231,7 @@ public class Matches
 
         if (this._missedMatches != 0)
         {
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",
@@ -250,7 +250,7 @@ public class Matches
         this._update(this._loadedMatches + this._missedMatches);
     }
 
-    private void getMatchData(string matchID, bool retry = false)
+    private void GetMatchData(string matchID, bool retry = false)
     {
         // Remove the match from the retry list to avoid infinite retries
         if (retry)
@@ -263,12 +263,12 @@ public class Matches
             MatchData? matchData;
 
             // If the match is already cached, use that instead
-            if (FileManagement.fileExists(cacheFile))
+            if (FileManagement.FileExists(cacheFile))
             {
                 // Load the match data from the cache
                 try
                 {
-                    FileManagement.loadFromFile(
+                    FileManagement.LoadFromFile(
                             cacheFile,
                             out matchData
                         );
@@ -276,7 +276,7 @@ public class Matches
                 // Load the raw match data from the cache
                 catch (InvalidOperationException)
                 {
-                    FileManagement.loadFromFile(
+                    FileManagement.LoadFromFile(
                             cacheFile,
                             out match
                         );
@@ -284,7 +284,7 @@ public class Matches
                 }
 
                 // Log the success
-                Program.log(
+                Program.Log(
                         source: nameof(Matches),
                         method: "getMatches()",
                         doing: "Loading Matches",
@@ -315,13 +315,13 @@ public class Matches
                 matchData = new MatchData(match!);
 
                 // Cache the match data
-                FileManagement.saveToFile(
+                FileManagement.SaveToFile(
                         cacheFile,
                         matchData
                     );
 
                 // Log the success
-                Program.log(
+                Program.Log(
                         source: nameof(Matches),
                         method: "getMatches()",
                         doing: "Loading Matches",
@@ -361,7 +361,7 @@ public class Matches
         catch (Exception e)
         {
             // Log the error
-            Program.log(
+            Program.Log(
                     source: nameof(Matches),
                     method: "getMatches()",
                     doing: "Loading Matches",

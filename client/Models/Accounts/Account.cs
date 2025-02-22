@@ -18,7 +18,7 @@ public struct Account
     public string GameName { get; set; }
     public string TagLine { get; set; }
     public string RiotID { get; set; }
-    public string PUUID { get; set; }
+    public string Puuid { get; set; }
 
     public PlatformRoute Region { get; set; }
     public RegionalRoute Continent { get; set; }
@@ -38,7 +38,7 @@ public struct Account
     )
     {
         // Check if the account is already saved
-        FileManagement.loadFromFile(
+        FileManagement.LoadFromFile(
                 Constants.usersFile,
                 out List<Account>? accounts
             );
@@ -64,7 +64,7 @@ public struct Account
         this.GameName = gameName;
         this.TagLine = tagLine;
         this.RiotID = $"{this.GameName}#{this.TagLine}";
-        this.PUUID = puuid;
+        this.Puuid = puuid;
 
         this.Region = region;
         this.Continent = region.ToRegional();
@@ -83,7 +83,7 @@ public struct Account
         // todo: try/catch because this will fail if the camille return for a user
         //  changes
         // Open the user file and load its data
-        FileManagement.loadFromFile(
+        FileManagement.LoadFromFile(
                 Constants.usersFile,
                 out List<Account>? accounts
             );
@@ -108,10 +108,10 @@ public struct Account
     /// <summary>
     ///     Save this user to the users file
     /// </summary>
-    public void save()
+    public void Save()
     {
         // Open the user file and load its data
-        FileManagement.loadFromFile(
+        FileManagement.LoadFromFile(
                 Constants.usersFile,
                 out List<Account>? accounts
             );
@@ -119,7 +119,7 @@ public struct Account
         if (accounts is not default(List<Account>))
         {
             accounts.Add(this);
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     Constants.usersFile,
                     accounts
                 );
@@ -127,7 +127,7 @@ public struct Account
         // If the file doesn't have a list of users, create one and add this user
         else
         {
-            FileManagement.saveToFile(
+            FileManagement.SaveToFile(
                     Constants.usersFile,
                     new List<Account> { this }
                 );

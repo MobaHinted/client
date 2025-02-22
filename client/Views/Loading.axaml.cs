@@ -11,7 +11,7 @@ using ReactiveUI;
 
 namespace client.Views;
 
-public partial class LoadingView : ReactiveUserControl<Loading>, Iview
+public partial class LoadingView : ReactiveUserControl<Loading>, IView
 {
     public LoadingView()
     {

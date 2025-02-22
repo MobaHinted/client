@@ -40,7 +40,7 @@ public class Runes
                         short id = (short)x.Perk;
 
                         // Load Rune
-                        if (!RuneHelper.tryGetById(
+                        if (!RuneHelper.TryGetById(
                                     id,
                                     out Rune? rune
                                 ))
@@ -49,11 +49,11 @@ public class Runes
                                 );
 
                         // Set Keystone
-                        if (RuneHelper.isKeystone(rune!))
+                        if (RuneHelper.IsKeystone(rune!))
                             this.Keystone = rune!;
 
                         // Set Trees
-                        RuneTree tree = RuneHelper.getTreeByRuneId(id);
+                        RuneTree tree = RuneHelper.GetTreeByRuneId(id);
                         if (this.PrimaryTree is null)
                             this.PrimaryTree = tree;
                         if (this.SecondaryTree is null && tree != this.PrimaryTree)
@@ -72,7 +72,7 @@ public class Runes
                 this.PrimaryRunes.Concat(this.SecondaryRunes).Select(r => r.id)
             );
 
-        Program.log(
+        Program.Log(
                 source: nameof(Runes),
                 method: "Runes()",
                 doing: "Parsed Runes Data",

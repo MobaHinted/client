@@ -142,7 +142,7 @@ public class Logging
     ///     );
     ///     </code>
     /// </example>
-    /// <seealso cref="Program.log" />
+    /// <seealso cref="Program.Log" />
     /// <param name="logTo">
     ///     How the log should be given, see: <see cref="LogTo" />
     /// </param>
@@ -160,7 +160,7 @@ public class Logging
     /// <param name="logLocation">
     ///     The log file this log should appear in, see: <see cref="LogLocation" />
     /// </param>
-    public void log(
+    public void Log(
         LogTo logTo,
         string source,
         string method,
@@ -177,7 +177,7 @@ public class Logging
             logTo &= ~LogTo.console;
 
         // Format and save the log
-        string log = format(
+        string log = Format(
                 source,
                 method,
                 doing,
@@ -193,7 +193,7 @@ public class Logging
             // Lock the console so color doesn't bleed
             lock (consoleLock)
             {
-                color(logLevel);
+                Color(logLevel);
                 Console.Write(log);
                 Console.ResetColor();
             }
@@ -223,11 +223,11 @@ public class Logging
                 lock (this._logLocks[location])
                 {
                     // Recreate the log file if it was cleared
-                    if (!FileManagement.fileExists(this._logLocations[location]))
-                        FileManagement.createFile(this._logLocations[location]);
+                    if (!FileManagement.FileExists(this._logLocations[location]))
+                        FileManagement.CreateFile(this._logLocations[location]);
 
                     // Append the log to the file
-                    FileManagement.appendToFile(
+                    FileManagement.AppendToFile(
                             this._logLocations[location],
                             log
                         );
@@ -236,7 +236,7 @@ public class Logging
         }
     }
 
-    private static string format(
+    private static string Format(
         string source,
         string method,
         string doing,
@@ -291,7 +291,7 @@ public class Logging
         return log;
     }
 
-    private static void color(LogLevel logLevel)
+    private static void Color(LogLevel logLevel)
     {
         Console.ForegroundColor = logLevel switch
         {

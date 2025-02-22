@@ -11,7 +11,7 @@ namespace client.Models.Data.GameData.Helpers;
 
 public static class RuneHelper
 {
-    public static bool isKeystone(short runeId)
+    public static bool IsKeystone(short runeId)
     {
         short[] keystones = [];
         Program.Assets.Runes.runetrees.ForEach(
@@ -29,12 +29,12 @@ public static class RuneHelper
         return keystones.Contains(runeId);
     }
 
-    public static bool isKeystone(Rune rune)
+    public static bool IsKeystone(Rune rune)
     {
-        return isKeystone((short)rune.id);
+        return IsKeystone((short)rune.id);
     }
 
-    public static bool tryGetById(short runeId, out Rune? rune)
+    public static bool TryGetById(short runeId, out Rune? rune)
     {
         Rune? foundRune = null;
         Program.Assets.Runes.runetrees.ForEach(
@@ -49,7 +49,7 @@ public static class RuneHelper
         return foundRune != null;
     }
 
-    public static RuneTree getTreeByRuneId(short runeId)
+    public static RuneTree GetTreeByRuneId(short runeId)
     {
         RuneTree? foundTree = null;
         Program.Assets.Runes.runetrees.ForEach(

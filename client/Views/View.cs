@@ -3,8 +3,8 @@
 
 namespace client.Views;
 
-public interface Iview;
+public interface IView;
 
-public interface IsubView;
+public interface ISubView;
 
-public interface Ielement;
+public interface IElement;

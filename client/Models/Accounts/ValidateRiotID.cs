@@ -25,7 +25,7 @@ public class RiotIDValidationError : DataValidationError
     /// </summary>
     /// <param name="specifiedError">The resulting RiotID status</param>
     public RiotIDValidationError(ValidRiotIDStatus specifiedError)
-        : base(specifiedError.getDescription()) { }
+        : base(specifiedError.GetDescription()) { }
 }
 
 /// <summary>
@@ -87,7 +87,7 @@ public enum ValidRiotIDStatus
 /// </summary>
 public static class EnumExtensions
 {
-    public static string getDescription(this Enum value)
+    public static string GetDescription(this Enum value)
     {
         // Search for the ValidRiotIDStatus
         FieldInfo? field = value.GetType().GetField(value.ToString());
@@ -136,7 +136,7 @@ public static class ValidateRiotID
             "Performance",
             "SYSLIB1045:Convert to \'GeneratedRegexAttribute\'."
         )]
-    private static Regex invalidIDCharacters()
+    private static Regex InvalidIDCharacters()
     {
         return new Regex(@"[#*\/\\?!%]| {2,}");
     }
@@ -147,9 +147,9 @@ public static class ValidateRiotID
     /// </summary>
     /// <param name="gameName">The given GameName</param>
     /// <returns>Riot ID Validity Status enum</returns>
-    public static ValidRiotIDStatus gameName(string gameName)
+    public static ValidRiotIDStatus GameName(string gameName)
     {
-        if (invalidIDCharacters().IsMatch(gameName))
+        if (InvalidIDCharacters().IsMatch(gameName))
         {
             return ValidRiotIDStatus.invalidCharacters;
         }
@@ -171,9 +171,9 @@ public static class ValidateRiotID
     /// </summary>
     /// <param name="tagLine">The given TagLine</param>
     /// <returns>Riot ID Validity Status enum</returns>
-    public static ValidRiotIDStatus tagLine(string tagLine)
+    public static ValidRiotIDStatus TagLine(string tagLine)
     {
-        if (invalidIDCharacters().IsMatch(tagLine))
+        if (InvalidIDCharacters().IsMatch(tagLine))
         {
             return ValidRiotIDStatus.invalidCharacters;
         }
@@ -195,20 +195,20 @@ public static class ValidateRiotID
     /// <param name="gameName">The given GameName</param>
     /// <param name="tagLine">The given TagLine</param>
     /// <returns>Whether it is a valid Riot ID</returns>
-    public static bool wholeID(string gameName, string tagLine)
+    public static bool WholeID(string gameName, string tagLine)
     {
-        return ValidateRiotID.gameName(gameName) == ValidRiotIDStatus.valid
-            && ValidateRiotID.tagLine(tagLine) == ValidRiotIDStatus.valid;
+        return GameName(gameName) == ValidRiotIDStatus.valid
+            && TagLine(tagLine) == ValidRiotIDStatus.valid;
     }
 
     /// <summary>
     ///     Just a cleaner, standard way to check if search() found a Riot ID
     /// </summary>
-    /// <param name="potentialPUUID">A potential PUUID from search()</param>
+    /// <param name="potentialPuuid">A potential PUUID from search()</param>
     /// <returns></returns>
-    public static bool exists(string potentialPUUID)
+    public static bool Exists(string potentialPuuid)
     {
-        return potentialPUUID != "";
+        return potentialPuuid != "";
     }
 
     /// <summary>
@@ -217,15 +217,15 @@ public static class ValidateRiotID
     /// <param name="gameName">The GamName half of a Riot ID</param>
     /// <param name="tagLine">The TagLine half of a Riot ID</param>
     /// <param name="continent">The continent that should be searched for the Riot ID</param>
-    /// <param name="potentialPUUID">The variable that will hold the PUUID or empty string</param>
-    public static void search(
+    /// <param name="potentialPuuid">The variable that will hold the PUUID or empty string</param>
+    public static void Search(
         string gameName,
         string tagLine,
         RegionalRoute continent,
-        out string potentialPUUID
+        out string potentialPuuid
     )
     {
-        potentialPUUID = Program
+        potentialPuuid = Program
                 .riotAPI.AccountV1()
                 .GetByRiotId(
                         continent,

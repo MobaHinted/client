@@ -20,7 +20,7 @@ public enum Role
 
 public class Roles
 {
-    public static Role determine(
+    public static Role Determine(
         Champion champion,
         Item[] items,
         Spells spells,

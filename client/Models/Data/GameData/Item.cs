@@ -29,7 +29,7 @@ public class Item
         this.Description = item.description;
         this.Image = item.image;
 
-        Program.log(
+        Program.Log(
                 source: nameof(Item),
                 method: "Item()",
                 doing: "Parsed Item Data",

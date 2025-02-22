@@ -5,43 +5,43 @@ namespace client.Models.Data;
 
 public static class Setup
 {
-    private static bool allFilesExist()
+    private static bool AllFilesExist()
     {
-        return FileManagement.fileExists(Constants.usersFile)
-            && FileManagement.fileExists(Constants.friendsFile)
-            && FileManagement.fileExists(Constants.championRolesDataFile)
-            && FileManagement.fileExists(Constants.fullLogFile)
-            && FileManagement.fileExists(Constants.warningsPlusLogFile)
-            && FileManagement.fileExists(Constants.mainLogFile)
-            && FileManagement.fileExists(Constants.downloadLogFile)
-            && FileManagement.fileExists(Constants.downloadLogFile)
-            && FileManagement.fileExists(Constants.gameFlowLogFile)
-            && FileManagement.fileExists(Constants.automationLogFile)
-            && FileManagement.fileExists(Constants.overlayLogFile)
-            && FileManagement.fileExists(Constants.avaloniaConfigFile)
-            && FileManagement.fileExists(Constants.settingsFile);
+        return FileManagement.FileExists(Constants.usersFile)
+            && FileManagement.FileExists(Constants.friendsFile)
+            && FileManagement.FileExists(Constants.championRolesDataFile)
+            && FileManagement.FileExists(Constants.fullLogFile)
+            && FileManagement.FileExists(Constants.warningsPlusLogFile)
+            && FileManagement.FileExists(Constants.mainLogFile)
+            && FileManagement.FileExists(Constants.downloadLogFile)
+            && FileManagement.FileExists(Constants.downloadLogFile)
+            && FileManagement.FileExists(Constants.gameFlowLogFile)
+            && FileManagement.FileExists(Constants.automationLogFile)
+            && FileManagement.FileExists(Constants.overlayLogFile)
+            && FileManagement.FileExists(Constants.avaloniaConfigFile)
+            && FileManagement.FileExists(Constants.settingsFile);
     }
 
-    private static bool allDirectoriesExist()
+    private static bool AllDirectoriesExist()
     {
-        return FileManagement.directoryExists(Constants.mobahinted)
-            && FileManagement.directoryExists(Constants.assets)
-            && FileManagement.directoryExists(Constants.data)
-            && FileManagement.directoryExists(Constants.logs)
-            && FileManagement.directoryExists(Constants.cachedMatchesFolder)
-            && FileManagement.directoryExists(Constants.imageCacheFolder)
-            && FileManagement.directoryExists(Constants.imageCacheDataDragonFolder)
-            && FileManagement.directoryExists(Constants.imageCacheProfileIconFolder)
-            && FileManagement.directoryExists(Constants.dataDragonFolder)
-            && FileManagement.directoryExists(Constants.dataDragonChampionFolder);
+        return FileManagement.DirectoryExists(Constants.mobahinted)
+            && FileManagement.DirectoryExists(Constants.assets)
+            && FileManagement.DirectoryExists(Constants.data)
+            && FileManagement.DirectoryExists(Constants.logs)
+            && FileManagement.DirectoryExists(Constants.cachedMatchesFolder)
+            && FileManagement.DirectoryExists(Constants.imageCacheFolder)
+            && FileManagement.DirectoryExists(Constants.imageCacheDataDragonFolder)
+            && FileManagement.DirectoryExists(Constants.imageCacheProfileIconFolder)
+            && FileManagement.DirectoryExists(Constants.dataDragonFolder)
+            && FileManagement.DirectoryExists(Constants.dataDragonChampionFolder);
     }
 
-    public static bool allContentExists()
+    public static bool AllContentExists()
     {
-        bool filesExist = allFilesExist();
-        bool directoriesExist = allDirectoriesExist();
+        bool filesExist = AllFilesExist();
+        bool directoriesExist = AllDirectoriesExist();
 
-        Program.log(
+        Program.Log(
                 source: nameof(Setup),
                 method: "allContentExists()",
                 message: "Checking if all necessary files and directories exist...",
@@ -57,39 +57,39 @@ public static class Setup
         return filesExist && directoriesExist;
     }
 
-    private static void createAllFiles()
+    private static void CreateAllFiles()
     {
-        FileManagement.createFile(Constants.usersFile);
-        FileManagement.createFile(Constants.friendsFile);
-        FileManagement.createFile(Constants.championRolesDataFile);
-        FileManagement.createFile(Constants.fullLogFile);
-        FileManagement.createFile(Constants.warningsPlusLogFile);
-        FileManagement.createFile(Constants.mainLogFile);
-        FileManagement.createFile(Constants.downloadLogFile);
-        FileManagement.createFile(Constants.gameFlowLogFile);
-        FileManagement.createFile(Constants.automationLogFile);
-        FileManagement.createFile(Constants.overlayLogFile);
-        FileManagement.createFile(Constants.avaloniaConfigFile);
-        FileManagement.createFile(Constants.settingsFile);
+        FileManagement.CreateFile(Constants.usersFile);
+        FileManagement.CreateFile(Constants.friendsFile);
+        FileManagement.CreateFile(Constants.championRolesDataFile);
+        FileManagement.CreateFile(Constants.fullLogFile);
+        FileManagement.CreateFile(Constants.warningsPlusLogFile);
+        FileManagement.CreateFile(Constants.mainLogFile);
+        FileManagement.CreateFile(Constants.downloadLogFile);
+        FileManagement.CreateFile(Constants.gameFlowLogFile);
+        FileManagement.CreateFile(Constants.automationLogFile);
+        FileManagement.CreateFile(Constants.overlayLogFile);
+        FileManagement.CreateFile(Constants.avaloniaConfigFile);
+        FileManagement.CreateFile(Constants.settingsFile);
     }
 
-    private static void createAllDirectories()
+    private static void CreateAllDirectories()
     {
-        FileManagement.createDirectory(Constants.mobahinted);
-        FileManagement.createDirectory(Constants.assets);
-        FileManagement.createDirectory(Constants.data);
-        FileManagement.createDirectory(Constants.logs);
-        FileManagement.createDirectory(Constants.cachedMatchesFolder);
-        FileManagement.createDirectory(Constants.imageCacheFolder);
-        FileManagement.createDirectory(Constants.imageCacheDataDragonFolder);
-        FileManagement.createDirectory(Constants.imageCacheProfileIconFolder);
-        FileManagement.createDirectory(Constants.dataDragonFolder);
-        FileManagement.createDirectory(Constants.dataDragonChampionFolder);
+        FileManagement.CreateDirectory(Constants.mobahinted);
+        FileManagement.CreateDirectory(Constants.assets);
+        FileManagement.CreateDirectory(Constants.data);
+        FileManagement.CreateDirectory(Constants.logs);
+        FileManagement.CreateDirectory(Constants.cachedMatchesFolder);
+        FileManagement.CreateDirectory(Constants.imageCacheFolder);
+        FileManagement.CreateDirectory(Constants.imageCacheDataDragonFolder);
+        FileManagement.CreateDirectory(Constants.imageCacheProfileIconFolder);
+        FileManagement.CreateDirectory(Constants.dataDragonFolder);
+        FileManagement.CreateDirectory(Constants.dataDragonChampionFolder);
     }
 
-    public static void createAllContent()
+    public static void CreateAllContent()
     {
-        Program.log(
+        Program.Log(
                 source: nameof(Setup),
                 method: "createAllContent()",
                 message: "Creating all necessary files and directories...",
@@ -97,7 +97,7 @@ public static class Setup
                 logLocation: LogLocation.main
             );
 
-        createAllDirectories();
-        createAllFiles();
+        CreateAllDirectories();
+        CreateAllFiles();
     }
 }

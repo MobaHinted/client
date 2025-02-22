@@ -55,7 +55,7 @@
 
         <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                 TabIndex="3" IsEnabled="{Binding CanAdd}"
-                Command="{Binding SearchAndAddAccount}">
+                Command="{Binding SearchAndAddAccountCommand}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Add" Margin="0 0 20 0" />
                 <i:Icon Value="fa-solid fa-plus" />
