@@ -14,15 +14,15 @@ namespace client.Models.Data.GameData;
 
 public class Runes
 {
-    public Rune Keystone;
+    public Rune Keystone = null!;
 
     public List<Rune> PrimaryRunes = [];
 
-    public RuneTree PrimaryTree;
+    public RuneTree PrimaryTree = null!;
 
     public List<Rune> SecondaryRunes = [];
 
-    public RuneTree SecondaryTree;
+    public RuneTree SecondaryTree = null!;
 
     public Runes(Perks perks)
     {
