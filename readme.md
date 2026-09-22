@@ -1,4 +1,4 @@
-# <img src="./assets/mobahinted.png" width="25" height="25"> MobaHinted [![Maintainability](https://api.codeclimate.com/v1/badges/d00ab1ee631db9cd16b9/maintainability)](https://codeclimate.com/github/MobaHinted/client/maintainability)
+# <img src="./assets/mobahinted.png" width="25" height="25"> MobaHinted [![Maintainability](https://qlty.sh/gh/MobaHinted/projects/mobahinted/maintainability.svg)](https://qlty.sh/gh/MobaHinted/projects/mobahinted)
 This is a tool for League of Legends that will have functionality similar to
 Blitz / Mobalytics primarily, with the exclusion of ads, paid features, and the
 inclusion of it just actually working while having everything you need.
